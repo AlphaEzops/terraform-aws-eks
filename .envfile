@@ -1,0 +1,4 @@
+PROJECT_NAME=
+STAGE=dev
+VAULT_NAME=sandbox-infrastructure
+AWS_REGION=us-east-1
