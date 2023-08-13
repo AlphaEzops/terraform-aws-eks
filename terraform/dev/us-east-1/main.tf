@@ -21,9 +21,10 @@ module "cluster" {
 }
 
 module "services" {
+  count  = var.enable_services && var.enable_cluster && var.enable_network ? 1 : 0
+  depends_on = [module.cluster]
   source = "./services/systems"
   cluster_name = var.cluster_name
-  count  = var.enable_services && var.enable_cluster && var.enable_network ? 1 : 0
 }
 
 #module "dns" {

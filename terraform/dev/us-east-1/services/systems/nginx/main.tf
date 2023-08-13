@@ -69,7 +69,7 @@ resource "helm_release" "ingress_nginx" {
 
   set {
     name  = "defaultBackend.nodeSelector.kube/nodetype"
-    value = "general"
+    value = var.node_selector
   }
 }
 
@@ -80,7 +80,7 @@ data "kubernetes_service_v1" "ingress_nginx_service" {
 
   metadata {
     name      = "ingress-nginx-controller"
-    namespace = "ingress-nginx"
+    namespace = var.namespace
   }
 }
 

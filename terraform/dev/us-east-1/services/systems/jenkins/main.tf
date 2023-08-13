@@ -13,7 +13,7 @@ resource "kubernetes_namespace" "jenkins" {
 #==============================================================================================================
 locals {
   default_set_values = {
-    "nodeSelector.kube/nodetype" = var.node_selector
+#    "nodeSelector.kube/nodetype" = var.node_selector
   }
 }
 
@@ -24,6 +24,7 @@ resource "helm_release" "jenkins" {
   repository       = "https://charts.jenkins.io"
   version          = "4.5.0"
   namespace        = var.create_namespace ? var.namespace : "jenkins-system"
+  timeout          = 260
 
   dynamic "set" {
     for_each = try({ for key, value in local.default_set_values : key => value }, {})
@@ -36,4 +37,48 @@ resource "helm_release" "jenkins" {
   values = [
     file("${path.module}/manifests/jenkins.yaml")
   ]
+}
+#==============================================================================================================
+# INGRESS - JENKINS
+#==============================================================================================================
+resource "kubernetes_ingress_v1" "jenkins" {
+  depends_on = [helm_release.jenkins]
+#  count      = var.enabled && var.create_ingress ? 1 : 0
+
+  metadata {
+    name      = "jenkins"
+    namespace = var.create_namespace ? var.namespace : "jenkins-system"
+    annotations = {
+#      "kubernetes.io/ingress.class" = "nginx"
+#      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+      "cert-manager.io/cluster-issuer" = "letsencrypt-prod"
+      "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
+      "ingress.kubernetes.io/force-ssl-redirect" =  "true"
+    }
+  }
+
+  spec {
+    tls {
+      hosts = ["jenkins.santosops.com"]
+      secret_name = "santos-ops"
+    }
+    ingress_class_name = "nginx"
+    rule {
+      host = "jenkins.santosops.com"
+      http {
+        path {
+          path_type = "Prefix"
+          path = "/"
+          backend {
+            service {
+              name = "jenkins"
+              port {
+                name = "http"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

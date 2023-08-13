@@ -15,3 +15,9 @@ variable "enabled" {
   default     = true
   description = "Variable indicating whether deployment is enabled."
 }
+
+variable "node_selector" {
+  type = string
+  default = "system-services"
+  description = "Node selector to use for metric server pods."
+}

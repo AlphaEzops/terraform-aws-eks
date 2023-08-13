@@ -7,39 +7,38 @@ module "metric_server" {
   source = "./metric-server"
 }
 
+module "ingress_nginx" {
+  source = "./nginx"
+}
 
-#module "cert_manager" {
-#  source = "./cert-manager"
-#  cluster_name = var.cluster_name
-#}
+module "prometheus" {
+  depends_on = [module.ebs_csi_driver]
+  source = "./prometheus"
+}
 
-#module "metric_server" {
-#  source = "./metric-server"
-#}
-#
-#module "ingress_nginx" {
-#  source = "./nginx"
-#}
-#
-#module "jenkins" {
-#  source = "./jenkins"
-#}
-#
-#module "prometheus" {
-#  source = "./prometheus"
-#}
-#
-#module "loki" {
-#  source = "./loki"
-#}
-#
+module "loki" {
+  depends_on = [module.ebs_csi_driver]
+  source = "./loki"
+}
+
+module "cert_manager" {
+  depends_on = [module.ingress_nginx]
+  source = "./cert-manager"
+}
+
+module "jenkins" {
+  depends_on = [module.ingress_nginx]
+  source = "./jenkins"
+}
+
+module "grafana" {
+  depends_on = [module.ingress_nginx]
+  source = "./grafana"
+}
+
+
 #module "promtail" {
 #  source = "./promtail"
 #}
-#
-#module "grafana" {
-#    source = "./grafana"
-#}
-#
-#
+
 

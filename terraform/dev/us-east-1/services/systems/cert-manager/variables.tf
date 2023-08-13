@@ -4,11 +4,6 @@ variable "enabled" {
   description = "Variable indicating whether deployment is enabled."
 }
 
-variable "cluster_name" {
-  type        = string
-  description = "The name of the cluster"
-}
-
 variable "service_account_name" {
   type        = string
   default     = "cert-manager"
@@ -32,7 +27,7 @@ variable "helm_chart_release_name" {
 
 variable "helm_chart_version" {
   type        = string
-  default     = "1.1.0"
+  default     = "1.12.3"
   description = "Cert Manager Helm chart version."
 }
 
@@ -67,57 +62,7 @@ variable "mod_dependency" {
 }
 
 variable "set_values" {
-  type        = map(any)
-  description = "External Secrets values"
-  default = {
-    values = {}
-  }
-}
-
-#================================================================================
-# CERTIFICATE
-#================================================================================
-variable "certificates" {
-  type = list(object({
-    name        = string
-    namespace   = string
-    secret_name = string
-    issuer_ref  = string
-    kind        = string
-    dns_name    = string
-  }))
-  default     = []
-  description = "List of certificates to be created"
-}
-#================================================================================
-# DNS 01
-#================================================================================
-variable "dns01" {
-  type = list(object({
-    name           = string
-    namespace      = string
-    kind           = string
-    dns_zone       = string
-    region         = string
-    secret_key_ref = string
-    acme_server    = string
-    acme_email     = string
-  }))
-  default     = []
-  description = "List of DNS01 to be created"
-}
-#================================================================================
-# HTTP 01
-#================================================================================
-variable "http01" {
-  type = list(object({
-    name           = string
-    kind           = string
-    ingress_class  = string
-    secret_key_ref = string
-    acme_server    = string
-    acme_email     = string
-  }))
-  default     = []
-  description = "List of HTTP01 to be created"
+  type = map(any)
+  default = {}
+  description = "set values to helm chart"
 }
