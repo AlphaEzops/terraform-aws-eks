@@ -29,7 +29,6 @@ resource "helm_release" "argocd_helm_release" {
     }
   }
 }
-
 resource "kubectl_manifest" "argo_cd_project" {
   for_each = try({ for k, v in var.project : k => v if v != null }, {})
 
@@ -43,14 +42,12 @@ resource "kubectl_manifest" "argo_cd_project" {
     helm_release.argocd_helm_release
   ]
 }
-
 #==============================================================================================================
 # PRIVATE REPOSITORY CONFIGURATION
 #==============================================================================================================
 data "aws_ssm_parameter" "ssh_key" {
   name = "/DEV/PRIVATEKEY"
 }
-
 resource "kubernetes_secret_v1" "argo_cd_private_repo" {
   for_each = try({ for k, v in var.private_repo : k => v if v != null }, {})
 
@@ -84,7 +81,6 @@ resource "kubectl_manifest" "argo_cd_public_repo" {
     helm_release.argocd_helm_release
   ]
 }
-
 #==============================================================================================================
 # APPLICATION CONFIGURATION
 #==============================================================================================================
@@ -111,6 +107,7 @@ resource "kubectl_manifest" "argo_cd_application" {
 # APPLICATION  CERT-MANAGER
 #==============================================================================================================
 resource "kubectl_manifest" "cert_manager" {
+  depends_on = [helm_release.argocd_helm_release]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -144,6 +141,7 @@ YAML
 # APPLICATION JENKINS
 #==============================================================================================================
 resource "kubectl_manifest" "jenkins" {
+  depends_on = [helm_release.argocd_helm_release]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -177,6 +175,7 @@ YAML
 # APPLICATION GRAFANA
 #==============================================================================================================
 resource "kubectl_manifest" "grafana" {
+  depends_on = [helm_release.argocd_helm_release]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -210,6 +209,7 @@ YAML
 # APPLICATION PROMETHEUS
 #==============================================================================================================
 resource "kubectl_manifest" "prometheus" {
+  depends_on = [helm_release.argocd_helm_release]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -243,6 +243,7 @@ YAML
 # APPLICATION INGRESS NGINX
 #==============================================================================================================
 resource "kubectl_manifest" "ingress_nginx" {
+  depends_on = [helm_release.argocd_helm_release]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -276,6 +277,7 @@ YAML
 # APPLICATION  METRICS SERVER
 #==============================================================================================================
 resource "kubectl_manifest" "metric-server" {
+  depends_on = [helm_release.argocd_helm_release]
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -306,6 +308,74 @@ spec:
 YAML
 }
 #==============================================================================================================
+# APPLICATION  LOKI
+#==============================================================================================================
+resource "kubectl_manifest" "loki" {
+  depends_on = [helm_release.argocd_helm_release]
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "loki-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/grafana-loki"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+#==============================================================================================================
+# APPLICATION  PROMTAIL
+#==============================================================================================================
+resource "kubectl_manifest" "promtail" {
+  depends_on = [helm_release.argocd_helm_release]
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: promtail
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "promtail-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/promtail"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+#==============================================================================================================
 # INGRESS - ARGO CD
 #==============================================================================================================
 resource "kubernetes_ingress_v1" "argo_cd_ingress" {
@@ -315,11 +385,13 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
     name      = "argocd"
     namespace = var.create_namespace ? var.namespace : "argocd-system"
     annotations = {
-      "kubernetes.io/ingress.class" = "nginx"
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
       "cert-manager.io/cluster-issuer" = "letsencrypt-staging"
-      "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
+      "nginx.ingress.kubernetes.io/backend-protocol" =  "HTTPS"
+      "nginx.ingress.kubernetes.io/proxy-connect-timeout" = "300"
+      "nginx.ingress.kubernetes.io/proxy-read-timeout" = "300"
+      "nginx.ingress.kubernetes.io/proxy-send-timeout" = "300"
       "ingress.kubernetes.io/force-ssl-redirect" =  "true"
+      "nginx.ingress.kubernetes.io/ssl-passthrough" = "true"
     }
   }
 
@@ -339,7 +411,7 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
             service {
               name = "argo-cd-dev-argocd-server"
               port {
-                number = 8080
+                 name = "http"
               }
             }
           }
@@ -349,22 +421,3 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   }
 }
 
-#==============================================================================================================
-# NOTIFICATION CONFIGURATION
-#==============================================================================================================
-#resource "kubectl_manifest" "argo_cd_notification" {
-#  for_each = try({ for k, v in var.notification : k => v if v != null }, {})
-#
-#  yaml_body = templatefile("${path.module}/templates/notifications/application-notification.yaml.tpl", {
-#    ARGO_NAMESPACE      = var.namespace
-#    OAUTH_SLACK_TOKEN   = each.value.oauth_slack_token
-#    SLACK_CHANNELS_LIST = each.value.slack_channels_list
-#  })
-#
-#  depends_on = [
-#    helm_release.argo_cd_install
-#  ]
-#  sensitive_fields = [
-#    "data.oauth-slack-token"
-#  ]
-#}

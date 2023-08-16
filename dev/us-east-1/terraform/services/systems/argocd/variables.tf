@@ -63,6 +63,22 @@ variable "values" {
     {
       name  = "crds.install"
       value = true
+    },
+    {
+      name  = "controller.replicas"
+      value = 2
+    },
+    {
+      name = "server.autoscaling.enabled"
+      value = true
+    },
+    {
+      name = "repoServer.autoscaling.enabled"
+      value = true
+    },
+    {
+      name = "server.ingress.enabled"
+      value = true
     }
   ]
 }
