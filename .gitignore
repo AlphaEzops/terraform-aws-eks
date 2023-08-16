@@ -3,7 +3,8 @@
 **/.terraform/*
 **/**/.terraform/*
 **/**/**/.terraform/*
-
+# tf.plan output
+**/**/tf.plan
 # .tfstate files
 *.tfstate
 *.tfstate.*

@@ -1,0 +1,28 @@
+version: "3"
+
+task:
+  terraform:
+    desc: Download terraform CLI
+    cmds:
+      - |
+        if [ "$TERRAFORM" = "yes" ]; then
+          echo "Downloading terraform..."
+          curl -s https://releases.hashicorp.com/terraform/1.5.5/terraform_1.5.5_{{OS}}_{{ARCH}}.zip  -o terraform.zip
+          unzip terraform.zip
+          rm terraform.zip
+          chmod +x terraform
+          sudo mv terraform /usr/local/bin/
+          echo "Terraform installed!"
+        fi
+
+  tfenv:
+    desc: Download tfenv
+    cmds:
+      - |
+        if [ "$TF_ENV" = "yes" ]; then
+          echo "Downloading tfenv..."
+          git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+          echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bash_profile
+          sudo ln -s ~/.tfenv/bin/* /usr/local/bin
+          echo "tf env installed!"
+        fi

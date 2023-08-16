@@ -1,0 +1,39 @@
+controller:
+  installPlugins:
+    - blueocean:latest
+    - workflow-aggregator:latest
+    - workflow-job:latest
+    - git:latest
+  JCasC:
+    configScripts:
+      unclassifiedCasc: |
+        unclassified:
+          simple-theme-plugin:
+            elements:
+              - cssUrl:
+                url: "https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-cyan.css"
+      welcome-message: |
+        jenkins:
+          systemMessage: Welcome to our CI\CD server.
+#      jenkins-casc-configs: |
+#        credentials:
+#          system:
+#            domainCredentials:
+#            - credentials:
+#              - string:
+#                  description: "github access token"
+#                  id: "github_app_token"
+#                  scope: GLOBAL
+#                  secret: ""
+    securityRealm: |-
+      local:
+        allowsSignup: false
+        enableCaptcha: false
+        users:
+        - id: "admin"
+          name: "Jenkins Admin"
+          password: "admin"
+    authorizationStrategy: |-
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: false
+    

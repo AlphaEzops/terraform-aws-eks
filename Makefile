@@ -24,12 +24,12 @@ set_env:
 	@echo VAULT_NAME=$(vault_name) >> .envfile
 	@echo AWS_REGION=$(region) >> .envfile
 	@aws-vault exec $(vault_name) --no-session --region=$(region)
-
+# https://github.com/jenkinsci/helm-charts/blob/main/charts/jenkins/VALUES_SUMMARY.md#jenkins-configuration-as-code-jcasc
 # ------------------------------------------------------------------------------
 # TERRAFORM - PLAN COMMANDS
 # ------------------------------------------------------------------------------
 plan: ##            PLAN ALL MODULES
-	cd terraform/$(STAGE)/${AWS_REGION} && terraform init  && terraform plan
+	cd $(STAGE)/${AWS_REGION}/terraform && terraform fmt && terraform init  && terraform plan -out tf.plan
 
 planfile_json: ##   PLAN ALL MODULES AND GENERATE JSON FILE
 	bash scripts/tfplanjson.sh ${STAGE}
@@ -38,26 +38,26 @@ planfile_json: ##   PLAN ALL MODULES AND GENERATE JSON FILE
 # TERRAFORM - APPLY COMMANDS
 #-------------------------------------------------------------------------------
 apply:
-	cd terraform/$(STAGE)/${AWS_REGION} && terraform init && terraform apply
+	cd $(STAGE)/${AWS_REGION}/terraform && terraform init && terraform apply tf.plan
 
 #-------------------------------------------------------------------------------
 # TERRAFORM - DESTROY COMMANDS
 #-------------------------------------------------------------------------------
 destroy:
-	cd terraform/$(STAGE)/${AWS_REGION} && terraform init && terraform destroy
+	cd $(STAGE)/${AWS_REGION}/terraform && terraform init && terraform destroy
 
 #-------------------------------------------------------------------------------
 # TERRAFORM - STATE COMMANDS
 #-------------------------------------------------------------------------------
 state_list:
-	terraform state list cd terraform/$(STAGE)/${AWS_REGION}/$(module)
+	terraform state list cd $(STAGE)/${AWS_REGION}/terraform/$(module)
 
 #-------------------------------------------------------------------------------
 # TERRAFORM - CLEAN .TERRAFORM
 #-------------------------------------------------------------------------------
 tf_clean:
-	find ./terraform -type d -name ".terraform" -exec rm -rf {} +
-	find ./terraform -type f -name ".terraform.lock.hcl" -exec rm -f {} +
+	find $(STAGE)/${AWS_REGION}/terraform -type d -name ".terraform" -exec rm -rf {} +
+	find $(STAGE)/${AWS_REGION}/terraform -type f -name ".terraform.lock.hcl" -exec rm -f {} +
 
 #############
 # INFRACOST #

@@ -1,0 +1,39 @@
+version: "3"
+
+vars:
+  TFPLAN: .tfplan
+
+tasks:
+  auto:
+    prompt: "Are you sure you want to run terraform auto?"
+    dir: ./{{.ENV}}/{{.REGION}}/terraform
+    desc: Run Init Plan and Apply terraform
+    cmds:
+      - task: init
+      - task: plan
+      - task: apply
+
+  init:
+    dir: ./{{.ENV}}/{{.REGION}}/terraform
+    desc: Download terraform providers and setup backend
+    cmds:
+      - pwd
+      - terraform init
+
+  plan:
+    dir: ./{{.ENV}}/{{.REGION}}/terraform
+    desc: Run terraform plan
+    cmds:
+      - terraform plan -out={{.TFPLAN}}
+
+  apply:
+    dir: ./{{.ENV}}/{{.REGION}}/terraform
+    desc: Run terraform apply
+    cmds:
+      - terraform apply "{{.TFPLAN}}"
+
+  destroy:
+    dir: ./{{.ENV}}/{{.REGION}}/terraform
+    desc: Run terraform destroy
+    cmds:
+      - terraform destroy
