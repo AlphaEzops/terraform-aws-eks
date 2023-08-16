@@ -4,7 +4,7 @@ metadata:
   name: jenkins
   namespace: jenkins-system
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/backend-protocol: HTTP
     ingress.kubernetes.io/force-ssl-redirect: "true"

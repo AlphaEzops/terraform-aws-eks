@@ -272,40 +272,51 @@ spec:
       - CreateNamespace=true
 YAML
 }
-
-
 #==============================================================================================================
-# NOTIFICATION CONFIGURATION
+# APPLICATION  METRICS SERVER
 #==============================================================================================================
-#resource "kubectl_manifest" "argo_cd_notification" {
-#  for_each = try({ for k, v in var.notification : k => v if v != null }, {})
-#
-#  yaml_body = templatefile("${path.module}/templates/notifications/application-notification.yaml.tpl", {
-#    ARGO_NAMESPACE      = var.namespace
-#    OAUTH_SLACK_TOKEN   = each.value.oauth_slack_token
-#    SLACK_CHANNELS_LIST = each.value.slack_channels_list
-#  })
-#
-#  depends_on = [
-#    helm_release.argo_cd_install
-#  ]
-#  sensitive_fields = [
-#    "data.oauth-slack-token"
-#  ]
-#}
+resource "kubectl_manifest" "metric-server" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "metrics-server-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/metrics-server"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
 #==============================================================================================================
-# INGRESS - GRAFANA
+# INGRESS - ARGO CD
 #==============================================================================================================
 resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   depends_on = [helm_release.argocd_helm_release]
-  #  count      = var.enabled && var.create_ingress ? 1 : 0
 
   metadata {
     name      = "argocd"
     namespace = var.create_namespace ? var.namespace : "argocd-system"
     annotations = {
-      #      "kubernetes.io/ingress.class" = "nginx"
-      #      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
+      "kubernetes.io/ingress.class" = "nginx"
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/"
       "cert-manager.io/cluster-issuer" = "letsencrypt-staging"
       "nginx.ingress.kubernetes.io/backend-protocol" = "HTTP"
       "ingress.kubernetes.io/force-ssl-redirect" =  "true"
@@ -326,9 +337,9 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
           path = "/"
           backend {
             service {
-              name = "argocd-server"
+              name = "argo-cd-dev-argocd-server"
               port {
-                number = 3000
+                number = 8080
               }
             }
           }
@@ -337,3 +348,23 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
     }
   }
 }
+
+#==============================================================================================================
+# NOTIFICATION CONFIGURATION
+#==============================================================================================================
+#resource "kubectl_manifest" "argo_cd_notification" {
+#  for_each = try({ for k, v in var.notification : k => v if v != null }, {})
+#
+#  yaml_body = templatefile("${path.module}/templates/notifications/application-notification.yaml.tpl", {
+#    ARGO_NAMESPACE      = var.namespace
+#    OAUTH_SLACK_TOKEN   = each.value.oauth_slack_token
+#    SLACK_CHANNELS_LIST = each.value.slack_channels_list
+#  })
+#
+#  depends_on = [
+#    helm_release.argo_cd_install
+#  ]
+#  sensitive_fields = [
+#    "data.oauth-slack-token"
+#  ]
+#}
