@@ -61,32 +61,32 @@ variable "instance_type" {
   default     = "t3.medium"
 }
 
-variable "addons" {
-  description = "EKS addons"
-  type = list(object({
-    name    = string
-    version = string
-  }))
-  default = [
-    {
-      name    = "coredns"
-      version = "v1.10.1-eksbuild.2"
-    },
-    # {
-    #   name    = "kube-proxy"
-    #   version = "v1.23.8-eksbuild.2"
-    # },
-    # {
-    #   name    = "vpc-cni"
-    #   version = "v1.11.4-eksbuild.1"
-    # },
-#     {
-#       name = "aws-ebs-csi-driver"
-#       version = "v1.21.0-eksbuild.1"
-#     }
-
-  ]
-}
+#variable "addons" {
+#  description = "EKS addons"
+#  type = list(object({
+#    name    = string
+#    version = string
+#  }))
+#  default = [
+#    {
+#      name    = "coredns"
+#      version = "v1.10.1-eksbuild.2"
+#    },
+#    # {
+#    #   name    = "kube-proxy"
+#    #   version = "v1.23.8-eksbuild.2"
+#    # },
+#    # {
+#    #   name    = "vpc-cni"
+#    #   version = "v1.11.4-eksbuild.1"
+#    # },
+##     {
+##       name = "aws-ebs-csi-driver"
+##       version = "v1.21.0-eksbuild.1"
+##     }
+#
+#  ]
+#}
 
 variable "aws_auth_users" {
   description = "aws_auth_users"

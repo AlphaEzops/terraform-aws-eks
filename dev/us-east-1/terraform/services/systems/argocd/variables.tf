@@ -103,17 +103,7 @@ variable "public_repo" {
 variable "applications" {
   type        = any
   description = "Application Setup"
-  default     = {
-    devops = {
-      app_name              = "devops"
-      app_namespace         = "cert-manger-system"
-      private_repo_url      = "git@github.com:ArthurMaverick/devops_project.git"
-      app_path              = "terraform/dev/us-east-1/services/system/cert-manager"
-      app_target_revision   = "HEAD"
-      app_directory_recurse = true
-      app_project           = "devops"
-    }
-  }
+  default     = {}
 }
 
 variable "notification" {

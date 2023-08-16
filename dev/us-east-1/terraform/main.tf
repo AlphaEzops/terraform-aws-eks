@@ -16,7 +16,7 @@ module "cluster" {
   cluster_name       = var.cluster_name
   cluster_version    = var.cluster_version
   instance_type      = var.instance_type
-  addons             = var.addons
+#  addons             = var.addons
   aws_auth_users     = var.aws_auth_users
 }
 

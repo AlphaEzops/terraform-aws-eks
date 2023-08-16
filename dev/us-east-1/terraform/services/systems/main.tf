@@ -1,12 +1,10 @@
-module "ebs_csi_driver" {
-  source       = "./k8s-ebs-csi-drive"
-  cluster_name = var.cluster_name
-}
+#module "ebs_csi_driver" {
+#  source       = "./k8s-ebs-csi-drive"
+#  cluster_name = var.cluster_name
+#}
 
 module "argo_cd" {
-  depends_on = [module.ebs_csi_driver]
   source     = "./argocd"
-
 }
 #module "ingress_nginx" {
 #  source = "./nginx"

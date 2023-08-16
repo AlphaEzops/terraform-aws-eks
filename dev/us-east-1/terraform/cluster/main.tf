@@ -118,21 +118,29 @@ resource "aws_launch_template" "eks_cluster" {
     create_before_destroy = true
   }
 }
+
+#==============================================================================
+# AWS EBS CSI DRIVER - PERMITIONS
+#==============================================================================
+
+
+
 #==============================================================================
 # EKS CLUSTER
 #==============================================================================
 module "eks_cluster" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.16.0"
+  version = "19.10.0" # old 19.16.0
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
-
+  create_kms_key = false # new
+  cluster_encryption_config = {}
   cluster_endpoint_private_access = true
   cluster_endpoint_public_access  = true
   create_cloudwatch_log_group     = true
   manage_aws_auth_configmap       = true
-  enable_irsa                     = true
+#  enable_irsa                     = true
 
   cluster_enabled_log_types = [
     "api",
@@ -155,20 +163,32 @@ module "eks_cluster" {
   ]
 
   cluster_addons = {
+    aws-ebs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = module.aws_ebs_csi_driver.iam_role_arn
+    }
     kube-proxy = {
-      addon_name                  = "kube-proxy"
-      addon_version               = "v1.27.4-eksbuild.2"
-      resolve_conflicts_on_create = "OVERWRITE"
-      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent = true
     }
     vpc-cni = {
-      addon_name                  = "vpc-cni"
-      addon_version               = "v1.13.4-eksbuild.1"
-      resolve_conflicts_on_create = "OVERWRITE"
-      resolve_conflicts_on_update = "OVERWRITE"
+      most_recent              = true
+      before_compute           = true
+      service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
+      configuration_values = jsonencode({
+        env = {
+          # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      })
     }
+    #    vpc-cni = {
+    #      addon_name                  = "vpc-cni"
+    #      addon_version               = "v1.13.4-eksbuild.1"
+    #      resolve_conflicts_on_create = "OVERWRITE"
+    #      resolve_conflicts_on_update = "OVERWRITE"
+    #    }
   }
-
   cluster_addons_timeouts = {
     create = "10m"
     update = "10m"
@@ -184,11 +204,13 @@ module "eks_cluster" {
       create_launch_template  = false
       launch_template_id      = aws_launch_template.eks_cluster.id
       launch_template_version = aws_launch_template.eks_cluster.default_version
+
       ami_type                = "AL2_x86_64"
       instance_types          = ["t3.medium"]
       labels = {
         "kube/nodetype" = "system-services"
       }
+      iam_role_attach_cni_policy = true
     }
 
     backend = {
@@ -204,23 +226,210 @@ module "eks_cluster" {
       labels = {
         "kube/nodetype" = "backend"
       }
+      iam_role_attach_cni_policy = true
     }
   }
 
   tags = merge(var.tags.eks, local.tags)
 }
 #==============================================================================
+# AWS EBS CSI DRIVER - IRSA
+#==============================================================================
+module "aws_ebs_csi_driver" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.20.0"
+
+  role_name = upper("EBS-CSI-DRIVER-${module.eks_cluster.cluster_name}")
+
+  role_policy_arns = {
+    admin = aws_iam_policy.aws_ebs_csi_driver.arn
+  }
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_cluster.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:aws-node", "kube-system:ebs-csi-controller-sa"]
+    }
+  }
+
+  tags = local.tags
+}
+
+resource "aws_iam_policy" "aws_ebs_csi_driver" {
+  name        = "aws-ebs-csi-driver-${local.account_id}"
+  path        = "/"
+  description = "policy for aws ebs csi driver"
+
+  policy = <<EOT
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateSnapshot",
+        "ec2:AttachVolume",
+        "ec2:DetachVolume",
+        "ec2:ModifyVolume",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumesModifications"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateTags"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:volume/*",
+        "arn:aws:ec2:*:*:snapshot/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "ec2:CreateAction": [
+            "CreateVolume",
+            "CreateSnapshot"
+          ]
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteTags"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:volume/*",
+        "arn:aws:ec2:*:*:snapshot/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/ebs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/CSIVolumeName": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/ebs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/CSIVolumeName": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteVolume"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/kubernetes.io/created-for/pvc/name": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteSnapshot"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/CSIVolumeSnapshotName": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DeleteSnapshot"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/ebs.csi.aws.com/cluster": "true"
+        }
+      }
+    }
+  ]
+}
+EOT
+}
+
+#==============================================================================
+# AWS VPC CNI - IRSA
+#==============================================================================
+module "vpc_cni_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "5.20.0"
+
+  role_name             = upper("VPC-CNI-IRSA-${module.eks_cluster.cluster_name}")
+  attach_vpc_cni_policy = true
+  role_policy_arns = {
+    AmazonEKS_CNI_Policy = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  }
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks_cluster.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:aws-node"]
+    }
+  }
+  tags = local.tags
+}
+#==============================================================================
 # EKS ADDONS
 #==============================================================================
-resource "aws_eks_addon" "eks_cluster_addons" {
-  for_each                    = { for addon in var.addons : addon.name => addon }
-  cluster_name                = module.eks_cluster.cluster_name
-  addon_name                  = each.value.name
-  addon_version               = each.value.version
-  resolve_conflicts_on_create = "OVERWRITE"
-  resolve_conflicts_on_update = "OVERWRITE"
-  tags                        = merge(var.tags.eks_addon, local.tags)
-}
+#resource "aws_eks_addon" "eks_cluster_addons" {
+#  for_each                    = { for addon in var.addons : addon.name => addon }
+#  cluster_name                = module.eks_cluster.cluster_name
+#  addon_name                  = each.value.name
+#  addon_version               = each.value.version
+#  resolve_conflicts_on_create = "OVERWRITE"
+#  resolve_conflicts_on_update = "OVERWRITE"
+#  tags                        = merge(var.tags.eks_addon, local.tags)
+#}
 #==============================================================================
 # AWS DATA CLUSTER
 #==============================================================================

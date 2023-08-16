@@ -21,8 +21,8 @@ tasks:
         echo "Type the Project name:"
         read PROJECT;
         echo "PROJECT=$PROJECT" >> .envfile
-#        unset AWS_VAULT
-#        aws-vault exec $PROJECT-$ENV --region $REGION --no-session
+        unset AWS_VAULT
+        aws-vault exec $PROJECT-$ENV --region $REGION --no-session
     silent: true
 
   env:install:

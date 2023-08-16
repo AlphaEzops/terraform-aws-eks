@@ -107,6 +107,172 @@ resource "kubectl_manifest" "argo_cd_application" {
     helm_release.argocd_helm_release
   ]
 }
+#==============================================================================================================
+# APPLICATION  CERT-MANAGER
+#==============================================================================================================
+resource "kubectl_manifest" "cert_manager" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "cert-manager-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/cert-manager"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+#==============================================================================================================
+# APPLICATION JENKINS
+#==============================================================================================================
+resource "kubectl_manifest" "jenkins" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jenkins
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "jenkins-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/jenkins"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+#==============================================================================================================
+# APPLICATION GRAFANA
+#==============================================================================================================
+resource "kubectl_manifest" "grafana" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "grafana-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/grafana"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+#==============================================================================================================
+# APPLICATION PROMETHEUS
+#==============================================================================================================
+resource "kubectl_manifest" "prometheus" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "prometheus-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/prometheus"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+#==============================================================================================================
+# APPLICATION INGRESS NGINX
+#==============================================================================================================
+resource "kubectl_manifest" "ingress_nginx" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: "ingress-nginx-system"
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-1/services/system/ingress-nginx"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "devops"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+YAML
+}
+
 
 #==============================================================================================================
 # NOTIFICATION CONFIGURATION
