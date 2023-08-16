@@ -366,10 +366,6 @@ configAsCode:
       gitHostKeyVerificationConfiguration:
         sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
     unclassified:
-      simple-theme-plugin:
-        elements:
-          - cssUrl:
-            url: "https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-cyan.css"
       buildDiscarders:
         configuredBuildDiscarders:
           - "jobBuildDiscarder"
