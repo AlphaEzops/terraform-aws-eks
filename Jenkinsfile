@@ -1,20 +1,39 @@
+// Uses Declarative syntax to run commands inside a container.
 pipeline {
-  agent any
-  stages {
-    stage('Download Tools') {
-      steps {
-        sh '''echo "Step 0: Downloading AWS CLI and Helm CLI"
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-curl -LO "https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz"
-tar -zxvf helm-v3.7.0-linux-amd64.tar.gz
-mv linux-amd64/helm /usr/local/bin/
-rm -rf linux-amd64 helm-v3.7.0-linux-amd64.tar.gz
+    agent {
+        kubernetes {
+            // Rather than inline YAML, in a multibranch Pipeline you could use: yamlFile 'jenkins-pod.yaml'
+            // Or, to avoid YAML:
+            // containerTemplate {
+            //     name 'shell'
+            //     image 'ubuntu'
+            //     command 'sleep'
+            //     args 'infinity'
+            // }
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: shell
+    image: ubuntu
+    command:
+    - sleep
+    args:
+    - infinity
 '''
-      }
+            // Can also wrap individual steps:
+            // container('shell') {
+            //     sh 'hostname'
+            // }
+            defaultContainer 'shell'
+        }
     }
-
-  }
+    stages {
+        stage('Main') {
+            steps {
+                sh 'hostname'
+            }
+        }
+    }
 }
