@@ -377,7 +377,7 @@ configAsCode:
         storage: "file"
       location:
         adminAddress: "address not configured yet <nobody@nowhere>"
-        url: "http://jenkins:8080/"
+        url: "http://jenkins.santosops.com:8080/"
       mailer:
         charset: "UTF-8"
         useSsl: false
