@@ -867,7 +867,7 @@ imageRenderer:
   ##    maxUnavailable: 25%
   ##
   updateStrategy:
-    type: RollingUpdate
+    type: Recreate
   ## @param imageRenderer.podAnnotations Grafana Image Renderer Pod annotations
   ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
   ##
