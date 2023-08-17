@@ -143,14 +143,15 @@ extraEnvVarsSecret: ""
 ##   - configuration-as-code:1569.vb_72405b_80249
 ##
 plugins:
-  - blueocean:1.27.5
+  - kubernetes:latest
+  - blueocean:latest
   - workflow-aggregator:latest
   - workflow-job:latest
   - git:latest
   - configuration-as-code:latest
   - github:latest
   - github-branch-source:latest
-  - kubernetes:3995.v227c16b_675e
+
 ## @param extraPlugins List of plugins to install in addition to those listed in `plugins`
 ##
 extraPlugins: []
