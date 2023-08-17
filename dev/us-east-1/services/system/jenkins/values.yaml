@@ -1087,16 +1087,22 @@ rbac:
   create: true
   ## @param rbac.rules Custom RBAC rules to set
   ## e.g:
-  ## rules:
-  ##   - apiGroups:
-  ##       - ""
-  ##     resources:
-  ##       - pods
-  ##     verbs:
-  ##       - get
-  ##       - list
+  # rules:
+  #   - apiGroups:
+  #       - ""
+  #     resources:
+  #       - pods
+  #     verbs:
+  #       - get
+  #       - list
   ##
-  rules: []
+  rules:
+    - apiGroups:
+        - "*"
+      resources:
+        - "*"
+      verbs:
+        - "*"
 
 ## ServiceAccount configuration
 ##
@@ -1107,7 +1113,7 @@ serviceAccount:
   ## @param serviceAccount.name The name of the ServiceAccount to use.
   ## If not set and create is true, a name is generated using the common.names.fullname template
   ##
-  name: ""
+  name: "jenkins"
   ## @param serviceAccount.annotations Additional Service Account annotations (evaluated as a template)
   ##
   annotations: {}
