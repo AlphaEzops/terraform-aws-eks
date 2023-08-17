@@ -258,15 +258,28 @@ configAsCode:
   ##      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
   ##
   extraConfigFiles:
-#    credentials:
-#      system:
-#        domainCredentials:
-#          - credentials:
-#              - string:
-#                  description: "github access tokin"
-#                  id: "github_app_token"
-#                  scope: GLOBAL
-#                  secret: "test"
+    credentials:
+      system:
+        domainCredentials:
+          - credentials:
+              - file:
+                  fileName: "config"
+                  id: "Devops"
+                  scope: GLOBAL
+                  secretBytes: ""
+              - basicSSHUserPrivateKey:
+                  id: "GtithubCredentials"
+                  passphrase: "{AQAAABAAAAAwLvl+PSGl09MtWXb/c8KQgBoj7oqyDKO9PCTpX5x9835IgpEdioH5EQe3hFG1WA9QWlNmp3QbKn/NAx1fdgfjZg==}"
+                  privateKeySource:
+                    directEntry:
+                      privateKey: "{AQAAABAAAAAQMHd96OcGO81OsmfWFLZHxmi1D/KWv+tYXVM8sL0J/YU=}"
+                  scope: GLOBAL
+                  username: "ArthurMaverick"
+              - usernamePassword:
+                  id: "GithubMaverick"
+                  password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
+                  scope: GLOBAL
+                  username: "ArthurMaverick"
     jenkins:
       agentProtocols:
         - "JNLP4-connect"
@@ -278,49 +291,18 @@ configAsCode:
         - kubernetes:
             containerCap: 10
             containerCapStr: "10"
-            jenkinsTunnel: "jenkins-agent.jenkins-system.svc.cluster.local:50000"
-            jenkinsUrl: "http://jenkins.jenkins-system.svc.cluster.local:8080"
             name: "kubernetes"
-            namespace: "jenkins-system"
-            podLabels:
-              - key: "jenkins/jenkins-jenkins-agent"
-                value: "true"
-            serverUrl: "https://kubernetes.default"
-            templates:
-              - containers:
-                  - args: "^${computer.jnlpmac} ^${computer.name}"
-                    envVars:
-                      - envVar:
-                          key: "JENKINS_URL"
-                          value: "http://jenkins.jenkins-system.svc.cluster.local:8080/"
-                    image: "jenkins/inbound-agent:3107.v665000b_51092-15"
-                    name: "jnlp"
-                    resourceLimitCpu: "512m"
-                    resourceLimitMemory: "512Mi"
-                    resourceRequestCpu: "512m"
-                    resourceRequestMemory: "512Mi"
-                    workingDir: "/home/jenkins/agent"
-                id: "a6e410bbc54d23e84ac3f58bd1608da0e09b1ef712ce19292fc4c1ee6c8add69"
-                label: "jenkins-jenkins-agent"
-                name: "default"
-                namespace: "jenkins-system"
-                nodeUsageMode: "NORMAL"
-                podRetention: "never"
-                serviceAccount: "default"
-                slaveConnectTimeout: 100
-                slaveConnectTimeoutStr: "100"
-                yamlMergeStrategy: "override"
+            webSocket: true
       crumbIssuer:
         standard:
           excludeClientIPFromCrumb: true
       disableRememberMe: false
       labelAtoms:
         - name: "built-in"
-        - name: "jenkins-jenkins-agent"
       markupFormatter: "plainText"
       mode: NORMAL
       myViewsTabBar: "standard"
-      numExecutors: 0
+      numExecutors: 2
       primaryView:
         all:
           name: "all"
@@ -335,17 +317,15 @@ configAsCode:
           enableCaptcha: false
           users:
             - id: "admin"
-              name: "Devops Admin"
+              name: "admin"
               properties:
                 - "apiToken"
                 - "mailer"
-                - "myView"
+                - "favorite"
                 - preferredProvider:
                     providerId: "default"
-                - "timezone"
                 - "experimentalFlags"
-      slaveAgentPort: 50000
-      systemMessage: "Welcome to our CI\\CD server."
+      slaveAgentPort: -1
       updateCenter:
         sites:
           - id: "default"
@@ -369,15 +349,30 @@ configAsCode:
       gitHostKeyVerificationConfiguration:
         sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
     unclassified:
+      bitbucketEndpointConfiguration:
+        endpoints:
+          - bitbucketCloudEndpoint:
+              enableCache: false
+              manageHooks: false
+              repositoriesCacheDuration: 0
+              teamCacheDuration: 0
       buildDiscarders:
         configuredBuildDiscarders:
           - "jobBuildDiscarder"
       fingerprints:
         fingerprintCleanupDisabled: false
         storage: "file"
+      gitHubConfiguration:
+        apiRateLimitChecker: ThrottleForNormalize
+      gitHubPluginConfig:
+        configs:
+          - name: "devops"
+        hookUrl: "http://jenkins.santosops.com/github-webhook/"
+      junitTestResultStorage:
+        storage: "file"
       location:
         adminAddress: "address not configured yet <nobody@nowhere>"
-        url: "http://jenkins.santosops.com:8080/"
+        url: "http://jenkins.santosops.com/"
       mailer:
         charset: "UTF-8"
         useSsl: false
