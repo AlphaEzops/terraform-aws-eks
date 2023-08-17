@@ -140,37 +140,37 @@ YAML
 #==============================================================================================================
 # APPLICATION JENKINS
 #==============================================================================================================
-resource "kubectl_manifest" "jenkins" {
-  depends_on = [helm_release.argocd_helm_release]
-  yaml_body = <<YAML
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: jenkins
-  namespace: argocd-system
-spec:
-  destination:
-    namespace: "jenkins-system"
-    server: "https://kubernetes.default.svc"
-  source:
-    path: "dev/us-east-1/services/system/jenkins"
-    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
-    targetRevision: "HEAD"
-    helm:
-      valueFiles:
-        - "values.yaml"
-  project: "devops"
-  syncPolicy:
-    managedNamespaceMetadata:
-      labels:
-        managed: "argo-cd"
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-YAML
-}
+#resource "kubectl_manifest" "jenkins" {
+#  depends_on = [helm_release.argocd_helm_release]
+#  yaml_body = <<YAML
+#apiVersion: argoproj.io/v1alpha1
+#kind: Application
+#metadata:
+#  name: jenkins
+#  namespace: argocd-system
+#spec:
+#  destination:
+#    namespace: "jenkins-system"
+#    server: "https://kubernetes.default.svc"
+#  source:
+#    path: "dev/us-east-1/services/system/jenkins"
+#    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+#    targetRevision: "HEAD"
+#    helm:
+#      valueFiles:
+#        - "values.yaml"
+#  project: "devops"
+#  syncPolicy:
+#    managedNamespaceMetadata:
+#      labels:
+#        managed: "argo-cd"
+#    automated:
+#      prune: true
+#      selfHeal: true
+#    syncOptions:
+#      - CreateNamespace=true
+#YAML
+#}
 #==============================================================================================================
 # APPLICATION GRAFANA
 #==============================================================================================================
