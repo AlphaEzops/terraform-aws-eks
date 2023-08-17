@@ -150,7 +150,7 @@ plugins:
   - configuration-as-code:latest
   - github:latest
   - github-branch-source:latest
-  - Kubernetes:latest
+  - kubernetes:3995.v227c16b_675e
 ## @param extraPlugins List of plugins to install in addition to those listed in `plugins`
 ##
 extraPlugins: []
