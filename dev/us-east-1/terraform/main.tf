@@ -16,9 +16,24 @@ module "cluster" {
   cluster_name       = var.cluster_name
   cluster_version    = var.cluster_version
   instance_type      = var.instance_type
-#  addons             = var.addons
   aws_auth_users     = var.aws_auth_users
 }
+
+#module "ci-cd" {
+#  source = "./pipe/codebuild"
+#  prefix =
+#  project_name = "python-app"
+#  stage = var.stage
+#}
+
+#module "ecr" {
+#  source               = "./pipe/ecr"
+#  image_tag_mutability = "MUTABLE"
+#  scan_on_push         = true
+#  prefix               = "devops"
+#  project_name         = "python-app"
+#  stage                = var.stage
+#}
 
 module "services" {
   count        = var.enable_services && var.enable_cluster && var.enable_network ? 1 : 0

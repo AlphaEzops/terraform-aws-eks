@@ -62,8 +62,6 @@ resource "kubernetes_secret_v1" "argo_cd_private_repo" {
   data = {
     url = each.value.private_repo_url
     sshPrivateKey = data.aws_ssm_parameter.ssh_key.value
-#    insecure =  "true"
-#    enableLfs = "true"
   }
 }
 #==============================================================================================================

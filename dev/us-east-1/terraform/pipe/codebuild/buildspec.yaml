@@ -1,0 +1,66 @@
+version: 0.2
+
+env:
+  shell: bash
+  parameter-store:
+    GITHUB_TOKEN: GH_TOKEN
+
+phases:
+  install:
+    on-failure: ABORT
+    runtime-versions:
+      python: 3.9
+    commands:
+
+      # CLONE SOURCE CODE...
+      - git clone https://${GITHUB_TOKEN}@github.com/ArthurMaverick/devops_project.git
+
+      # INSTALL DOCKER
+      - amazon-linux-extras install docker
+      - service docker start
+      - usermod -a -G docker ec2-user
+
+      # INSTALL ANSIBLE
+      - pip3 install ansible
+
+      # INSTALL LIB TEST
+      - RELEASE_VERSION=$(grep -Po '(?<=VERSION_ID=")[0-9]' /etc/os-release)
+      - cat << EOF | sudo tee -a /etc/yum.repos.d/trivy.repo
+        [trivy]
+        name=Trivy repository
+        baseurl=https://aquasecurity.github.io/trivy-repo/rpm/releases/$RELEASE_VERSION/\$basearch/
+        gpgcheck=0
+        enabled=1
+        EOF
+        sudo yum -y update
+        sudo yum -y install trivy
+
+      # INSTALL HELM
+      - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      - chmod 700 get_helm.sh
+      - ./get_helm.sh
+
+    finally:
+      - echo "All necessary tools are installed"
+  pre_build:
+    commands:
+      - echo Checking all necessary tools and files...
+      - make --version
+      - aws --version
+      - git --version
+      - ansible-playbook --version
+      - docker --version
+    finally:
+      - echo "All necessary tools and files are installed"
+  build:
+    commands:
+      - aws ecr get-login-password --region region | docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com
+      - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${TAG}
+      - trivy <PYTHON TEST>
+      - docker push -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${TAG}
+      - aws eks update-kubeconfig --name "ecomm-cluster"
+    finally:
+      - echo "finished"
+  post_build:
+    commands:
+      - echo Build Finished on `date`
