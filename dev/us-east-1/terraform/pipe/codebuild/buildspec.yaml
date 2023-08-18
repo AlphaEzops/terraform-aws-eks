@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   shell: bash
-  parameter-store:
-    GITHUB_TOKEN: GH_TOKEN
+#  parameter-store:
+#    GITHUB_TOKEN: "/DEV/GH_TOKEN"
 
 phases:
   install:
@@ -13,7 +13,7 @@ phases:
     commands:
 
       # CLONE SOURCE CODE...
-      - git clone https://${GITHUB_TOKEN}@github.com/ArthurMaverick/devops_project.git
+      - git clone https://${GH_TOKEN}@github.com/ArthurMaverick/devops_project.git
 
       # INSTALL DOCKER
       - amazon-linux-extras install docker

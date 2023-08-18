@@ -154,6 +154,7 @@ plugins:
   - aws-java-sdk-codebuild:latest
   - material-theme:latest
   - job-dsl:latest
+  - aws-codebuild:latest
 ## @param extraPlugins List of plugins to install in addition to those listed in `plugins`
 ##
 extraPlugins: []

@@ -12,22 +12,11 @@ data "aws_iam_policy_document" "assume_role" {
     }
   }
 }
-#data "aws_iam_policy_document" "policy" {
-#  statement {
-#    effect = "Allow"
-#
-#    principals {
-#      type        = "Service"
-#      identifiers = ["*"]
-#    }
-#
-#    actions = ["*"]
-#  }
-#}
 
 data "aws_iam_policy_document" "inline_policy" {
   statement {
-    actions   = ["ec2:DescribeAccountAttributes"]
+    effect = "Allow"
+    actions   = ["*"]
     resources = ["*"]
   }
 }
@@ -45,6 +34,9 @@ resource "aws_iam_role" "codebuild_role" {
 #===================================================================================================
 # CODEBUILD
 #===================================================================================================
+data "aws_ssm_parameter" "github_token" {
+  name = "/DEV/GH_TOKEN"
+}
 resource "aws_codebuild_project" "codebuild" {
   name = format("%s-%s-%s",var.prefix, var.stage,var.project_name)
   description          = "AWS CodeBuild for the app ${var.project_name}"
@@ -71,6 +63,10 @@ resource "aws_codebuild_project" "codebuild" {
     environment_variable {
       name  = "STAGE"
       value = var.stage
+    }
+    environment_variable {
+      name  = "GH_TOKEN"
+      value = data.aws_ssm_parameter.github_token.value
     }
   }
 
