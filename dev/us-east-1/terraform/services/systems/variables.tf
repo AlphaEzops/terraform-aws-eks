@@ -9,3 +9,9 @@ variable "node_selector" {
     description = "The node selector for the cluster"
     type = string
 }
+
+variable "project_name" {
+    default = "my-project"
+    description = "The name of the project"
+    type = string
+}

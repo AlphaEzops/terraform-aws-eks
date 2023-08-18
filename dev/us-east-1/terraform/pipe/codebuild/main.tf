@@ -4,23 +4,44 @@
 data "aws_iam_policy_document" "assume_role" {
   statement {
     effect = "Allow"
+    actions = ["sts:AssumeRole"]
 
     principals {
       type        = "Service"
-      identifiers = [
-        "ssm:GetParameters",
-        "eks:DescribeCluster"
-      ]
+      identifiers = ["codebuild.amazonaws.com"]
     }
+  }
+}
+#data "aws_iam_policy_document" "policy" {
+#  statement {
+#    effect = "Allow"
+#
+#    principals {
+#      type        = "Service"
+#      identifiers = ["*"]
+#    }
+#
+#    actions = ["*"]
+#  }
+#}
 
-    actions = ["sts:AssumeRole"]
+data "aws_iam_policy_document" "inline_policy" {
+  statement {
+    actions   = ["ec2:DescribeAccountAttributes"]
+    resources = ["*"]
   }
 }
 
 resource "aws_iam_role" "codebuild_role" {
-  name               = format("%s-%s", var.prefix, var.stage, var.project_name)
+  name               = format("%s-%s-%s", var.prefix, var.stage, var.project_name)
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+
+  inline_policy {
+    name   = "policy-8675309"
+    policy = data.aws_iam_policy_document.inline_policy.json
+  }
 }
+
 #===================================================================================================
 # CODEBUILD
 #===================================================================================================
@@ -36,10 +57,9 @@ resource "aws_codebuild_project" "codebuild" {
     type = "NO_ARTIFACTS"
   }
 
-  cache {
-    type  = "LOCAL"
-    modes = ["LOCAL_SOURCE_CACHE"]
-  }
+#  cache {
+#    type  = "LOCAL"
+#  }
 
   environment {
     image                       = "aws/codebuild/amazonlinux2-x86_64-standard:4.0"
