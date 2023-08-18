@@ -553,7 +553,7 @@ grafana:
 ## @param persistence.size Size for the PV
 ##
 persistence:
-  enabled: true
+  enabled: false
   storageClassName: gp2
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
@@ -564,7 +564,7 @@ persistence:
   storageClass: ""
   annotations: {}
   existingClaim: ""
-  accessMode: ReadWriteMany
+  accessMode: ReadWriteOnce
   accessModes: []
   size: 10Gi
 
