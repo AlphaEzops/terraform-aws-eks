@@ -18,10 +18,6 @@ phases:
       - yum install -y docker
       - docker --version
 
-      # INSTALL ANSIBLE
-      # - pip3 install ansible
-
-
       # INSTALL LIBs TEST
       - RELEASE_VERSION=$(grep -Po '(?<=VERSION_ID=")[0-9]' /etc/os-release)
       - rpm -ivh https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.rpm
@@ -31,6 +27,13 @@ phases:
       - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
       - chmod 700 get_helm.sh
       - ./get_helm.sh
+
+      # INSTALL AWS CLI
+      - curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+      - curl -LO https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256
+      - echo $(cat kubectl.sha256)  kubectl | sha256sum --check
+      - chmod +x kubectl && mkdir -p ~/.local/bin && mv ./kubectl ~/.local/bin/kubectl
+      - kubectl version --client
 
       # INSTALL YQ
       - wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
@@ -60,23 +63,26 @@ phases:
       # BUILD IMAGE
       - docker build -t arthursantos2228/devops-default-python-app:${DIND_COMMIT} -f $(pwd)/dev/us-east-1/services/apps/api-01/source/Dockerfile $(pwd)/dev/us-east-1/services/apps/api-01/source
 
-      # TEST UNIT TEST
-      - ls
-      - pytest -rxXs $(pwd)/dev/us-east-1/services/apps/api-01/source/app_test.py
+      # TEST PYTHON CODE
+      - trivy fs $(pwd)/dev/us-east-1/services/apps/api-01/source
 
-      # TEST IMAGE
+      # IMAGE TEST
       - trivy image arthursantos2228/devops-default-python-app:${DIND_COMMIT}
 
       # PUSH IMAGE
-      - docker push -t arthursantos2228/devops-default-python-app:${DIND_COMMIT}
+      - docker push arthursantos2228/devops-default-python-app:${DIND_COMMIT}
 
       # DEPLOY IMAGE
+      - mkdir ~/.kube
       - aws eks update-kubeconfig --name "ecomm-cluster"
+      - export KUBECONFIG=/root/.kube/config
       - helm upgrade --install  python-app pwd/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=${DIND_COMMIT}
+
 
       # UPDATE REPOSITORY WITH NEW IMAGE TAG ON HELM
       - rm -rf get_helm.sh
       - yq  -iy ".image.tag |= \"{DIND_COMMIT}\"" ./dev/us-east-1/services/apps/api-01/helm/values.yaml
+      - git push origin main
     finally:
       - echo "finished"
   post_build:
