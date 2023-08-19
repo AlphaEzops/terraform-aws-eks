@@ -8,7 +8,7 @@ spec:
     namespace: {{ .Release.Namespace }}
     server: "https://kubernetes.default.svc"
   source:
-    path: "dev/us-east-1/services/apps/app-01/helm"
+    path: "dev/us-east-1/services/apps/api-01/helm"
     repoURL: "git@github.com:ArthurMaverick/devops_project.git"
     targetRevision: "HEAD"
     helm:
