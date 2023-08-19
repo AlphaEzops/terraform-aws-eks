@@ -11,12 +11,13 @@ phases:
     runtime-versions:
       python: 3.9
     commands:
-
+      - printenv
+      - ls -a
       # CLONE SOURCE CODE...
-      - git clone https://${GH_TOKEN}@github.com/ArthurMaverick/devops_project.git
+      - git clone https://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@github.com/ArthurMaverick/devops_project.git
 
       # INSTALL DOCKER
-      - amazon-linux-extras install docker
+      - yum install -y docker
       - service docker start
       - usermod -a -G docker ec2-user
 
