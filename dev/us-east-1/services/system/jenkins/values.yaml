@@ -261,8 +261,7 @@ configAsCode:
   ##      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
   ##
   extraConfigFiles:
-    credentals.yaml : |-
-      credentials:
+    credentials:
         system:
           domainCredentials:
             - credentials:
@@ -432,7 +431,61 @@ configAsCode:
       sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
   ## @param configAsCode.extraJenkins Append additional settings under the 'jenkins' block
   ##
-  extraJenkins: {}
+  extraJenkins:
+    jenkins:
+      agentProtocols:
+        - "JNLP4-connect"
+        - "Ping"
+      authorizationStrategy:
+        loggedInUsersCanDoAnything:
+          allowAnonymousRead: false
+      clouds:
+        - kubernetes:
+            containerCap: 10
+            containerCapStr: "10"
+            name: "kubernetes"
+            webSocket: true
+      crumbIssuer:
+        standard:
+          excludeClientIPFromCrumb: true
+      disableRememberMe: false
+      labelAtoms:
+        - name: "built-in"
+      markupFormatter: "plainText"
+      mode: NORMAL
+      myViewsTabBar: "standard"
+      numExecutors: 2
+      primaryView:
+        all:
+          name: "all"
+      projectNamingStrategy: "standard"
+      quietPeriod: 5
+      remotingSecurity:
+        enabled: true
+      scmCheckoutRetryCount: 0
+      securityRealm:
+        local:
+          allowsSignup: false
+          enableCaptcha: false
+          users:
+            - id: "admin"
+              name: "admin"
+              properties:
+                - "apiToken"
+                - "mailer"
+                - "favorite"
+                - preferredProvider:
+                    providerId: "default"
+                - "experimentalFlags"
+      slaveAgentPort: -1
+      updateCenter:
+        sites:
+          - id: "default"
+            url: "https://updates.jenkins.io/update-center.json"
+      views:
+        - all:
+            name: "all"
+      viewsTabBar: "standard"
   ## @param configAsCode.extraConfig Append additional settings at the root of the configuration-as-code file
   ##
   extraConfig: {}
