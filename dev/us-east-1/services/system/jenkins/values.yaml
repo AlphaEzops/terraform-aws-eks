@@ -352,6 +352,10 @@ configAsCode:
       gitHostKeyVerificationConfiguration:
         sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
     unclassified:
+      simple-theme-plugin:
+        elements:
+          - cssUrl:
+              url: "https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-cyan.css"
       bitbucketEndpointConfiguration:
         endpoints:
           - bitbucketCloudEndpoint:
@@ -398,6 +402,35 @@ configAsCode:
       mavenGlobalConfig:
         globalSettingsProvider: "standard"
         settingsProvider: "standard"
+    jobs:
+      - script: >
+          pipelineJob('seedJob') 
+          {
+            definition 
+            {
+              cpsScm 
+              {
+                scm 
+                {
+                  git 
+                  {
+                    remote 
+                    {
+                      url(''))
+                      credentials('git')
+                      branch('main')
+                    }
+                  }
+                }
+
+                scriptPath('./Jenkinsfile')
+                lightweight = true
+              }
+            }
+          }
+      - script: >
+          queue('seedJob')
+
   ## @param configAsCode.securityRealm Content of the 'securityRealm' block
   ##
   securityRealm:
