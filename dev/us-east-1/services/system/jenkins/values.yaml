@@ -261,82 +261,82 @@ configAsCode:
   ##      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
   ##
   extraConfigFiles:
-    credentials:
-        system:
-          domainCredentials:
-            - credentials:
-                - file:
-                    fileName: "config"
-                    id: "Devops"
-                    scope: GLOBAL
-                    secretBytes: ""
-                - basicSSHUserPrivateKey:
-                    id: "GtithubCredentials"
-                    passphrase: "{AQAAABAAAAAwLvl+PSGl09MtWXb/c8KQgBoj7oqyDKO9PCTpX5x9835IgpEdioH5EQe3hFG1WA9QWlNmp3QbKn/NAx1fdgfjZg==}"
-                    privateKeySource:
-                      directEntry:
-                        privateKey: "{AQAAABAAAAAQMHd96OcGO81OsmfWFLZHxmi1D/KWv+tYXVM8sL0J/YU=}"
-                    scope: GLOBAL
-                    username: "ArthurMaverick"
-                - usernamePassword:
-                    id: "GithubMaverick"
-                    password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
-                    scope: GLOBAL
-                    username: "ArthurMaverick"
-    jenkins:
-      agentProtocols:
-        - "JNLP4-connect"
-        - "Ping"
-      authorizationStrategy:
-        loggedInUsersCanDoAnything:
-          allowAnonymousRead: false
-      clouds:
-        - kubernetes:
-            containerCap: 10
-            containerCapStr: "10"
-            name: "kubernetes"
-            webSocket: true
-      crumbIssuer:
-        standard:
-          excludeClientIPFromCrumb: true
-      disableRememberMe: false
-      labelAtoms:
-        - name: "built-in"
-      markupFormatter: "plainText"
-      mode: NORMAL
-      myViewsTabBar: "standard"
-      numExecutors: 2
-      primaryView:
-        all:
-          name: "all"
-      projectNamingStrategy: "standard"
-      quietPeriod: 5
-      remotingSecurity:
-        enabled: true
-      scmCheckoutRetryCount: 0
-      securityRealm:
-        local:
-          allowsSignup: false
-          enableCaptcha: false
-          users:
-            - id: "admin"
-              name: "admin"
-              properties:
-                - "apiToken"
-                - "mailer"
-                - "favorite"
-                - preferredProvider:
-                    providerId: "default"
-                - "experimentalFlags"
-      slaveAgentPort: -1
-      updateCenter:
-        sites:
-          - id: "default"
-            url: "https://updates.jenkins.io/update-center.json"
-      views:
-        - all:
-            name: "all"
-      viewsTabBar: "standard"
+#    credentials:
+#        system:
+#          domainCredentials:
+#            - credentials:
+#                - file:
+#                    fileName: "config"
+#                    id: "Devops"
+#                    scope: GLOBAL
+#                    secretBytes: ""
+#                - basicSSHUserPrivateKey:
+#                    id: "GtithubCredentials"
+#                    passphrase: "{AQAAABAAAAAwLvl+PSGl09MtWXb/c8KQgBoj7oqyDKO9PCTpX5x9835IgpEdioH5EQe3hFG1WA9QWlNmp3QbKn/NAx1fdgfjZg==}"
+#                    privateKeySource:
+#                      directEntry:
+#                        privateKey: "{AQAAABAAAAAQMHd96OcGO81OsmfWFLZHxmi1D/KWv+tYXVM8sL0J/YU=}"
+#                    scope: GLOBAL
+#                    username: "ArthurMaverick"
+#                - usernamePassword:
+#                    id: "GithubMaverick"
+#                    password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
+#                    scope: GLOBAL
+#                    username: "ArthurMaverick"
+#    jenkins:
+#      agentProtocols:
+#        - "JNLP4-connect"
+#        - "Ping"
+#      authorizationStrategy:
+#        loggedInUsersCanDoAnything:
+#          allowAnonymousRead: false
+#      clouds:
+#        - kubernetes:
+#            containerCap: 10
+#            containerCapStr: "10"
+#            name: "kubernetes"
+#            webSocket: true
+#      crumbIssuer:
+#        standard:
+#          excludeClientIPFromCrumb: true
+#      disableRememberMe: false
+#      labelAtoms:
+#        - name: "built-in"
+#      markupFormatter: "plainText"
+#      mode: NORMAL
+#      myViewsTabBar: "standard"
+#      numExecutors: 2
+#      primaryView:
+#        all:
+#          name: "all"
+#      projectNamingStrategy: "standard"
+#      quietPeriod: 5
+#      remotingSecurity:
+#        enabled: true
+#      scmCheckoutRetryCount: 0
+#      securityRealm:
+#        local:
+#          allowsSignup: false
+#          enableCaptcha: false
+#          users:
+#            - id: "admin"
+#              name: "admin"
+#              properties:
+#                - "apiToken"
+#                - "mailer"
+#                - "favorite"
+#                - preferredProvider:
+#                    providerId: "default"
+#                - "experimentalFlags"
+#      slaveAgentPort: -1
+#      updateCenter:
+#        sites:
+#          - id: "default"
+#            url: "https://updates.jenkins.io/update-center.json"
+#      views:
+#        - all:
+#            name: "all"
+#      viewsTabBar: "standard"
     globalCredentialsConfiguration:
       configuration:
         providerFilter: "none"
@@ -402,34 +402,7 @@ configAsCode:
       mavenGlobalConfig:
         globalSettingsProvider: "standard"
         settingsProvider: "standard"
-    jobs:
-      - script: >
-          pipelineJob('seedJob') 
-          {
-            definition 
-            {
-              cpsScm 
-              {
-                scm 
-                {
-                  git 
-                  {
-                    remote 
-                    {
-                      url(''))
-                      credentials('git')
-                      branch('main')
-                    }
-                  }
-                }
 
-                scriptPath('./Jenkinsfile')
-                lightweight = true
-              }
-            }
-          }
-      - script: >
-          queue('seedJob')
 
   ## @param configAsCode.securityRealm Content of the 'securityRealm' block
   ##
@@ -449,29 +422,7 @@ configAsCode:
             - "experimentalFlags"
   ## @param configAsCode.authorizationStrategy Content of the 'authorizationStrategy' block
   ##
-  authorizationStrategy:
-    credentials:
-      system:
-        domainCredentials:
-          - credentials:
-              - file:
-                  fileName: "config"
-                  id: "Devops"
-                  scope: GLOBAL
-                  secretBytes: ""
-              - basicSSHUserPrivateKey:
-                  id: "GtithubCredentials"
-                  passphrase: "{AQAAABAAAAAwLvl+PSGl09MtWXb/c8KQgBoj7oqyDKO9PCTpX5x9835IgpEdioH5EQe3hFG1WA9QWlNmp3QbKn/NAx1fdgfjZg==}"
-                  privateKeySource:
-                    directEntry:
-                      privateKey: "{AQAAABAAAAAQMHd96OcGO81OsmfWFLZHxmi1D/KWv+tYXVM8sL0J/YU=}"
-                  scope: GLOBAL
-                  username: "ArthurMaverick"
-              - usernamePassword:
-                  id: "GithubMaverick"
-                  password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
-                  scope: GLOBAL
-                  username: "ArthurMaverick"
+  authorizationStrategy: {}
   ## @param configAsCode.security Content of the 'security' block
   ##
   security:
