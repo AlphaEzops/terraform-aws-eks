@@ -5,6 +5,7 @@
   </picture>
 </p>
 
+
 <p align="center">
   GitOps Infrastructure & Application Delivery Platform
 </p>
