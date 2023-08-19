@@ -55,27 +55,28 @@ phases:
       - docker login --username arthursantos2228 --password dckr_pat_JJOgBLH6mZTuRVKrkR-TO3cvirI
 
       # BUILD IMAGE
-      - docker build -t arthursantos2228/devops-default-python-app:${DIND_COMMIT} -f $(pwd)/dev/us-east-1/services/apps/api-01/source/Dockerfile $(pwd)/dev/us-east-1/services/apps/api-01/source
+      - docker build -t arthursantos2228/devops-default-python-app:$(date +"%Y%m%d%H%M%S") -f $(pwd)/dev/us-east-1/services/apps/api-01/source/Dockerfile $(pwd)/dev/us-east-1/services/apps/api-01/source
 
       # TEST PYTHON CODE
       - trivy fs $(pwd)/dev/us-east-1/services/apps/api-01/source
 
       # IMAGE TEST
-      - trivy image arthursantos2228/devops-default-python-app:${DIND_COMMIT}
+      - trivy image arthursantos2228/devops-default-python-app:$(date +"%Y%m%d%H%M%S")
 
       # PUSH IMAGE
-      - docker push arthursantos2228/devops-default-python-app:${DIND_COMMIT}
+      - docker push arthursantos2228/devops-default-python-app:$(date +"%Y%m%d%H%M%S")
 
       # DEPLOY IMAGE
       - aws eks update-kubeconfig --name "ecomm-cluster" --region ${AWS_REGION}
       - export KUBECONFIG=~/.kube/config
       - echo "$KUBECONFIG"
-      - helm upgrade --install  python-app $(pwd)/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=${DIND_COMMIT}
+      - helm upgrade --install  python-app $(pwd)/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=$(date +"%Y%m%d%H%M%S")
 
       # UPDATE REPOSITORY WITH NEW IMAGE TAG ON HELM
       - rm -rf get_helm.sh
       - rm -rf kubectl.sha256
       - yq  -i ".image.tag |= \"${DIND_COMMIT}\"" ./dev/us-east-1/services/apps/api-01/helm/values.yaml
+      - cat ./dev/us-east-1/services/apps/api-01/helm/values.yaml
       - git config --global user.email "arthuracs18@gmail.com"
       - git config --global user.name "ArthurMaverick"
       - git add .
