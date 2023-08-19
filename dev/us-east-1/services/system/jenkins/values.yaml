@@ -465,7 +465,6 @@ configAsCode:
   ## @param configAsCode.extraJenkins Append additional settings under the 'jenkins' block
   ##
   extraJenkins:
-    jenkins:
       agentProtocols:
         - "JNLP4-connect"
         - "Ping"
