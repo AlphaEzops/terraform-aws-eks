@@ -11,30 +11,19 @@ phases:
     runtime-versions:
       python: 3.9
     commands:
-      - printenv
-      - ls -a
       # CLONE SOURCE CODE...
-      - git clone https://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@github.com/ArthurMaverick/devops_project.git
+      - git clone https://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@github.com/ArthurMaverick/devops_project.git .
 
       # INSTALL DOCKER
       - yum install -y docker
-      - service docker start
-      - usermod -a -G docker ec2-user
+      - docker --version
 
       # INSTALL ANSIBLE
-      - pip3 install ansible
+      # - pip3 install ansible
 
       # INSTALL LIB TEST
       - RELEASE_VERSION=$(grep -Po '(?<=VERSION_ID=")[0-9]' /etc/os-release)
-      - cat << EOF | sudo tee -a /etc/yum.repos.d/trivy.repo
-        [trivy]
-        name=Trivy repository
-        baseurl=https://aquasecurity.github.io/trivy-repo/rpm/releases/$RELEASE_VERSION/\$basearch/
-        gpgcheck=0
-        enabled=1
-        EOF
-        sudo yum -y update
-        sudo yum -y install trivy
+      - rpm -ivh https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.rpm
 
       # INSTALL HELM
       - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -45,21 +34,42 @@ phases:
       - echo "All necessary tools are installed"
   pre_build:
     commands:
+      - printenv
       - echo Checking all necessary tools and files...
       - make --version
       - aws --version
       - git --version
-      - ansible-playbook --version
-      - docker --version
+      - helm version
     finally:
       - echo "All necessary tools and files are installed"
   build:
     commands:
-      - aws ecr get-login-password --region region | docker login --username AWS --password-stdin aws_account_id.dkr.ecr.region.amazonaws.com
-      - docker build -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${TAG}
-      - trivy <PYTHON TEST>
-      - docker push -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${TAG}
+      - ls -a
+      - ls ./dev/us-east-1/services/apps/api-01/source
+      - pwd
+
+      # DOCKER LOGIN
+      - docker login --username arthursantos2228 --password dckr_pat_JJOgBLH6mZTuRVKrkR-TO3cvirI
+
+      # BUILD IMAGE
+      - cd $(pwd)/dev/us-east-1/services/apps/api-01/source && docker build -t arthursantos2228/devops-default-python-app:${DIND_COMMIT} .
+      - ls
+      # TEST UNIT TEST
+      - pytest $(pwd)/dev/us-east-1/services/apps/api-01/source/test_app.py
+
+      # TEST IMAGE
+      - trivy image arthursantos2228/devops-default-python-app:${DIND_COMMIT}
+
+      # PUSH IMAGE
+      - docker push -t arthursantos2228/devops-default-python-app:${DIND_COMMIT}
+
+      # DEPLOY IMAGE
       - aws eks update-kubeconfig --name "ecomm-cluster"
+      - helm upgrade --install  python-app pwd/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=${DIND_COMMIT}
+
+      # UPDATE REPOSITORY WITH NEW IMAGE TAG ON HELM
+      - rm -rf get_helm.sh
+      - yq  -iy ".image.tag |= \"{DIND_COMMIT}\"" ./dev/us-east-1/services/apps/api-01/helm/values.yaml
     finally:
       - echo "finished"
   post_build:
