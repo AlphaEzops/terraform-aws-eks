@@ -261,28 +261,29 @@ configAsCode:
   ##      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
   ##
   extraConfigFiles:
-    credentials:
-      system:
-        domainCredentials:
-          - credentials:
-              - file:
-                  fileName: "config"
-                  id: "Devops"
-                  scope: GLOBAL
-                  secretBytes: ""
-              - basicSSHUserPrivateKey:
-                  id: "GtithubCredentials"
-                  passphrase: "{AQAAABAAAAAwLvl+PSGl09MtWXb/c8KQgBoj7oqyDKO9PCTpX5x9835IgpEdioH5EQe3hFG1WA9QWlNmp3QbKn/NAx1fdgfjZg==}"
-                  privateKeySource:
-                    directEntry:
-                      privateKey: "{AQAAABAAAAAQMHd96OcGO81OsmfWFLZHxmi1D/KWv+tYXVM8sL0J/YU=}"
-                  scope: GLOBAL
-                  username: "ArthurMaverick"
-              - usernamePassword:
-                  id: "GithubMaverick"
-                  password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
-                  scope: GLOBAL
-                  username: "ArthurMaverick"
+    credentals.yaml : |-
+      credentials:
+        system:
+          domainCredentials:
+            - credentials:
+                - file:
+                    fileName: "config"
+                    id: "Devops"
+                    scope: GLOBAL
+                    secretBytes: ""
+                - basicSSHUserPrivateKey:
+                    id: "GtithubCredentials"
+                    passphrase: "{AQAAABAAAAAwLvl+PSGl09MtWXb/c8KQgBoj7oqyDKO9PCTpX5x9835IgpEdioH5EQe3hFG1WA9QWlNmp3QbKn/NAx1fdgfjZg==}"
+                    privateKeySource:
+                      directEntry:
+                        privateKey: "{AQAAABAAAAAQMHd96OcGO81OsmfWFLZHxmi1D/KWv+tYXVM8sL0J/YU=}"
+                    scope: GLOBAL
+                    username: "ArthurMaverick"
+                - usernamePassword:
+                    id: "GithubMaverick"
+                    password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
+                    scope: GLOBAL
+                    username: "ArthurMaverick"
     jenkins:
       agentProtocols:
         - "JNLP4-connect"
@@ -400,13 +401,35 @@ configAsCode:
         settingsProvider: "standard"
   ## @param configAsCode.securityRealm Content of the 'securityRealm' block
   ##
-  securityRealm: {}
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+        - id: "admin"
+          name: "admin"
+          properties:
+            - "apiToken"
+            - "mailer"
+            - "favorite"
+            - preferredProvider:
+                providerId: "default"
+            - "experimentalFlags"
   ## @param configAsCode.authorizationStrategy Content of the 'authorizationStrategy' block
   ##
   authorizationStrategy: {}
   ## @param configAsCode.security Content of the 'security' block
   ##
-  security: {}
+  security:
+    apiToken:
+      creationOfLegacyTokenEnabled: false
+      tokenGenerationOnCreationEnabled: false
+      usageStatisticsEnabled: true
+    gitHooks:
+      allowedOnAgents: false
+      allowedOnController: false
+    gitHostKeyVerificationConfiguration:
+      sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
   ## @param configAsCode.extraJenkins Append additional settings under the 'jenkins' block
   ##
   extraJenkins: {}
@@ -416,7 +439,13 @@ configAsCode:
   ## @param configAsCode.extraKubernetes Append additional settings under the Kubernetes cloud block
   ## NOTE: This value will only take effect if agent.enabled=true
   ##
-  extraKubernetes: {}
+  extraKubernetes:
+    clouds:
+      - kubernetes:
+          containerCap: 10
+          containerCapStr: "10"
+          name: "kubernetes"
+          webSocket: true
   ## @param configAsCode.extraClouds Additional clouds
   ## NOTE: This value will only take effect if agent.enabled=true
   ##

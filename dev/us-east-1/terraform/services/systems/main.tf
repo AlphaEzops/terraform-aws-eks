@@ -1,4 +1,4 @@
 module "argo_cd" {
-  source     = "./argocd"
+  source  = "./argocd"
 }
 
