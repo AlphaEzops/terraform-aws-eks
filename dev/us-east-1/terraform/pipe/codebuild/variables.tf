@@ -16,3 +16,8 @@ variable "prefix" {
   description = "Prefix name"
   default = "devops"
 }
+
+variable "iam_role_arn" {
+    type = string
+    description = "IAM role"
+}

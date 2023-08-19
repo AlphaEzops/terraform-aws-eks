@@ -21,6 +21,7 @@ module "cluster" {
 
 module "ci-cd" {
   source = "./pipe/codebuild"
+  iam_role_arn = module.cluster[0].eks_apps_codepipeline_codebuild_iam_role_arn
   prefix = "devops"
   project_name = "python-app"
   stage = var.stage

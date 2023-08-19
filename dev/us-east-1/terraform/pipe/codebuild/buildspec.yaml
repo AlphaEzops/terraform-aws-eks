@@ -51,10 +51,6 @@ phases:
       - echo "All necessary tools and files are installed"
   build:
     commands:
-      - ls -a
-      - ls ./dev/us-east-1/services/apps/api-01/source
-      - pwd
-
       # DOCKER LOGIN
       - docker login --username arthursantos2228 --password dckr_pat_JJOgBLH6mZTuRVKrkR-TO3cvirI
 
@@ -71,17 +67,19 @@ phases:
       - docker push arthursantos2228/devops-default-python-app:${DIND_COMMIT}
 
       # DEPLOY IMAGE
-      - mkdir ~/.kube
-      - aws eks update-kubeconfig --name "ecomm-cluster"
-      - cp /root/.kube/config ~/.kube/config
-      - cat ~/.kube/config
+      - aws eks update-kubeconfig --name "ecomm-cluster" --region ${AWS_REGION}
       - export KUBECONFIG=~/.kube/config
-      - helm upgrade --install  python-app pwd/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=${DIND_COMMIT}
-
+      - echo "$KUBECONFIG"
+      - helm upgrade --install  python-app $(pwd)/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=${DIND_COMMIT}
 
       # UPDATE REPOSITORY WITH NEW IMAGE TAG ON HELM
       - rm -rf get_helm.sh
-      - yq  -iy ".image.tag |= \"{DIND_COMMIT}\"" ./dev/us-east-1/services/apps/api-01/helm/values.yaml
+      - rm -rf kubectl.sha256
+      - yq  -i ".image.tag |= \"${DIND_COMMIT}\"" ./dev/us-east-1/services/apps/api-01/helm/values.yaml
+      - git config --global user.email "arthuracs18@gmail.com"
+      - git config --global user.name "ArthurMaverick"
+      - git add .
+      - git commit -m "Update image tag ${DIND_COMMIT} on helm"
       - git push origin main
     finally:
       - echo "finished"
