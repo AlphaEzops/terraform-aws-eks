@@ -58,10 +58,10 @@ phases:
       - docker login --username arthursantos2228 --password dckr_pat_JJOgBLH6mZTuRVKrkR-TO3cvirI
 
       # BUILD IMAGE
-      - cd $(pwd)/dev/us-east-1/services/apps/api-01/source && docker build -t arthursantos2228/devops-default-python-app:${DIND_COMMIT} .
-      - ls
+      - docker build -t arthursantos2228/devops-default-python-app:${DIND_COMMIT} -f $(pwd)/dev/us-east-1/services/apps/api-01/source/Dockerfile $(pwd)/dev/us-east-1/services/apps/api-01/source
 
       # TEST UNIT TEST
+      - ls
       - pytest $(pwd)/dev/us-east-1/services/apps/api-01/source/app_test.py
 
       # TEST IMAGE
