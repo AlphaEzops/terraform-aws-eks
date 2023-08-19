@@ -261,6 +261,109 @@ configAsCode:
   ##      systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
   ##
   extraConfigFiles:
+    globalCredentialsConfiguration:
+      configuration:
+        providerFilter: "none"
+        typeFilter: "none"
+    tool:
+      git:
+        installations:
+          - home: "git"
+            name: "Default"
+      mavenGlobalConfig:
+        globalSettingsProvider: "standard"
+        settingsProvider: "standard"
+
+  ## @param configAsCode.securityRealm Content of the 'securityRealm' block
+  ##
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+        - id: "admin"
+          name: "admin"
+          properties:
+            - "apiToken"
+            - "mailer"
+            - "favorite"
+            - preferredProvider:
+                providerId: "default"
+            - "experimentalFlags"
+  ## @param configAsCode.authorizationStrategy Content of the 'authorizationStrategy' block
+  ##
+  authorizationStrategy: {}
+  ## @param configAsCode.security Content of the 'security' block
+  ##
+  security:
+    apiToken:
+      creationOfLegacyTokenEnabled: false
+      tokenGenerationOnCreationEnabled: false
+      usageStatisticsEnabled: true
+    gitHooks:
+      allowedOnAgents: false
+      allowedOnController: false
+    gitHostKeyVerificationConfiguration:
+      sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
+  ## @param configAsCode.extraJenkins Append additional settings under the 'jenkins' block
+  ##
+  extraJenkins:
+    agentProtocols:
+      - "JNLP4-connect"
+      - "Ping"
+    authorizationStrategy:
+      loggedInUsersCanDoAnything:
+        allowAnonymousRead: false
+    clouds:
+      - kubernetes:
+          containerCap: 10
+          containerCapStr: "10"
+          name: "kubernetes"
+          webSocket: true
+    crumbIssuer:
+      standard:
+        excludeClientIPFromCrumb: true
+    disableRememberMe: false
+    labelAtoms:
+      - name: "built-in"
+    markupFormatter: "plainText"
+    mode: NORMAL
+    myViewsTabBar: "standard"
+    numExecutors: 2
+    primaryView:
+      all:
+        name: "all"
+    projectNamingStrategy: "standard"
+    quietPeriod: 5
+    remotingSecurity:
+      enabled: true
+    scmCheckoutRetryCount: 0
+    securityRealm:
+      local:
+        allowsSignup: false
+        enableCaptcha: false
+        users:
+          - id: "admin"
+            name: "admin"
+            properties:
+              - "apiToken"
+              - "mailer"
+              - "favorite"
+              - preferredProvider:
+                  providerId: "default"
+              - "experimentalFlags"
+    slaveAgentPort: -1
+    updateCenter:
+      sites:
+        - id: "default"
+          url: "https://updates.jenkins.io/update-center.json"
+    views:
+      - all:
+          name: "all"
+    viewsTabBar: "standard"
+  ## @param configAsCode.extraConfig Append additional settings at the root of the configuration-as-code file
+  ##
+  extraConfig:
     credentials:
       system:
         domainCredentials:
@@ -283,74 +386,6 @@ configAsCode:
                   password: "{AQAAABAAAAAwE2Le0IrpqmnAo1vM5t6l7cizHe6F+WgbsoL4ODloHgBKJeHb+ieYFeqH9xKOlXchPzWxDFIVRfbFafa031+9Rg==}"
                   scope: GLOBAL
                   username: "ArthurMaverick"
-    jenkins:
-      agentProtocols:
-        - "JNLP4-connect"
-        - "Ping"
-      authorizationStrategy:
-        loggedInUsersCanDoAnything:
-          allowAnonymousRead: false
-      clouds:
-        - kubernetes:
-            containerCap: 10
-            containerCapStr: "10"
-            name: "kubernetes"
-            webSocket: true
-      crumbIssuer:
-        standard:
-          excludeClientIPFromCrumb: true
-      disableRememberMe: false
-      labelAtoms:
-        - name: "built-in"
-      markupFormatter: "plainText"
-      mode: NORMAL
-      myViewsTabBar: "standard"
-      numExecutors: 2
-      primaryView:
-        all:
-          name: "all"
-      projectNamingStrategy: "standard"
-      quietPeriod: 5
-      remotingSecurity:
-        enabled: true
-      scmCheckoutRetryCount: 0
-      securityRealm:
-        local:
-          allowsSignup: false
-          enableCaptcha: false
-          users:
-            - id: "admin"
-              name: "admin"
-              properties:
-                - "apiToken"
-                - "mailer"
-                - "favorite"
-                - preferredProvider:
-                    providerId: "default"
-                - "experimentalFlags"
-      slaveAgentPort: -1
-      updateCenter:
-        sites:
-          - id: "default"
-            url: "https://updates.jenkins.io/update-center.json"
-      views:
-        - all:
-            name: "all"
-      viewsTabBar: "standard"
-    globalCredentialsConfiguration:
-      configuration:
-        providerFilter: "none"
-        typeFilter: "none"
-    security:
-      apiToken:
-        creationOfLegacyTokenEnabled: false
-        tokenGenerationOnCreationEnabled: false
-        usageStatisticsEnabled: true
-      gitHooks:
-        allowedOnAgents: false
-        allowedOnController: false
-      gitHostKeyVerificationConfiguration:
-        sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
     unclassified:
       bitbucketEndpointConfiguration:
         endpoints:
@@ -368,8 +403,6 @@ configAsCode:
       gitHubConfiguration:
         apiRateLimitChecker: ThrottleForNormalize
       gitHubPluginConfig:
-        configs:
-          - name: "devops"
         hookUrl: "http://jenkins.santosops.com/github-webhook/"
       junitTestResultStorage:
         storage: "file"
@@ -390,33 +423,23 @@ configAsCode:
         hideCredentials: false
         showEntireCommitSummaryInChanges: false
         useExistingAccountWithSameEmail: false
-    tool:
-      git:
-        installations:
-          - home: "git"
-            name: "Default"
-      mavenGlobalConfig:
-        globalSettingsProvider: "standard"
-        settingsProvider: "standard"
-  ## @param configAsCode.securityRealm Content of the 'securityRealm' block
-  ##
-  securityRealm: {}
-  ## @param configAsCode.authorizationStrategy Content of the 'authorizationStrategy' block
-  ##
-  authorizationStrategy: {}
-  ## @param configAsCode.security Content of the 'security' block
-  ##
-  security: {}
-  ## @param configAsCode.extraJenkins Append additional settings under the 'jenkins' block
-  ##
-  extraJenkins: {}
-  ## @param configAsCode.extraConfig Append additional settings at the root of the configuration-as-code file
-  ##
-  extraConfig: {}
+      simple-theme-plugin:
+        elements:
+          - cssUrl:
+              url: "https://cdn.rawgit.com/afonsof/jenkins-material-theme/gh-pages/dist/material-cyan.css"
+      themeManager:
+        disableUserThemes: false
+        theme: "material-green"
   ## @param configAsCode.extraKubernetes Append additional settings under the Kubernetes cloud block
   ## NOTE: This value will only take effect if agent.enabled=true
   ##
-  extraKubernetes: {}
+  extraKubernetes:
+    clouds:
+      - kubernetes:
+          containerCap: 10
+          containerCapStr: "10"
+          name: "kubernetes"
+          webSocket: true
   ## @param configAsCode.extraClouds Additional clouds
   ## NOTE: This value will only take effect if agent.enabled=true
   ##
