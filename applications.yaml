@@ -1,11 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ .Release.Name }}
+  name: python-app
   namespace: argocd-system
 spec:
   destination:
-    namespace: {{ .Release.Namespace }}
+    namespace: python-app
     server: "https://kubernetes.default.svc"
   source:
     path: "dev/us-east-1/services/apps/api-01/helm"
