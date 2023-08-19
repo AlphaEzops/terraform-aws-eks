@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: arthursantos2228/devops-default-python-app
-  tag: '20230819222446'
+  tag: '20230819222721'
 nameOverride: ''
 fullnameOverride: ''
 service:
