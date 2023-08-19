@@ -21,9 +21,11 @@ phases:
       # INSTALL ANSIBLE
       # - pip3 install ansible
 
-      # INSTALL LIB TEST
+
+      # INSTALL LIBs TEST
       - RELEASE_VERSION=$(grep -Po '(?<=VERSION_ID=")[0-9]' /etc/os-release)
       - rpm -ivh https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.rpm
+      - pip install pytest
 
       # INSTALL HELM
       - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
@@ -58,8 +60,9 @@ phases:
       # BUILD IMAGE
       - cd $(pwd)/dev/us-east-1/services/apps/api-01/source && docker build -t arthursantos2228/devops-default-python-app:${DIND_COMMIT} .
       - ls
+
       # TEST UNIT TEST
-      - pytest $(pwd)/dev/us-east-1/services/apps/api-01/source/test_app.py
+      - pytest $(pwd)/dev/us-east-1/services/apps/api-01/source/app_test.py
 
       # TEST IMAGE
       - trivy image arthursantos2228/devops-default-python-app:${DIND_COMMIT}
