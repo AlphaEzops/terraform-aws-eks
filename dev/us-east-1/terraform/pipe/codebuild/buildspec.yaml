@@ -62,7 +62,7 @@ phases:
 
       # TEST UNIT TEST
       - ls
-      - pytest $(pwd)/dev/us-east-1/services/apps/api-01/source/app_test.py
+      - pytest -rxXs $(pwd)/dev/us-east-1/services/apps/api-01/source/app_test.py
 
       # TEST IMAGE
       - trivy image arthursantos2228/devops-default-python-app:${DIND_COMMIT}
