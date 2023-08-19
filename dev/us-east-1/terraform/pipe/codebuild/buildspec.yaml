@@ -41,7 +41,6 @@ phases:
       - echo "All necessary tools are installed"
   pre_build:
     commands:
-      - printenv
       - echo Checking all necessary tools and files...
       - make --version
       - aws --version
@@ -74,7 +73,9 @@ phases:
       # DEPLOY IMAGE
       - mkdir ~/.kube
       - aws eks update-kubeconfig --name "ecomm-cluster"
-      - export KUBECONFIG=/root/.kube/config
+      - cp /root/.kube/config ~/.kube/config
+      - cat ~/.kube/config
+      - export KUBECONFIG=~/.kube/config
       - helm upgrade --install  python-app pwd/dev/us-east-1/services/apps/api-01/helm --create-namespace -n python-app  --set image.tag=${DIND_COMMIT}
 
 
