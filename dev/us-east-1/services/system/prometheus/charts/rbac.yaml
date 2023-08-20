@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-all-access
+rules:
+  - apiGroups: ["*"]  # Specify all API groups
+    resources: ["*"]   # Specify all resource types
+    verbs: ["get", "list", "watch"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]

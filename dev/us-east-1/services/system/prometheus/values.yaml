@@ -101,7 +101,7 @@ server:
 
   ## If set it will override prometheus.server.fullname value for ClusterRole and ClusterRoleBinding
   ##
-  clusterRoleNameOverride: ""
+  clusterRoleNameOverride: "prometheus-all-access"
 
   ## namespaces to monitor (instead of monitoring all - clusterwide). Needed if you want to run without Cluster-admin privileges.
   namespaces:
@@ -112,6 +112,7 @@ server:
    - "loki-system"
    - "metrics-server-system"
    - "nginx-system"
+   - "pyhthon-app"
 
   # sidecarContainers - add more containers to prometheus server
   # Key/Value where Key is the sidecar `- name: <Key>`
