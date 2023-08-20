@@ -7,3 +7,4 @@ fullnameOverride: ''
 service:
   type: ClusterIP
   port: 9555
+namespace: app-02
