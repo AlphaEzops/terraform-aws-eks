@@ -3748,7 +3748,7 @@ volumePermissions:
 serviceAccount:
   ## @param serviceAccount.create Enable creation of ServiceAccount for Loki pods
   ##
-  create: false
+  create: true
   ## @param serviceAccount.name The name of the ServiceAccount to use
   ## If not set and create is true, a name is generated using the common.names.fullname template
   ##
@@ -3767,16 +3767,16 @@ serviceAccount:
 metrics:
   ## @param metrics.enabled Enable metrics
   ##
-  enabled: false
+  enabled: true
   ## Prometheus Operator ServiceMonitor configuration
   ##
   serviceMonitor:
     ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using Prometheus Operator
     ##
-    enabled: false
+    enabled: true
     ## @param metrics.serviceMonitor.namespace Namespace for the ServiceMonitor Resource (defaults to the Release Namespace)
     ##
-    namespace: ""
+    namespace: "prometheus-system"
     ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
     ##
