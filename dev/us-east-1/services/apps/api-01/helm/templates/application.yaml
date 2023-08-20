@@ -7,7 +7,7 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: {{ .Values.namespace }}
+    namespace: {{ .Release.Namespace }}
     server: "https://kubernetes.default.svc"
   source:
     path: "dev/us-east-1/services/apps/api-01/helm"
