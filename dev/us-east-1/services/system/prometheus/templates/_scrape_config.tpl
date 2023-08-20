@@ -13,6 +13,11 @@ kubernetes_sd_configs:
   - role: endpoints
     namespaces:
       names:
+      - argocd-system
+      - python-app
+      - ingress-nginx-system
+      - jenkins-system
+      - kube-system
       - {{ include "common.names.namespace" .context }}
 metrics_path: /metrics
 relabel_configs:
@@ -54,7 +59,9 @@ relabel_configs:
     target_label: pod
   - source_labels:
       - __meta_kubernetes_namespace
-    target_label: namespace
+    regex: (cert-manager-system|cert-manager-system|cert-manager-system|cert-manager-system|python-app)
+    target_label: additional_namespace
+    replacement: $1
   - source_labels:
       - __meta_kubernetes_service_name
     target_label: service
