@@ -237,40 +237,7 @@ spec:
       - CreateNamespace=true
 YAML
 }
-#==============================================================================================================
-# APPLICATION PROMETHEUS
-#==============================================================================================================
-resource "kubectl_manifest" "kube-prometheus" {
-  depends_on = [helm_release.argocd_helm_release]
-  yaml_body = <<YAML
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: kube-prometheus
-  namespace: argocd-system
-spec:
-  destination:
-    namespace: "monitoring-system"
-    server: "https://kubernetes.default.svc"
-  source:
-    path: "dev/us-east-1/services/system/kube-prometheus-stack"
-    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
-    targetRevision: "HEAD"
-    helm:
-      valueFiles:
-        - "values.yaml"
-  project: "devops"
-  syncPolicy:
-    managedNamespaceMetadata:
-      labels:
-        managed: "argo-cd"
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-YAML
-}
+
 #==============================================================================================================
 # APPLICATION INGRESS NGINX
 #==============================================================================================================
