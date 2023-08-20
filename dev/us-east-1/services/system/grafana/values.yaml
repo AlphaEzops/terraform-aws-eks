@@ -262,7 +262,7 @@ datasources:
     datasources:
       - name: Prometheus
         type: prometheus
-        url: http:// 172.20.88.106:80
+        url: http://172.20.88.106:80
         access: proxy
         isDefault: true
       - name: Prometheus-2
