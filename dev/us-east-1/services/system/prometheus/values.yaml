@@ -1343,7 +1343,7 @@ server:
   service:
     ## @param server.service.type Prometheus service type
     ##
-    type: LoadBalancer
+    type: ClusterIP
     ## @param server.service.ports.http Prometheus service HTTP port
     ##
     ports:
