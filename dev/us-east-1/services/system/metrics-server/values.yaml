@@ -145,7 +145,7 @@ addonResizer:
     threshold: 5
 
 metrics:
-  enabled: false
+  enabled: true
 
 serviceMonitor:
   enabled: false
