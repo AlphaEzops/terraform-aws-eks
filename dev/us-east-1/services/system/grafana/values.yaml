@@ -262,9 +262,34 @@ datasources:
     datasources:
       - name: Prometheus
         type: prometheus
-        url: http://prometheus-server.prometheus-system.svc.cluster.local
+        url: http:// 172.20.88.106:80
         access: proxy
         isDefault: true
+      - name: Prometheus-2
+        type: prometheus-2
+        url: http://172.20.13.240:9090
+        access: proxy
+        isDefault: false
+      - name: Prometheus-3
+        type: prometheus-3
+        url: http://172.20.181.90:9091
+        access: proxy
+        isDefault: false
+      - name: Prometheus-3
+        type: prometheus-3
+        url: http://172.20.189.67:9100
+        access: proxy
+        isDefault: false
+      - name: Prometheus-4
+        type: prometheus-4
+        url: http://172.20.73.16:8080
+        access: proxy
+        isDefault: false
+      - name: Prometheus-4
+        type: prometheus-4
+        url: http://172.20.108.151:9100
+        access: proxy
+        isDefault: false
       - name: Loki
         type: loki
         url: http://loki-grafana-loki-gateway.loki-system.svc.cluster.local
