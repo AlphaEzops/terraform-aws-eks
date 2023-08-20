@@ -1,28 +1,25 @@
 # DevOps Toolchain Installation and Usage Guide
 
 This comprehensive guide will walk you through the process of installing and using various tools commonly used in the DevOps workflow. From infrastructure provisioning to configuration management, automation, and container orchestration, this guide will cover everything you need to get started.
-
+# Devops Project
 ## Table of Contents
-1. [Install Tools](#1-prerequisites)
-2. [Infrastructure Provisioning](#2-installing-terraform)
+1. [Requirements](#1-requirements)
+2. [Infrastructure Overview](#2-infrastructure)
 6. [Conclusion](#6-conclusion)
 
+---
+## 1. Requirements
+1. you need install all the tools below:
+- [terraform](./docs/terraform.md) <br/>
+- [kubectl](./docs/kubectl.md) <br/>
+- [ansible](./docs/ansible.md) <br/>
+- [aws cli](./docs/aws-cli.md) <br/>
+- [tfenv](./docs/tfenv.md) <br/>
+- [aws vault](./docs/aws-vault.md)
 
 ---
-# Devops Project
-
-## Requirements
-1. you need install all the tools below
-[terraform](./docs/terraform.md)
-[kubectl](./docs/kubectl.md)
-[ansible](./docs/ansible.md)
-[aws cli](./docs/aws-cli.md)
-[tfenv](./docs/tfenv.md)
-[aws vault](./docs/aws-vault.md)
-
-2. Provisioning the infrastructure
-- O terraform é responsável por install a network, pipeline e o eks cluster 
-- 
+## 2. Infrastructure
+Overview of the infrastructure created by terraform
 
 ## 6. Conclusion
 
