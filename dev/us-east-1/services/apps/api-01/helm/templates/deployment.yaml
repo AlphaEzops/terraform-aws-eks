@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: python-app-01
+  name: python-api
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: 2
