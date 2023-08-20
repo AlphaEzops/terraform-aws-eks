@@ -749,7 +749,7 @@ ingress:
 metrics:
   ## @param metrics.enabled Enable the export of Prometheus metrics
   ##
-  enabled: false
+  enabled: true
   ## Prometheus Operator ServiceMonitor configuration
   ## @param metrics.service.annotations [object] Annotations for Prometheus metrics service
   ##
