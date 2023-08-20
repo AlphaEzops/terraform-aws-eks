@@ -479,7 +479,7 @@ alertmanager:
   service:
     ## @param alertmanager.service.type Alertmanager service type
     ##
-    type: LoadBalancer
+    type: ClusterIP
     ## @param alertmanager.service.ports.http Alertmanager service HTTP port
     ## @param alertmanager.service.ports.cluster Alertmanager cluster HA port
     ##
