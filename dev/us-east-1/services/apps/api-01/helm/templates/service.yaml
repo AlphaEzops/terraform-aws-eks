@@ -6,9 +6,9 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 9555
+      targetPort: 9555
       protocol: TCP
       name: {{ .Release.Name }}
   selector:
-    app.kubernetes.io/name: python-app
+    app: {{ .Release.Name }}

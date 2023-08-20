@@ -250,7 +250,7 @@ metadata:
   namespace: argocd-system
 spec:
   destination:
-    namespace: "prometheus-system"
+    namespace: "monitoring-system"
     server: "https://kubernetes.default.svc"
   source:
     path: "dev/us-east-1/services/system/kube-prometheus-stack"
