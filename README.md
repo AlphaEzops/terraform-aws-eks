@@ -1,41 +1,38 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="images/kubefirst-light.svg" alt="Kubefirst Logo">
-    <img alt="" src="images/kubefirst.svg">
-  </picture>
-</p>
+# DevOps Toolchain Installation and Usage Guide
 
+This comprehensive guide will walk you through the process of installing and using various tools commonly used in the DevOps workflow. From infrastructure provisioning to configuration management, automation, and container orchestration, this guide will cover everything you need to get started.
 
-<p align="center">
-  GitOps Infrastructure & Application Delivery Platform
-</p>
+## Table of Contents
+1. [Install Tools](#1-prerequisites)
+2. [Infrastructure Provisioning](#2-installing-terraform)
+6. [Conclusion](#6-conclusion)
 
-<p align="center">
-  <a href="https://any.com">Install</a>&nbsp;|&nbsp;
-  <a href="https://github.com/ArthurMaverick">Github</a>&nbsp;|&nbsp;
-  <a href="https://www.linkedin.com/in/arthurmcsantos">LinkedIn</a>&nbsp;
-</p>
 
 ---
 # Devops Project
 
 ## Requirements
-1. Download the infrastructure repository to your local machine:
-    ```shell
-    git clone https://github.com/ArthurMaverick/devops_project.git
-    ```
+1. you need install all the tools below
+[terraform](./docs/terraform.md)
+[kubectl](./docs/kubectl.md)
+[ansible](./docs/ansible.md)
+[aws cli](./docs/aws-cli.md)
+[tfenv](./docs/tfenv.md)
+[aws vault](./docs/aws-vault.md)
 
-2. Download the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) from AWS or [AWS VAULT](https://github.com/99designs/aws-vault).
-- How install >> [aws cli](/path/to/repodoc)
-- How install >> [aws vault](/path/to/repodoc)
+2. Provisioning the infrastructure
+- O terraform é responsável por install a network, pipeline e o eks cluster 
+- 
 
-3. Download Terraform and TFenv:
-- [Terraform](https://www.terraform.io/downloads.html)
-- [TFenv](https://github.com/tfutils/tfenv)
+## 6. Conclusion
 
-4. Download Ansible:
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+Congratulations! You've successfully installed and set up a suite of powerful tools commonly used in DevOps workflows. With AWS CLI, Terraform, kubectl, and Ansible at your disposal, you can manage infrastructure, provision resources, orchestrate containers, and automate configurations effectively.
 
-5. Download Kubectl:
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
----
+Remember to refer to the official documentation and guides for each tool to learn more about their features, usage, and best practices:
+
+- AWS CLI Documentation: https://aws.amazon.com/cli/
+- Terraform Documentation: https://www.terraform.io/docs/index.html
+- Kubernetes Documentation: https://kubernetes.io/docs/home/
+- Ansible Documentation: https://docs.ansible.com/ansible/latest/index.html
+
+By mastering these tools, you'll be better equipped to streamline your DevOps practices, manage infrastructure as code, and automate various aspects of your software development lifecycle. Always exercise caution and test your actions in controlled environments before applying them to production systems.
