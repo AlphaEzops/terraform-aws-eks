@@ -1,0 +1,90 @@
+#==========================================
+# GLOBAL
+#==========================================
+global:
+  namespace: argocd-system
+
+#==========================================
+# PROJECT
+#==========================================
+project:
+  name:  devops-project
+  description: "DevOps Project"
+
+#==========================================
+# REPOSITORIES
+#==========================================
+repositories:
+  infra:
+    name: devops
+    url: "https://github.com/ArthurMaverick/devops_project.git"
+    sshPrivateKeySecret: ""
+
+#==========================================
+# APPLICATIONS
+#==========================================
+apps:
+  cert-manager:
+    name: cert-manager
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/cert-manager"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "cert-manager-system"
+      server: "https://kubernetes.default.svc"
+  grafana:
+    name: grafana
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/grafana"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "grafana-system"
+      server: "https://kubernetes.default.svc"
+  jenkins:
+    name: jenkins
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/jenkins"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "jenkins-system"
+      server: "https://kubernetes.default.svc"
+  loki:
+    name: loki
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/grafana-loki"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "loki-system"
+      server: "https://kubernetes.default.svc"
+  metrics-server:
+    name: metrics-server
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/metrics-server"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "metrics-server-system"
+      server: "https://kubernetes.default.svc"
+  nginx:
+    name: ingress-nginx
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/ingress-nginx"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "ingress-nginx-system"
+      server: "https://kubernetes.default.svc"
+  prometheus:
+    name: prometheus
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/prometheus"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "prometheus-system"
+      server: "https://kubernetes.default.svc"
+  promtail:
+    name: promtail
+    path: "dev/us-east-1/terraform/services/systems/argocd/operators/promtail"
+    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    targetRevision: "HEAD"
+    destination:
+      namespace: "promtail-system"
+      server: "https://kubernetes.default.svc"
