@@ -24,5 +24,5 @@ spec:
             path: "/"
   tls:
     - hosts:
-        - "api.santosops.com"
+        - "api-t.santosops.com"
       secretName: "santos-ops"
