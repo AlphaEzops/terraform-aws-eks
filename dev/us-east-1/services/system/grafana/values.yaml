@@ -79,7 +79,7 @@ admin:
   user: "admin"
   ## @param admin.password Admin password. If a password is not provided a random password will be generated
   ##
-  password: ""
+  password: "admin"
   ## @param admin.existingSecret Name of the existing secret containing admin password
   ##
   existingSecret: ""
@@ -221,7 +221,7 @@ config:
 ## @param dashboardsProvider.configMapName Name of a ConfigMap containing a custom dashboard provider
 ##
 dashboardsProvider:
-  enabled: false
+  enabled: true
   ## Important to set the Path to "/opt/bitnami/grafana/dashboards"
   ## Evaluated as a template.
   ##
@@ -265,6 +265,11 @@ datasources:
         url: http://prometheus-server.prometheus-system.svc.cluster.local
         access: proxy
         isDefault: true
+      - name: Loki
+        type: loki
+        url: http://loki-grafana-loki-gateway.loki-system.svc.cluster.local
+        access: proxy
+        isDefault: false
 
 
 ## Create notifiers from a configMap

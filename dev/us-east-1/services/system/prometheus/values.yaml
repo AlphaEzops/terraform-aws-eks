@@ -106,6 +106,12 @@ server:
   ## namespaces to monitor (instead of monitoring all - clusterwide). Needed if you want to run without Cluster-admin privileges.
   namespaces:
    - "prometheus-system"
+   - "argocd-system"
+   - "grafana-system"
+   - "jenkins-system"
+   - "loki-system"
+   - "metrics-server-system"
+   - "nginx-system"
 
   # sidecarContainers - add more containers to prometheus server
   # Key/Value where Key is the sidecar `- name: <Key>`
