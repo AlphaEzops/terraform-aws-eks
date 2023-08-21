@@ -1,6 +1,4 @@
-Sure, here's a complete document that explains how to deploy infrastructure using Terraform with the provided Taskfile:
-
-## Deploying Infrastructure with Terraform Using Taskfile
+# Deploying Infrastructure with Terraform Using Taskfile
 
 This guide will walk you through the process of deploying infrastructure using Terraform, using the provided Taskfile. The Taskfile is a configuration file that defines tasks for common operations in your infrastructure deployment workflow.
 
