@@ -7,6 +7,7 @@ This comprehensive guide will walk you through the process of installing and usi
 ## Table of Contents
 1. [Requirements](#1-requirements)
 2. [Network Overview](#2-network)
+3. [EKS Cluster](#3-eks-cluster)
 6. [Conclusion](#6-conclusion)
 
 ---
@@ -26,13 +27,19 @@ Overview of the infrastructure created by terraform
 - Foi criado uma rede com 6 subnetes (3 publicas e 3 privadas) em 3 zonas de disponibilidade diferentes.
 - O trafego da rede privada é feito por um nat gateway.
 - O trafego da rede publica é feito por um internet gateway.
-- Foi criado um load balancer para o acesso externo.
-- Foi criado um cluster kubernetes com 4 nodes pelo menos 1 node por AZ
+- Security groups foram criados para permitir o trafego entre as subnets e para permitir o trafego de entrada e saida da rede.
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
 
 
-
-
+## 3. EKS Cluster
+- Foi criado um cluster kubernetes com 4 nodes divididos em 2 node groups.
+- Cada node groups esta em uma zona de disponibilidade diferente, garantindo alta disponibilidade.
+- Servicos foram criados pensando em alta disponibilidade.
+- Nginx ingress controller foi instalado para gerenciar o trafego de entrada.
+- Prometheus foi instalado para coletar metricas do cluster.
+- Grafana foi instalado para visualizar as metricas coletadas pelo prometheus.
+- ArgoCD foi instalado para gerenciar os deployments do cluster.
+![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/cluster.gif)
 
 ## 6. Conclusion
 
