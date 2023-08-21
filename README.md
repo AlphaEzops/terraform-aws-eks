@@ -1,16 +1,18 @@
 # DevOps Toolchain Installation and Usage Guide
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/diagram.gif)
+---
 
 This comprehensive guide will walk you through the process of installing and using various tools commonly used in the DevOps workflow. From infrastructure provisioning to configuration management, automation, and container orchestration, this guide will cover everything you need to get started.
 # Devops Project
+
 ## Table of Contents
 1. [Requirements](#1-requirements)
 2. [Network Overview](#2-network)
 3. [EKS Cluster](#3-eks-cluster)
 6. [Conclusion](#6-conclusion)
 
----
+
 ## 1. Requirements
 1. you need install all the tools below:
 - [terraform](./docs/terraform.md) <br/>
