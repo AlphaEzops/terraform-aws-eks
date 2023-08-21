@@ -32,35 +32,38 @@ This comprehensive guide will walk you through the process of installing and usi
 [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev) | [STAGE GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/stage) | [PROD GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/prod)
 **Folder structure**
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/repo-structure-folder.gif)
-_somente o ambiente de dev foi criado para fins de demonstraçao entao siga com a doc do [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
+ 
+_only the dev environment was created for demo purposes so follow the documentation of [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
 
 ## 3. Network
-Overview of the infrastructure created by terraform
+Overview of the infrastructure created by terraform:
 
-- Foi criado uma rede com 6 subnetes (3 publicas e 3 privadas) em 3 zonas de disponibilidade diferentes.
-- O trafego da rede privada é feito por um nat gateway.
-- O trafego da rede publica é feito por um internet gateway.
-- Security groups foram criados para permitir o trafego entre as subnets e para permitir o trafego de entrada e saida da rede.
+- A network was created with 6 subnets (3 public and 3 private) in 3 different availability zones.
+- The traffic for the private network is routed through a NAT gateway.
+- The traffic for the public network is routed through an internet gateway.
+- Security groups were created to allow traffic between the subnets and to allow inbound and outbound network traffic.
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
 
 ## 4. EKS Cluster
-- Foi criado um cluster kubernetes com 4 nodes divididos em 2 node groups.
-- Cada node groups esta em uma zona de disponibilidade diferente, garantindo alta disponibilidade.
-- Servicos foram criados pensando em alta disponibilidade.
-- Nginx ingress controller foi instalado para gerenciar o trafego de entrada.
-- Prometheus foi instalado para coletar metricas do cluster.
-- Grafana foi instalado para visualizar as metricas coletadas pelo prometheus.
-- ArgoCD foi instalado para gerenciar os deployments do cluster.
+
+- A Kubernetes cluster was created with 4 nodes divided into 2 node groups.
+- Each node group is in a different availability zone, ensuring high availability.
+- Services were created with high availability in mind.
+- Nginx ingress controller was installed to manage incoming traffic.
+- Prometheus was installed to collect cluster metrics.
+- Grafana was installed to visualize the metrics collected by Prometheus.
+- ArgoCD was installed to manage cluster deployments.
+
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/cluster.gif)
 
 ## 5. Pipeline
-- Foi criado um pipeline para automatizar o deploy da aplicacao.
-- A pipeline foi criada usando Jenkins job e Codebuild.
-- A pipeline é trigada por um webhook do github.
-- A pipeline faz o build e o da imagem docker da aplicacao e faz o deploy no cluster kubernetes.
-- A pipeline faz o deploy da aplicacao em um namespace especifico.
+- A pipeline was created to automate the application deployment.
+- The pipeline was set up using Jenkins jobs and CodeBuild.
+- The pipeline is triggered by a GitHub webhook.
+- The pipeline builds the Docker image of the application and deploys it to the Kubernetes cluster.
+- The pipeline deploys the application to a specific namespace.
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/pipeline.gif)
 
