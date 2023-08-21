@@ -6,7 +6,7 @@ This comprehensive guide will walk you through the process of installing and usi
 # Devops Project
 ## Table of Contents
 1. [Requirements](#1-requirements)
-2. [Infrastructure Overview](#2-infrastructure)
+2. [Network Overview](#2-network)
 6. [Conclusion](#6-conclusion)
 
 ---
@@ -20,8 +20,17 @@ This comprehensive guide will walk you through the process of installing and usi
 - [aws vault](./docs/aws-vault.md)
 
 
-## 2. Infrastructure
+## 2. Network
 Overview of the infrastructure created by terraform
+
+- Foi criado uma rede com 6 subnetes (3 publicas e 3 privadas) em 3 zonas de disponibilidade diferentes.
+- O trafego da rede privada é feito por um nat gateway.
+- O trafego da rede publica é feito por um internet gateway.
+- Foi criado um load balancer para o acesso externo.
+- Foi criado um cluster kubernetes com 4 nodes pelo menos 1 node por AZ
+![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
+
+
 
 
 
