@@ -11,6 +11,7 @@ This comprehensive guide will walk you through the process of installing and usi
 1. [Requirements](#1-requirements)
 2. [Network Overview](#2-network)
 3. [EKS Cluster](#3-eks-cluster)
+4. [Pipeline](#4-pipeline)
 6. [Conclusion](#6-conclusion)
 
 
@@ -31,7 +32,7 @@ Overview of the infrastructure created by terraform
 - O trafego da rede privada é feito por um nat gateway.
 - O trafego da rede publica é feito por um internet gateway.
 - Security groups foram criados para permitir o trafego entre as subnets e para permitir o trafego de entrada e saida da rede.
-- 
+
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
 
 
@@ -43,8 +44,17 @@ Overview of the infrastructure created by terraform
 - Prometheus foi instalado para coletar metricas do cluster.
 - Grafana foi instalado para visualizar as metricas coletadas pelo prometheus.
 - ArgoCD foi instalado para gerenciar os deployments do cluster.
-- 
+
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/cluster.gif)
+
+## 4. Pipeline
+- Foi criado um pipeline para automatizar o deploy da aplicacao.
+- A pipeline foi criada usando Jenkins job e Codebuild.
+- A pipeline é trigada por um webhook do github.
+- A pipeline faz o build e o da imagem docker da aplicacao e faz o deploy no cluster kubernetes.
+- A pipeline faz o deploy da aplicacao em um namespace especifico.
+
+![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/pipeline.gif)
 
 ## 6. Conclusion
 
