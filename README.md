@@ -9,23 +9,32 @@ This comprehensive guide will walk you through the process of installing and usi
 
 ## Table of Contents
 1. [Requirements](#1-requirements)
-2. [Network Overview](#2-network)
-3. [EKS Cluster](#3-eks-cluster)
-4. [Pipeline](#4-pipeline)
+2. [Deploy Infrastructure](#2-deploy-infrastructure)
+3. [Network Overview](#3-network)
+4. [EKS Cluster](#4-eks-cluster)
+5. [Pipeline](#5-pipeline)
 6. [Conclusion](#6-conclusion)
 
 
 ## 1. Requirements
 1. you need install all the tools below:
-- [terraform](./docs/terraform.md) <br/>
-- [kubectl](./docs/kubectl.md) <br/>
-- [ansible](./docs/ansible.md) <br/>
-- [aws cli](./docs/aws-cli.md) <br/>
-- [tfenv](./docs/tfenv.md) <br/>
-- [aws vault](./docs/aws-vault.md)
+- [terraform](./docs/terraform.md) - tools for provisioning and managing cloud infrastructure **required**
+- [kubectl](./docs/kubectl.md) - command-line tool for Kubernetes **required**
+- [ansible](./docs/ansible.md) - configuration management and automation tool **optional**
+- [aws cli](./docs/aws-cli.md) - command-line tool for AWS **required**
+- [tfenv](./docs/tfenv.md) - terraform version manager **optional**
+- [aws vault](./docs/aws-vault.md) - tool for securely storing and accessing AWS credentials in development environments **optional**
 
+## 2. Deploy Infrastructure
 
-## 2. Network
+### Environments 
+
+[DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev) | [STAGE GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/stage) | [PROD GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/prod)
+- Folder structure
+![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/repo-structure-folder.gif)
+_somente o ambiente de dev foi criado para fins de demonstraçao entao siga com a doc do [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
+
+## 3. Network
 Overview of the infrastructure created by terraform
 
 - Foi criado uma rede com 6 subnetes (3 publicas e 3 privadas) em 3 zonas de disponibilidade diferentes.
@@ -35,8 +44,7 @@ Overview of the infrastructure created by terraform
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
 
-
-## 3. EKS Cluster
+## 4. EKS Cluster
 - Foi criado um cluster kubernetes com 4 nodes divididos em 2 node groups.
 - Cada node groups esta em uma zona de disponibilidade diferente, garantindo alta disponibilidade.
 - Servicos foram criados pensando em alta disponibilidade.
@@ -47,7 +55,7 @@ Overview of the infrastructure created by terraform
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/cluster.gif)
 
-## 4. Pipeline
+## 5. Pipeline
 - Foi criado um pipeline para automatizar o deploy da aplicacao.
 - A pipeline foi criada usando Jenkins job e Codebuild.
 - A pipeline é trigada por um webhook do github.
@@ -58,7 +66,7 @@ Overview of the infrastructure created by terraform
 
 ## 6. Conclusion
 
-Congratula tions! You've successfully installed and set up a suite of powerful tools commonly used in DevOps workflows. With AWS CLI, Terraform, kubectl, and Ansible at your disposal, you can manage infrastructure, provision resources, orchestrate containers, and automate configurations effectively.
+Congratulations! You've successfully installed and set up a suite of powerful tools commonly used in DevOps workflows. With AWS CLI, Terraform, kubectl, and Ansible at your disposal, you can manage infrastructure, provision resources, orchestrate containers, and automate configurations effectively.
 
 Remember to refer to the official documentation and guides for each tool to learn more about their features, usage, and best practices:
 
