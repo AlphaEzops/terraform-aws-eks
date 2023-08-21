@@ -58,7 +58,7 @@ Overview of the infrastructure created by terraform
 
 ## 6. Conclusion
 
-Congratulations! You've successfully installed and set up a suite of powerful tools commonly used in DevOps workflows. With AWS CLI, Terraform, kubectl, and Ansible at your disposal, you can manage infrastructure, provision resources, orchestrate containers, and automate configurations effectively.
+Congratula tions! You've successfully installed and set up a suite of powerful tools commonly used in DevOps workflows. With AWS CLI, Terraform, kubectl, and Ansible at your disposal, you can manage infrastructure, provision resources, orchestrate containers, and automate configurations effectively.
 
 Remember to refer to the official documentation and guides for each tool to learn more about their features, usage, and best practices:
 
