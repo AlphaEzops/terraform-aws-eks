@@ -1,6 +1,7 @@
 # DevOps Toolchain Installation and Usage Guide
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/diagram.gif)
+
 ---
 
 This comprehensive guide will walk you through the process of installing and using various tools commonly used in the DevOps workflow. From infrastructure provisioning to configuration management, automation, and container orchestration, this guide will cover everything you need to get started.
@@ -30,6 +31,7 @@ Overview of the infrastructure created by terraform
 - O trafego da rede privada é feito por um nat gateway.
 - O trafego da rede publica é feito por um internet gateway.
 - Security groups foram criados para permitir o trafego entre as subnets e para permitir o trafego de entrada e saida da rede.
+- 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
 
 
@@ -41,6 +43,7 @@ Overview of the infrastructure created by terraform
 - Prometheus foi instalado para coletar metricas do cluster.
 - Grafana foi instalado para visualizar as metricas coletadas pelo prometheus.
 - ArgoCD foi instalado para gerenciar os deployments do cluster.
+- 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/cluster.gif)
 
 ## 6. Conclusion
