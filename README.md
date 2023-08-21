@@ -30,7 +30,7 @@ This comprehensive guide will walk you through the process of installing and usi
 ### Environments 
 
 [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev) | [STAGE GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/stage) | [PROD GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/prod)
-- Folder structure
+**Folder structure**
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/repo-structure-folder.gif)
 _somente o ambiente de dev foi criado para fins de demonstraçao entao siga com a doc do [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
 
