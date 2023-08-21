@@ -37,6 +37,10 @@ resource "aws_iam_role" "codebuild_role" {
 data "aws_ssm_parameter" "github_token" {
   name = "/DEV/GH_TOKEN"
 }
+data "aws_ssm_parameter" "docker_token" {
+  name = "/DEV/DOCKER_TOKEN"
+}
+
 resource "aws_codebuild_project" "codebuild" {
   name           = format("%s-%s-%s", var.prefix, var.stage, var.project_name)
   description    = "AWS CodeBuild for the app ${var.project_name}"
@@ -64,6 +68,10 @@ resource "aws_codebuild_project" "codebuild" {
     environment_variable {
       name  = "GH_TOKEN"
       value = data.aws_ssm_parameter.github_token.value
+   }
+    environment_variable {
+      name  = "DOCKER_TOKEN"
+      value = data.aws_ssm_parameter.docker_token.value
     }
   }
 

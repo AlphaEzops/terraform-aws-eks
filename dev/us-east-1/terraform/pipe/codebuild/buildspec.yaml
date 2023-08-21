@@ -14,7 +14,7 @@ phases:
       # EXPORT VARIABLES
       -  export DATETIME=$(date +"%Y%m%d%H%M%S")
       # CLONE SOURCE CODE...
-      - git clone https://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@github.com/ArthurMaverick/devops_project.git .
+      - git clone https://${GH_TOKEN}@github.com/ArthurMaverick/devops_project.git .
 
       # INSTALL DOCKER
       - yum install -y docker
@@ -55,7 +55,7 @@ phases:
     commands:
 
       # DOCKER LOGIN
-      - docker login --username arthursantos2228 --password dckr_pat_JJOgBLH6mZTuRVKrkR-TO3cvirI
+      - docker login --username arthursantos2228 --password ${DOCKER_TOKEN}
 
       # BUILD IMAGE
       - docker build -t arthursantos2228/devops-default-python-app:$DATETIME -f $(pwd)/dev/us-east-1/services/apps/api-01/source/Dockerfile $(pwd)/dev/us-east-1/services/apps/api-01/source
