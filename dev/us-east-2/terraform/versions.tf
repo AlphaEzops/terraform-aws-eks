@@ -40,8 +40,8 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "tf-bucket-ecomm-716716811630"
-    key     = "us-east-1/dev/terraform.tfstate"
+    bucket  = "reveal-tf-state-975635808270"
+    key     = "us-east-2/dev/terraform.tfstate"
     encrypt = true
   }
 }

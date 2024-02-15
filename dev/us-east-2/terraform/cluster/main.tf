@@ -159,6 +159,11 @@ module "eks_cluster" {
       rolearn  = aws_iam_role.eks_apps_codepipeline_codebuild.arn
       username = aws_iam_role.eks_apps_codepipeline_codebuild.name
       groups   = ["system:masters"]
+    },
+    {
+      rolearn  = "arn:aws:iam::975635808270:user/lucas-viana"
+      username = "lucas-viana"
+      groups   = ["system:masters"]
     }
   ]
 

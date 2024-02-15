@@ -156,7 +156,7 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   spec {
     tls {
       hosts = ["argocd.dev.ezops.com.br"]
-      secret_name = "reveal-ops" #"santos-ops"
+      secret_name = "reveal-ops"
     }
     ingress_class_name = "nginx"
     rule {

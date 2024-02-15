@@ -37,7 +37,7 @@ module "cluster" {
 #}
 
 #module "services" {
-#  source       = "../../../remove/services/systems"
+#  source       = ".."
 #  count        = var.enable_services && var.enable_cluster && var.enable_network ? 1 : 0
 #  project_name = "reveal"
 #  cluster_name = var.cluster_name
