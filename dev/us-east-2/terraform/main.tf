@@ -22,32 +22,37 @@ module "cluster" {
   aws_auth_users     = var.aws_auth_users
 }
 
-
-data "aws_iam_policy_document" "ligl_ui_assume_role_policy" {
-  statement {
-    sid     = "Statement1"
-    effect  = "Allow"
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    condition {
-      test = "StringLike"
-      values = [
-        "system:serviceaccount:ligl-ui:ligl-ui"
-      ]
-      variable = "${module.cluster[0].eks_cluster_identity_oidc_issuer_url}:sub"
-    }
-    principals {
-      type = "Federated"
-      identifiers = [
-        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${module.cluster[0].eks_cluster_identity_oidc_issuer_url}",
-      ]
-    }
-  }
+module "external_secret" {
+  source = "./external_secrets"
+  eks = module.cluster[0]
 }
 
-resource "aws_iam_role" "ligl_ui_role" {
-  name               = "ligl-ui-role-sa"
-  assume_role_policy = data.aws_iam_policy_document.ligl_ui_assume_role_policy.json
-}
+
+# data "aws_iam_policy_document" "ligl_ui_assume_role_policy" {
+#   statement {
+#     sid     = "Statement1"
+#     effect  = "Allow"
+#     actions = ["sts:AssumeRoleWithWebIdentity"]
+#     condition {
+#       test = "StringLike"
+#       values = [
+#         "system:serviceaccount:ligl-ui:ligl-ui"
+#       ]
+#       variable = "${module.cluster[0].eks_cluster_identity_oidc_issuer_url}:sub"
+#     }
+#     principals {
+#       type = "Federated"
+#       identifiers = [
+#         "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${module.cluster[0].eks_cluster_identity_oidc_issuer_url}",
+#       ]
+#     }
+#   }
+# }
+
+# resource "aws_iam_role" "ligl_ui_role" {
+#   name               = "ligl-ui-role-sa"
+#   assume_role_policy = data.aws_iam_policy_document.ligl_ui_assume_role_policy.json
+# }
 
 #module "ci-cd" {
 #  source = "./pipe/codebuild"

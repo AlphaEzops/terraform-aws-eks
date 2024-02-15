@@ -2,7 +2,8 @@
 global:
   # K8s namespace. The name of the deployment.
   namespace: "ligl-ui"
-  serviceAccount: "arn:aws:iam::975635808270:role/ligl-ui-role-sa"
+  serviceAccount: 
+    roleArn: "arn:aws:iam::975635808270:role/ligl-ui-role-sa"
 
   ecr:
     enabled: false
