@@ -201,7 +201,7 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-    path: dev/us-east-2/services/apps/ligl-ui
+    path: dev/us-east-2/services/apps/ligl-ui-secrets
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
   syncPolicy:
