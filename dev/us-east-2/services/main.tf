@@ -109,8 +109,8 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-    path: null
-    repoURL: 'https://kubernetes.github.io/ingress-nginx'
+    chart: ingress-nginx
+    repoURL: https://kubernetes.github.io/ingress-nginx
     targetRevision: 4.8.0
   syncPolicy:
     automated:
@@ -131,51 +131,6 @@ YAML
     helm_release.argocd_helm_release
   ]
 }
-
-#resource "kubectl_manifest" "argo_cd_application" {
-##  for_each = try({ for k, v in var.applications : k => v if v != null }, {})
-#
-#  yaml_body = <<YAML
-#apiVersion: argoproj.io/v1alpha1
-#kind: Application
-#metadata:
-#  name: app-of-apps
-#  namespace: argocd-system
-#  finalizers:
-#    - resources-finalizer.argocd.argoproj.io
-#spec:
-#  destination:
-#    namespace: app-of-apps
-#    server: "https://kubernetes.default.svc"
-#  source:
-#    path: "dev/us-east-2/services/app-of-apps/system/apps"
-#    repoURL: "git@github.com:AlphaEzops/reveal-eks.git"
-#    targetRevision: "HEAD"
-#    helm:
-#      valueFiles:
-#        - "values.yaml"
-#  project: "default"
-#  syncPolicy:
-#    managedNamespaceMetadata:
-#      labels:
-#        managed: "argo-cd"
-#    automated:
-#      prune: true
-#      selfHeal: true
-#    syncOptions:
-#      - CreateNamespace=true
-#      - PruneLast=true
-#    retry:
-#      limit: 5
-#      backoff:
-#        duration: 5s
-#        maxDuration: 3m0s
-#        factor: 2
-#YAML
-#  depends_on = [
-#    helm_release.argocd_helm_release
-#  ]
-#}
 
 #==============================================================================================================
 # INGRESS - ARGO CD
