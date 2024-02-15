@@ -6,6 +6,8 @@ data "aws_eks_cluster_auth" "cluster_auth" {
   name = data.aws_eks_cluster.cluster_info.id
 }
 
+
+
 #data "aws_ssm_parameter" "ssh_key" {
 #name = "/DEV/REVEAL/PRIVATEKEY"
 #}
@@ -133,6 +135,50 @@ YAML
   ]
 }
 
+resource "kubectl_manifest" "external_secrets" {
+
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/instance: app-of-apps
+  name: ingress-nginx-development
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: external-secrets
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    helm:
+      valueFiles:
+        - values.yaml
+    chart: external-secrets
+    repoURL: https://charts.external-secrets.io
+    targetRevision: 0.9.5
+  syncPolicy:
+    automated:
+      allowEmpty: false
+      prune: false
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 5
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+YAML
+  depends_on = [
+    helm_release.argocd_helm_release
+  ]
+}
+
 #==============================================================================================================
 # INGRESS - ARGO CD
 #==============================================================================================================
@@ -223,3 +269,4 @@ YAML
     helm_release.argocd_helm_release
   ]
 }
+

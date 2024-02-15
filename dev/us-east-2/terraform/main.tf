@@ -1,3 +1,6 @@
+data "aws_partition" "this" {}
+data "aws_caller_identity" "this" {}
+
 module "network" {
   source       = "./network"
   count        = var.enable_network ? 1 : 0
@@ -17,6 +20,33 @@ module "cluster" {
   cluster_version    = var.cluster_version
   instance_type      = var.instance_type
   aws_auth_users     = var.aws_auth_users
+}
+
+
+data "aws_iam_policy_document" "ligl_ui_assume_role_policy" {
+  statement {
+    sid     = "Statement1"
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    condition {
+      test = "StringLike"
+      values = [
+        "system:serviceaccount:ligl-ui:ligl-ui"
+      ]
+      variable = "${module.cluster[0].eks_cluster_identity_oidc_issuer_url}:sub"
+    }
+    principals {
+      type = "Federated"
+      identifiers = [
+        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${module.cluster[0].eks_cluster_identity_oidc_issuer_url}",
+      ]
+    }
+  }
+}
+
+resource "aws_iam_role" "ligl_ui_role" {
+  name               = "ligl-ui-role-sa"
+  assume_role_policy = data.aws_iam_policy_document.ligl_ui_assume_role_policy.json
 }
 
 #module "ci-cd" {

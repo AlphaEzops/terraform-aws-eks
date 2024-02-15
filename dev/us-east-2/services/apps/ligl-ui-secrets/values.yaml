@@ -2,6 +2,7 @@
 global:
   # K8s namespace. The name of the deployment.
   namespace: "ligl-ui"
+  serviceAccount: "arn:aws:iam::975635808270:role/ligl-ui-role-sa"
 
   ecr:
     enabled: false
@@ -41,8 +42,8 @@ ingress:
   # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
   enabled: true
   # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
-  hostname: ""
-  class: "alb"
+  hostname: "ligl-ui.dev.ezops.com.br"
+  class: "nginx"
   # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
   sslCertArn: ""
   # -- Uncomment below to add custom annotations for the public ingress
