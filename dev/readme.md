@@ -39,7 +39,7 @@ terraform {
   backend "s3" {
     bucket = "terraform-state-bucket" # Replace with your bucket name
     key    = "terraform.tfstate"
-    region = "us-east-1" # Replace with your region
+    region = "us-east-2" # Replace with your region
   }
 }
 ```

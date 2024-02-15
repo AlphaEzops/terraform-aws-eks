@@ -15,7 +15,6 @@ This comprehensive guide will walk you through the process of installing and usi
 5. [Pipeline](#5-pipeline)
 6. [Conclusion](#6-conclusion)
 
-
 ## 1. Requirements
 1. you need install all the tools below:
 - [terraform](./docs/terraform.md) - tools for provisioning and managing cloud infrastructure **required**
