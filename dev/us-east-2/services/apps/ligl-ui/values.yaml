@@ -1,0 +1,90 @@
+---
+global:
+  # K8s namespace. The name of the deployment.
+  namespace: "ligl-ui"
+
+  ecr:
+    enabled: false
+    secret: "reveal-ecr"
+    # -- AWS Account ID (default "475250404638")
+    account: ""
+    # -- ECR AWS Region (default "us-east-1")
+    region: ""
+    # -- Set the full hostname/url for the secret rather than building it with account and region
+    host: ""
+    # -- Docker ECR Password (required)
+    # -- Command: aws ecr get-login-password
+    password: ""
+    # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
+    patchDefaultServiceAccount: true
+
+ui:
+  image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  tag: "new-tag"
+  name: "ligl-ui"
+  replicaCount: 2
+  nodeSelector:
+    kubernetes.io/os: linux
+    kubernetes.io/arch: amd64
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 1000m
+      memory: 1000Mi
+
+ingress:
+  # -- The ingress class (set per ingress)
+  # -- Options:
+  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+  enabled: true
+  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+  hostname: ""
+  class: "alb"
+  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+  sslCertArn: ""
+  # -- Uncomment below to add custom annotations for the public ingress
+  annotations: {}
+  alb:
+    rules: []
+    paths: []
+
+configMap:
+  name: "ligl-ui-config" 
+  configuration: |-
+    {
+      "serviceIp": "http://in-opt-dit-01.in.vertical.com/DEV_Services/",
+      "webSocketUrl": "ws://10.0.0.10:8092/",
+      "loginUrl": "ApiGateWay/Token",
+      "getUserUrl": "ApiGateWay/api/user",
+      "oData": "ApiGateWay/odata/",
+      "moduleLookupUrl": "ApiGateWay/odata/Modules",
+      "appSettingUrl": "ApiGateWay/odata/AppSettings",
+      "oDataTaxonomyUrl": "ApiGateWay/odata/TaxonomyService/",
+      "userPermissions": "ApiGateWay/odata/UserPermissions",
+      "logoutUrl": "ApiGateWay/api/ApplicationLogout",
+      "telerikReportServerUrl": "http://localhost:17080",
+      "apiPrefixURL": "ApiGateWay/api/",
+      "defaultLanguage": "en-us",
+      "IsNuixEnvironment": false,
+      "isCommonSpiritInstance": true,
+      "isLocalization": true,
+      "ClientName": "Reveal-Brainspace",
+      "AuthenticationProviderType": "BasicAuthentication",
+      "IsSSOSPInitiatedEnabled": true,
+      "IsMearsk": true,
+      "ssoSPInitiatedUrl": "https://myapps.microsoft.com/signin/SSOTEST/c901be31-6b06-400f-befd-c1e4fc855a43?tenantId=0b72188d-58bf-4491-880a-49e3f402721d",
+      "ApproversCount": 2,
+      "DocumentHelpUrl": "https://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf",
+      "telerikReportServerUrlNew": "https://in-opt-sit-01.in.vertical.com:44399/",
+      "reviewUrl": "https://landing.revealdata.com/",
+      "scheduledtasksUrl": "https://telerik.myligl.io/api/reportserver/v2/scheduledtasks",
+      "reportParameters": "https://telerik.myligl.io/api/reportserver/v2/reports/{reportID}/parameters",
+      "clientID": "https://telerik.myligl.io/api/reports/clients",
+      "reportParametersByClientID": "https://telerik.myligl.io/api/reports/clients/{clientId}/parameters",
+      "telerikToken": "https://telerik.myligl.io/token",
+      "childParameters": "https://telerik.myligl.io/api/reports/clients/{clientId}/parameters",
+      "getScheduledTask": "https://telerik.myligl.io/api/reportserver/v2/scheduledtasks"
+    }
