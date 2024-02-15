@@ -45,7 +45,6 @@ resource "helm_release" "argocd_helm_release" {
 #}
 
 resource "kubectl_manifest" "cert_manager_system" {
-
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -55,7 +54,7 @@ metadata:
   labels:
     argocd.argoproj.io/instance: app-of-apps
   name: cert-manager-development
-  namespace: argocd
+  namespace: argocd-system
 spec:
   destination:
     namespace: cert-manager
@@ -67,7 +66,7 @@ spec:
         - values.yaml
     path: dev/us-east-2/services/system/cert-manager
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
-    targetRevision: feature/rds
+    targetRevision: HEAD
   syncPolicy:
     automated:
       allowEmpty: false
@@ -100,7 +99,7 @@ metadata:
   labels:
     argocd.argoproj.io/instance: app-of-apps
   name: ingress-nginx-development
-  namespace: argocd
+  namespace: argocd-system
 spec:
   destination:
     namespace: ingress-nginx
