@@ -11,7 +11,7 @@ global:
       server: https://kubernetes.default.svc
       namespace: argocd-system
     source:
-      repoURL: git@github.com:ArthurMaverick/devops_project.git
+      repoURL: git@github.com:AlphaEzops/reveal-eks.git
       targetRevision: HEAD
 
 #==========================================
@@ -38,7 +38,7 @@ argocdApplications:
     name: cert-manager
     namespace: "cert-manager-system"
     path: "dev/us-east-2/services/system/cert-manager"
-    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    repoURL: "git@github.com:AlphaEzops/reveal-eks.git"
     targetRevision: "HEAD"
     disableAutomated: false
     disable: false
@@ -47,7 +47,7 @@ argocdApplications:
   metrics-server:
     name: metrics-server
     path: "dev/us-east-2/services/system/metrics-server"
-    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    repoURL: "git@github.com:AlphaEzops/reveal-eks.git"
     targetRevision: "HEAD"
     namespace: "metrics-server-system"
     disableAutomated: false
@@ -57,7 +57,7 @@ argocdApplications:
   nginx:
     name: ingress-nginx
     path: "dev/us-east-2/services/system/ingress-nginx"
-    repoURL: "git@github.com:ArthurMaverick/devops_project.git"
+    repoURL: "git@github.com:AlphaEzops/reveal-eks.git"
     targetRevision: "HEAD"
     namespace: "nginx-system"
     disableAutomated: false
