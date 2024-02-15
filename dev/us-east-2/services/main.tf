@@ -40,25 +40,50 @@ resource "helm_release" "argocd_helm_release" {
 #==============================================================================================================
 # SYSTEM APPLICATIONS - ARGO CD
 #==============================================================================================================
-data "aws_ssm_parameter" "ssh_key" {
-name = "/DEV/REVEAL/PRIVATEKEY"
-}
+#data "aws_ssm_parameter" "ssh_key" {
+#name = "/DEV/REVEAL/PRIVATEKEY"
+#}
 
 resource "kubectl_manifest" "argo_cd_application" {
   for_each = try({ for k, v in var.applications : k => v if v != null }, {})
 
-  yaml_body = templatefile("${path.module}/app-of-apps/system/app-root.yaml", {
-    APP_NAME              = each.value.app_name
-    ARGO_NAMESPACE        = var.namespace
-    APP_NAMESPACE         = each.value.app_namespace
-    APP_PATH              = each.value.app_path
-    APP_REPO_URL          = each.value.app_repo_url
-    APP_TARGET_REVISION   = each.value.app_target_revision
-    APP_DIRECTORY_RECURSE = each.value.app_directory_recurse
-    APP_PROJECT           = try(each.value.app_project, "default")
-
-
-  })
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd-system
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: app-of-apps
+    server: "https://kubernetes.default.svc"
+  source:
+    path: "dev/us-east-2/services/app-of-apps/system/apps"
+    repoURL: "git@github.com:AlphaEzops/reveal-eks.git"
+    targetRevision: "HEAD"
+    helm:
+      valueFiles:
+        - "values.yaml"
+  project: "default"
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        managed: "argo-cd"
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
+YAML
   depends_on = [
     helm_release.argocd_helm_release
   ]

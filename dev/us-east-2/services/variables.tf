@@ -26,7 +26,6 @@ variable "stage" {
 }
 
 
-
 variable "argo_version" {
   type        = string
   description = "ArgoCD version"
@@ -58,7 +57,7 @@ variable "values" {
     },
     {
       name  = "configs.cm.params.applicationsetcontroller.enable.progressive.syncs"
-      value = true
+      value = false
     },
     {
       name  = "crds.install"
@@ -105,7 +104,7 @@ variable "private_repo" {
     ezops = {
       app_name         = "devops-project"
       argo_namespace   = "argocd-system"
-      private_repo_url = "git@github.com:ArthurMaverick/devops_project.git"
+      private_repo_url = "git@github.com:AlphaEzops/reveal-eks.git"
     }
   }
 }
@@ -126,4 +125,10 @@ variable "notification" {
   type        = any
   description = "Notification Setup"
   default     = {}
+}
+
+variable "eks_cluster_name" {
+    type        = string
+    description = "EKS Cluster Name"
+    default     = "reveal-cluster"
 }

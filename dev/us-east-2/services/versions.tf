@@ -14,15 +14,13 @@ terraform {
       version = ">=2.22.0"
     }
     kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.10.0"
+      source  = "alekc/kubectl"
+      version = ">= 2.0.0"
     }
   }
   backend "s3" {
-    backend "s3" {
-      bucket  = "tf-bucket-ecomm-716716811630"
+      bucket  = "reveal-tf-state-975635808270"
       key     = "us-east-1/dev/services.tfstate"
       encrypt = true
-    }
   }
 }
