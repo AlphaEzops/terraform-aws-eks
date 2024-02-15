@@ -5,6 +5,11 @@ data "aws_eks_cluster" "cluster_info" {
 data "aws_eks_cluster_auth" "cluster_auth" {
   name = data.aws_eks_cluster.cluster_info.id
 }
+
+#data "aws_ssm_parameter" "ssh_key" {
+#name = "/DEV/REVEAL/PRIVATEKEY"
+#}
+
 #==============================================================================================================
 # KUBERNETES RESOURCES - NAMESPACE
 #==============================================================================================================
@@ -40,9 +45,6 @@ resource "helm_release" "argocd_helm_release" {
 #==============================================================================================================
 # SYSTEM APPLICATIONS - ARGO CD
 #==============================================================================================================
-#data "aws_ssm_parameter" "ssh_key" {
-#name = "/DEV/REVEAL/PRIVATEKEY"
-#}
 
 resource "kubectl_manifest" "cert_manager_system" {
   yaml_body = <<YAML
@@ -86,7 +88,6 @@ YAML
     helm_release.argocd_helm_release
   ]
 }
-
 
 resource "kubectl_manifest" "nginx_system" {
 
