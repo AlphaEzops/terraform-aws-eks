@@ -105,7 +105,7 @@ secrets:
     # -- Options for aws (AWS SecretsManager)
     aws:
       # -- Region: The AWS region where the secret resides (default "us-east-1")
-      region: "us-east-1"
+      region: "us-east-2"
     enabled: true
     # Specifies whether a service account should be created
     create: true
