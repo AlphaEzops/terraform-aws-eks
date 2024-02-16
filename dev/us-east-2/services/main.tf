@@ -272,8 +272,6 @@ spec:
       valueFiles:
         - values.yaml
       parameters:
-        - name: "secrets.externalSecrets.serviceAccount.arn"
-          value: ${local.secret_role_arn}
         - name: "secrets.externalSecrets.serviceAccount.name"
           value: ${local.service_account_name}
     path: dev/us-east-2/services/apps/ligl-ui-secrets

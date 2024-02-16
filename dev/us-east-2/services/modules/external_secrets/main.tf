@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
     condition {
       test = "StringEquals"
       values = [
-        "sts.serviceaccount:${local.application_namespace}:${local.application_namespace}"
+        "sts.serviceaccount:${local.application_namespace}:${local.service_account_name}"
       ]
       variable = "${var.eks_oidc_issuer}:sub"
     }
