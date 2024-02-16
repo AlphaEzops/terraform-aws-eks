@@ -156,6 +156,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+      - name: "secrets.externalSecrets.serviceAccount.arn"
+        value: "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
     chart: external-secrets
     repoURL: https://charts.external-secrets.io
     targetRevision: 0.9.5
