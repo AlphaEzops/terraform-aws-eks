@@ -1,9 +1,9 @@
-{{- define "helpers.configmap-list-env-variables"}}
-{{- range $key, $val := .Values.env }}
-- name: {{ $key }}
+{{- define "helpers.create-env-secrets"}}
+{{- range .Values.secrets.secretDefinitions.data }}
+- name: {{ .name }}
   valueFrom:
-    configMapKeyRef:
-      name: {{ $.Values.configMap.name }}
-      key: {{ $key }}
-{{- end}}
+    secretKeyRef:
+      name: {{ $.Values.secrets.externalSecrets.name }}
+      key: {{ .name }}
+{{- end }}
 {{- end }}

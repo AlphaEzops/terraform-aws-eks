@@ -132,3 +132,9 @@ variable "eks_cluster_name" {
     description = "EKS Cluster Name"
     default     = "reveal-cluster"
 }
+
+variable "eks_cluster_iam_role_secrets" {
+    type        = string
+    description = "EKS Cluster Secret"
+    default     = "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
+}

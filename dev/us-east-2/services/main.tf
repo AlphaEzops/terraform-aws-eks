@@ -226,23 +226,7 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
 }
 
 
-#==============================================================================================================
-# SERVICEACCOUNT - SECRET
-#==============================================================================================================
-resource "kubectl_manifest" "service_account_external_secrets" {
-    depends_on = [
-    helm_release.argocd_helm_release
-  ]
-    yaml_body = <<YAML
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: ligl-ui-sa
-  namespace: ligl-ui
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa
-YAML
-}
+
 
 #==============================================================================================================
 # APPLICATION - LIGL-UI
@@ -292,3 +276,20 @@ YAML
   ]
 }
 
+#==============================================================================================================
+# SERVICEACCOUNT - SECRET
+#==============================================================================================================
+# resource "kubectl_manifest" "service_account_external_secrets" {
+#     depends_on = [
+#     kubectl_manifest.ligl-ui
+#   ]
+#     yaml_body = <<YAML
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: ligl-ui-sa
+#   namespace: ligl-ui
+#   annotations:
+#     eks.amazonaws.com/role-arn: arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa
+# YAML
+# }
