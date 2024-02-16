@@ -3,6 +3,8 @@ data "aws_partition" "this" {}
 
 locals {
   region = "us-east-2"
+  application_namespace = var.application_namespace
+  service_account_name = var.service_account_name
 }
 
 # -------------------------------------------------------------------
@@ -69,7 +71,7 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
     condition {
       test = "StringEquals"
       values = [
-        "system:serviceaccount:ligl-ui:ligl-ui-sa"
+        "sts.serviceaccount:${local.application_namespace}:${local.application_namespace}"
       ]
       variable = "${var.eks_oidc_issuer}:sub"
     }
