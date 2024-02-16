@@ -51,8 +51,7 @@ data "aws_iam_policy_document" "eks_ligl_ui_secrets_access_policy" {
     ]
     effect = "Allow"
     resources = [
-      "arn:${data.aws_partition.this.partition}:secretsmanager:${local.region}:${data.aws_caller_identity.this.account_id}:secret:eks/*",
-      "arn:${data.aws_partition.this.partition}:secretsmanager:${local.region}:${data.aws_caller_identity.this.account_id}:secret:Reveal/*"
+      "arn:${data.aws_partition.this.partition}:secretsmanager:${local.region}:${data.aws_caller_identity.this.account_id}:secret:*",
     ]
   }
 }
@@ -69,11 +68,18 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
     effect  = "Allow"
     actions = ["sts:AssumeRoleWithWebIdentity"]
     condition {
-      test = "StringLike"
+      test = "StringEquals"
       values = [
         "system:serviceaccount:*:*"
       ]
       variable = "${var.eks.eks_cluster_identity_oidc_issuer_url}:sub"
+    }
+    condition {
+      test = "StringEquals"
+      values = [
+        "sts.amazonaws.com"
+      ]
+      variable = "${var.eks.eks_cluster_identity_oidc_issuer_url}:aud"
     }
     principals {
       type = "Federated"
