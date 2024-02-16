@@ -3,6 +3,7 @@ global:
   # K8s namespace. The name of the deployment.
   namespace: "ligl-ui"
 
+
   ecr:
     enabled: false
     secret: "reveal-ecr"
@@ -109,8 +110,14 @@ secrets:
     enabled: true
     # Specifies whether a service account should be created
     create: true
-    # Annotations to add to the service account
+
+    # Specifies the name of the kubernetes secrets
     name: "ligl-ui-secrets"
+
+    # Specifies the service account for external-secrets
+    serviceAccount:
+      name: "ligl-ui-sa"
+      arn: ""
 
   secretDefinitions:
     data:
