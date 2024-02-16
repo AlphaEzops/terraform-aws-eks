@@ -1,7 +1,3 @@
-variable "eks_oidc_issuer" {
-  description = "(required) Eks oidc issuer url"
-  type        = any
-}
 variable "service_account_name" {
   description = "(required) Service account name"
   type        = any

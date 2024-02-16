@@ -1,6 +1,8 @@
 data "aws_caller_identity" "this" {}
 data "aws_partition" "this" {}
-
+data "aws_eks_cluster" "reveal-cluster" {
+  name = "reveal-cluster"
+}
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
@@ -71,14 +73,14 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
     condition {
       test = "StringEquals"
       values = [
-        "sts.serviceaccount:${local.application_namespace}:${local.service_account_name}"
+        "sts.serviceaccount:ligl-ui:ligl-ui-sa"
       ]
-      variable = "${var.eks_oidc_issuer}:sub"
+      variable = "${data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer}:sub"
     }
     principals {
       type = "Federated"
       identifiers = [
-        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${var.eks_oidc_issuer}",
+        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer}",
       ]
     }
   }
@@ -99,3 +101,5 @@ resource "aws_iam_role_policy_attachment" "eks_ligl_ui_secrets_kms_access_policy
   role       = aws_iam_role.eks_ligl_ui_secrets_role.name
   policy_arn = aws_iam_policy.eks_external_secrets_access_policy.arn
 }
+
+

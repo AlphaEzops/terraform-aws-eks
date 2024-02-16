@@ -6,12 +6,7 @@ data "aws_eks_cluster_auth" "cluster_auth" {
   name = data.aws_eks_cluster.cluster_info.id
 }
 
-data "aws_eks_cluster" "reveal-cluster" {
-  name = "reveal-cluster"
-}
-
 locals {
-  eks_cluster_identity_oidc_issuer_url = data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer
   service_account_name = "ligl-ui-sa"
   secret_role_arn = "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
 }
@@ -242,7 +237,6 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
 
 module "external_secret" {
   source = "./modules/external_secrets"
-  eks_oidc_issuer = local.eks_cluster_identity_oidc_issuer_url
   application_namespace = "ligl-ui"
   service_account_name = local.service_account_name
 }
@@ -274,6 +268,8 @@ spec:
       parameters:
         - name: "secrets.externalSecrets.serviceAccount.name"
           value: ${local.service_account_name}
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${module.external_secret.service_account_role_arn}
     path: dev/us-east-2/services/apps/ligl-ui-secrets
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
