@@ -117,7 +117,7 @@ secrets:
     # Specifies the service account for external-secrets
     serviceAccount:
       name: "ligl-ui-sa"
-      arn: ""
+      arn: "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
 
   secretDefinitions:
     data:
