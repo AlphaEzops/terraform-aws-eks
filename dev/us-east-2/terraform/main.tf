@@ -22,10 +22,6 @@ module "cluster" {
   aws_auth_users     = var.aws_auth_users
 }
 
-module "external_secret" {
-  source = "./external_secrets"
-  eks = module.cluster[0]
-}
 
 
 # data "aws_iam_policy_document" "ligl_ui_assume_role_policy" {

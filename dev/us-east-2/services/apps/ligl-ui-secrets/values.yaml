@@ -58,16 +58,7 @@ configMap:
     {
       "serviceIp": "http://in-opt-dit-01.in.vertical.com/DEV_Services/",
       "webSocketUrl": "ws://10.0.0.10:8092/",
-      "loginUrl": "ApiGateWay/Token",
-      "getUserUrl": "ApiGateWay/api/user",
-      "oData": "ApiGateWay/odata/",
-      "moduleLookupUrl": "ApiGateWay/odata/Modules",
-      "appSettingUrl": "ApiGateWay/odata/AppSettings",
-      "oDataTaxonomyUrl": "ApiGateWay/odata/TaxonomyService/",
-      "userPermissions": "ApiGateWay/odata/UserPermissions",
-      "logoutUrl": "ApiGateWay/api/ApplicationLogout",
       "telerikReportServerUrl": "http://localhost:17080",
-      "apiPrefixURL": "ApiGateWay/api/",
       "defaultLanguage": "en-us",
       "IsNuixEnvironment": false,
       "isCommonSpiritInstance": true,
@@ -121,18 +112,30 @@ secrets:
 
   secretDefinitions:
     data:
-      - name: GATEWAY
+      - name: LOGIN_URL
         key: prod/reveal/ligl-ui
-        property: GATEWAY
-      - name: DIT
+        property: LOGIN_URL
+      - name: GET_USER_URL
         key: prod/reveal/ligl-ui
-        property: DIT
-      - name: SIT
+        property: GET_USER_URL
+      - name: ODATA
         key: prod/reveal/ligl-ui
-        property: SIT
-      - name: DEV
+        property: ODATA
+      - name: MODULE_LOOKUP_URL
         key: prod/reveal/ligl-ui
-        property: DEV
-      - name: IP
+        property: MODULE_LOOKUP_URL
+      - name: APP_SETTING_URL
         key: prod/reveal/ligl-ui
-        property: IP
+        property: APP_SETTING_URL
+      - name: ODATA_TAXONOMY_URL
+        key: prod/reveal/ligl-ui
+        property: ODATA_TAXONOMY_URL
+      - name: USER_PERMISSIONS
+        key: prod/reveal/ligl-ui
+        property: USER_PERMISSIONS
+      - name: LOGOUT_URL
+        key: prod/reveal/ligl-ui
+        property: LOGOUT_URL
+      - name: API_PREFIX_URL
+        key: prod/reveal/ligl-ui
+        property: API_PREFIX_URL

@@ -8,6 +8,9 @@ metadata:
   namespace: {{ .Values.global.namespace | default .Release.Name }}
   name: ligl-ui-ingress
   annotations:
+    # {{- if .Values.ingress.hostname }}
+    # external-dns.alpha.kubernetes.io/hostname: {{ .Values.ingress.hostname }}
+    # {{- end }}
     # Nginx ingress (nginx)
     # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
     # nginx.ingress.kubernetes.io/service-upstream: "true"

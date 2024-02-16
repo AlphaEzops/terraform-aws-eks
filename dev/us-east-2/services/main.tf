@@ -6,6 +6,15 @@ data "aws_eks_cluster_auth" "cluster_auth" {
   name = data.aws_eks_cluster.cluster_info.id
 }
 
+data "aws_eks_cluster" "reveal-cluster" {
+  name = "reveal-cluster"
+}
+
+locals {
+  eks_cluster_identity_oidc_issuer_url = data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer
+  secret_role_arn = "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
+}
+
 
 
 #data "aws_ssm_parameter" "ssh_key" {
@@ -156,9 +165,6 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-      parameters:
-      - name: "secrets.externalSecrets.serviceAccount.arn"
-        value: "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
     chart: external-secrets
     repoURL: https://charts.external-secrets.io
     targetRevision: 0.9.5
@@ -185,6 +191,7 @@ YAML
 #==============================================================================================================
 # INGRESS - ARGO CD
 #==============================================================================================================
+
 resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   depends_on = [helm_release.argocd_helm_release]
 
@@ -228,13 +235,18 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   }
 }
 
+#==============================================================================================================
+# EXTERNAL-SECRETS-ROLE - LIGL-UI
+#==============================================================================================================
 
-
+module "external_secret" {
+  source = "./modules/external_secrets"
+  eks_oidc_issuer = local.eks_cluster_identity_oidc_issuer_url
+}
 
 #==============================================================================================================
 # APPLICATION - LIGL-UI
 #==============================================================================================================
-
 resource "kubectl_manifest" "ligl-ui" {
 
   yaml_body = <<YAML
@@ -256,6 +268,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${module.external_secret.service_account_role_arn}
     path: dev/us-east-2/services/apps/ligl-ui-secrets
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
@@ -275,24 +290,7 @@ spec:
       - PruneLast=true
 YAML
   depends_on = [
-    helm_release.argocd_helm_release
+    helm_release.argocd_helm_release,
+    module.external_secret
   ]
 }
-
-#==============================================================================================================
-# SERVICEACCOUNT - SECRET
-#==============================================================================================================
-# resource "kubectl_manifest" "service_account_external_secrets" {
-#     depends_on = [
-#     kubectl_manifest.ligl-ui
-#   ]
-#     yaml_body = <<YAML
-# apiVersion: v1
-# kind: ServiceAccount
-# metadata:
-#   name: ligl-ui-sa
-#   namespace: ligl-ui
-#   annotations:
-#     eks.amazonaws.com/role-arn: arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa
-# YAML
-# }

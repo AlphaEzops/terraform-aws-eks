@@ -20,7 +20,6 @@ data "aws_iam_policy_document" "eks_external_secrets_access_policy" {
       "*"
     ]
   }
-
 }
 
 resource "aws_iam_policy" "eks_external_secrets_access_policy" {
@@ -70,14 +69,14 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
     condition {
       test = "StringEquals"
       values = [
-        "system:serviceaccount:*:*"
+        "system:serviceaccount:ligl-ui:ligl-ui-sa"
       ]
-      variable = "${var.eks.eks_cluster_identity_oidc_issuer_url}:sub"
+      variable = "${var.eks_oidc_issuer}:sub"
     }
     principals {
       type = "Federated"
       identifiers = [
-        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${var.eks.eks_cluster_identity_oidc_issuer_url}",
+        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${var.eks_oidc_issuer}",
       ]
     }
   }
