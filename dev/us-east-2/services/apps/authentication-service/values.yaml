@@ -19,7 +19,7 @@ global:
     # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
     patchDefaultServiceAccount: true
 
-ui:
+application:
   image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
   tag: "authentication-service"
   name: "authentication-service"

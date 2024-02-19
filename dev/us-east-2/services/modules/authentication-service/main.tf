@@ -123,7 +123,11 @@ spec:
         - name: "configMap.configuration"
           value: |-
             ${local.setting_json}
-    path: dev/us-east-2/services/apps/authentication_service
+        - name: "application.resources.requests.cpu"
+          value: "100m"
+        - name: "application.resources.requests.memory"
+          value: "100m"
+    path: dev/us-east-2/services/apps/authentication-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
   syncPolicy:

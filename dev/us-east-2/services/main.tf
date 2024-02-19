@@ -243,7 +243,7 @@ module "ligl-external" {
   application_namespace = "ligl-external"
 }
 
-# module "authentication-service" {
-#   source = "./modules/authentication-service"
-#   application_namespace = "authentication-service"
-# }
+module "authentication-service" {
+  source = "./modules/authentication-service"
+  application_namespace = "authentication-service"
+}
