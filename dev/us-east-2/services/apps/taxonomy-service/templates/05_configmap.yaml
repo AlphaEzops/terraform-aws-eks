@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
+data: 
+  appsettings.json: |-
+  {{ .Values.configMap.appsettings | fromYaml |toJson | indent 4 }}
+
