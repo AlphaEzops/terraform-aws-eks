@@ -1,7 +1,7 @@
 ---
 global:
   # K8s namespace. The name of the deployment.
-  namespace: "authentication_service"
+  namespace: "authentication-service"
 
 
   ecr:
@@ -21,8 +21,8 @@ global:
 
 ui:
   image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
-  tag: "authentication_service"
-  name: "authentication_service"
+  tag: "authentication-service"
+  name: "authentication-service"
   replicaCount: 2
   nodeSelector:
     kubernetes.io/os: linux
@@ -36,7 +36,7 @@ ui:
       memory: 1000Mi
 
 configMap:
-  name: "authentication_service_config" 
+  name: "authentication-service_config" 
   configuration: |-
     {
       "ConnectionStrings": {
@@ -106,7 +106,7 @@ configMap:
         "expiry": 24
       },
       "Environment": "dev",
-      "Origion": "*",=
+      "Origion": "*",
       "Service": "AuthenticationService"
     }
 

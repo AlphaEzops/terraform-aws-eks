@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: authentication_service-deployment
+  name: authentication-service-deployment
   namespace: {{ .Values.global.namespace | default .Release.Name }}
 spec:
   selector:
     matchLabels:
-      app: deployment-authentication_service
+      app: deployment-authentication-service
   progressDeadlineSeconds: 600
   replicas: {{.Values.ui.replicaCount}}
   strategy:
@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       labels:
-        app: deployment-authentication_service
+        app: deployment-authentication-service
       {{- if .Values.global.reloadOnUpgrade }}
       annotations:
         timestamp: {{ now | quote }}
@@ -37,7 +37,7 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            - name: config-authentication_service-volume
+            - name: config-authentication-service-volume
               mountPath: /app/appsettings.json
               subPath: appsettings.json 
           {{- if .Values.ui.resources }}
@@ -55,6 +55,6 @@ spec:
           {{- end }}
 
       volumes:
-        - name: config-authentication_service-volume
+        - name: config-authentication-service-volume
           configMap:
             name: {{ .Values.configMap.name }}
