@@ -3,6 +3,7 @@ data "aws_partition" "this" {}
 data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
+
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
@@ -73,9 +74,16 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
     condition {
       test = "StringEquals"
       values = [
-        "sts.serviceaccount:ligl-ui:ligl-ui-sa"
+        "system:serviceaccount:${local.application_namespace}:${local.service_account_name}",
       ]
       variable = "${replace(data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
+    }
+    condition {
+      test = "StringEquals"
+      values = [
+        "sts.amazonaws.com"
+      ]
+      variable = "${replace(data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
     }
     principals {
       type = "Federated"
@@ -103,3 +111,57 @@ resource "aws_iam_role_policy_attachment" "eks_ligl_ui_secrets_kms_access_policy
 }
 
 
+
+#==============================================================================================================
+# APPLICATION - LIGL-UI
+#==============================================================================================================
+
+
+resource "kubectl_manifest" "ligl-ui" {
+
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/instance: app-of-apps
+  name: ligl-ui-development
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: ligl-ui
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: "secrets.externalSecrets.serviceAccount.name"
+          value: ${local.service_account_name}
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${aws_iam_role.eks_ligl_ui_secrets_role.arn}
+    path: dev/us-east-2/services/apps/ligl-ui-secrets
+    repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      allowEmpty: false
+      prune: false
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 5
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+YAML
+  depends_on = [
+    aws_iam_role_policy_attachment.eks_ligl_ui_secrets_kms_access_policy
+  ]
+}

@@ -8,7 +8,7 @@ data "aws_eks_cluster_auth" "cluster_auth" {
 
 locals {
   service_account_name = "ligl-ui-sa"
-  secret_role_arn = "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
+  # secret_role_arn = "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
 }
 
 
@@ -235,61 +235,70 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
 # EXTERNAL-SECRETS-ROLE - LIGL-UI
 #==============================================================================================================
 
-module "external_secret" {
-  source = "./modules/external_secrets"
+# module "external_secret" {
+#   source = "./modules/external_secrets"
+#   application_namespace = "ligl-ui"
+#   service_account_name = local.service_account_name
+# }
+module "ligl-ui" {
+  source = "./modules/ligl-ui"
   application_namespace = "ligl-ui"
-  service_account_name = local.service_account_name
+  service_account_name = "ligl-ui-sa"
 }
 
-#==============================================================================================================
-# APPLICATION - LIGL-UI
-#==============================================================================================================
-resource "kubectl_manifest" "ligl-ui" {
 
-  yaml_body = <<YAML
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  labels:
-    argocd.argoproj.io/instance: app-of-apps
-  name: ligl-ui-development
-  namespace: argocd-system
-spec:
-  destination:
-    namespace: ligl-ui
-    server: 'https://kubernetes.default.svc'
-  project: default
-  source:
-    helm:
-      valueFiles:
-        - values.yaml
-      parameters:
-        - name: "secrets.externalSecrets.serviceAccount.name"
-          value: ${local.service_account_name}
-        - name: "secrets.externalSecrets.serviceAccount.arn"
-          value: ${module.external_secret.service_account_role_arn}
-    path: dev/us-east-2/services/apps/ligl-ui-secrets
-    repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
-    targetRevision: HEAD
-  syncPolicy:
-    automated:
-      allowEmpty: false
-      prune: false
-      selfHeal: true
-    retry:
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m0s
-      limit: 5
-    syncOptions:
-      - CreateNamespace=true
-      - PruneLast=true
-YAML
-  depends_on = [
-    helm_release.argocd_helm_release,
-    module.external_secret
-  ]
-}
+
+
+
+# #==============================================================================================================
+# # APPLICATION - LIGL-UI
+# #==============================================================================================================
+# resource "kubectl_manifest" "ligl-ui" {
+
+#   yaml_body = <<YAML
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+#   labels:
+#     argocd.argoproj.io/instance: app-of-apps
+#   name: ligl-ui-development
+#   namespace: argocd-system
+# spec:
+#   destination:
+#     namespace: ligl-ui
+#     server: 'https://kubernetes.default.svc'
+#   project: default
+#   source:
+#     helm:
+#       valueFiles:
+#         - values.yaml
+#       parameters:
+#         - name: "secrets.externalSecrets.serviceAccount.name"
+#           value: ${local.service_account_name}
+#         - name: "secrets.externalSecrets.serviceAccount.arn"
+#           value: "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
+#     path: dev/us-east-2/services/apps/ligl-ui-secrets
+#     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+#     targetRevision: HEAD
+#   syncPolicy:
+#     automated:
+#       allowEmpty: false
+#       prune: false
+#       selfHeal: true
+#     retry:
+#       backoff:
+#         duration: 5s
+#         factor: 2
+#         maxDuration: 3m0s
+#       limit: 5
+#     syncOptions:
+#       - CreateNamespace=true
+#       - PruneLast=true
+# YAML
+#   depends_on = [
+#     helm_release.argocd_helm_release,
+#     # module.external_secret
+#   ]
+# }

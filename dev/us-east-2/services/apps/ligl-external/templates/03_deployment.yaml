@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ligl-external-deployment
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: deployment-ligl-external
+  progressDeadlineSeconds: 600
+  replicas: {{.Values.ui.replicaCount}}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: deployment-ligl-external
+      {{- if .Values.global.reloadOnUpgrade }}
+      annotations:
+        timestamp: {{ now | quote }}
+      {{- end }}
+    spec:
+      {{- if or .Values.global.imagePullSecrets .Values.global.ecr.enabled }}
+      imagePullSecrets:
+        {{- if .Values.global.ecr.enabled }}
+        - name: {{ .Values.global.ecr.secret }}
+        {{- end }}
+      {{- end }}
+      nodeSelector:
+        {{- toYaml .Values.ui.nodeSelector | nindent 8 }}
+      containers:
+        - name: {{ .Values.ui.name }}
+          image: {{ .Values.ui.image }}:{{ .Values.ui.tag }}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: config-ligl-external-volume
+              mountPath: /usr/share/nginx/html/assets/configuration.json
+              subPath: configuration.json  
+          {{- if .Values.ui.resources }}
+          resources:
+            {{- toYaml .Values.ui.resources | nindent 12 }}
+          {{- else }}
+          # Default resource requests/limits
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+              cpu: 1000m
+              memory: 1000Mi
+          {{- end }}
+
+      volumes:
+        - name: config-ligl-external-volume
+          configMap:
+            name: {{ .Values.configMap.name }}

@@ -56,6 +56,7 @@ configMap:
   name: "ligl-ui-config" 
   configuration: |-
     {
+      LOGIN_URL: "{{- include "helpers.helpers.getSecret" LOGIN_URL }}"
       "serviceIp": "http://in-opt-dit-01.in.vertical.com/DEV_Services/",
       "webSocketUrl": "ws://10.0.0.10:8092/",
       "telerikReportServerUrl": "http://localhost:17080",

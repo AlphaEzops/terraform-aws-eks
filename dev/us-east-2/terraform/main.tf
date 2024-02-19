@@ -23,7 +23,6 @@ module "cluster" {
 }
 
 
-
 # data "aws_iam_policy_document" "ligl_ui_assume_role_policy" {
 #   statement {
 #     sid     = "Statement1"

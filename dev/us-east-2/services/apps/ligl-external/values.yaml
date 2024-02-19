@@ -1,0 +1,66 @@
+---
+global:
+  # K8s namespace. The name of the deployment.
+  namespace: "ligl-external"
+
+
+  ecr:
+    enabled: false
+    secret: "reveal-ecr"
+    # -- AWS Account ID (default "475250404638")
+    account: ""
+    # -- ECR AWS Region (default "us-east-1")
+    region: ""
+    # -- Set the full hostname/url for the secret rather than building it with account and region
+    host: ""
+    # -- Docker ECR Password (required)
+    # -- Command: aws ecr get-login-password
+    password: ""
+    # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
+    patchDefaultServiceAccount: true
+
+ui:
+  image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  tag: "ligl-external"
+  name: "ligl-external"
+  replicaCount: 2
+  nodeSelector:
+    kubernetes.io/os: linux
+    kubernetes.io/arch: amd64
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 1000m
+      memory: 1000Mi
+
+ingress:
+  # -- The ingress class (set per ingress)
+  # -- Options:
+  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+  enabled: true
+  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+  hostname: ""
+  class: "nginx"
+  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+  sslCertArn: ""
+  # -- Uncomment below to add custom annotations for the public ingress
+  annotations: {}
+  alb:
+    rules: []
+    paths: []
+
+configMap:
+  name: "ligl-external-config" 
+  configuration: |-
+    {
+        "serviceIp":"http://10.0.0.10:8092/",
+        "IsNuixEnvironment":false,
+        "UserLHNSignature":"true",
+        "UserLHNCurrentStatus":"true",
+        "IsSSOEnabledForLHNAcknowledgement":"true",
+        "LiglUILoginURL" : "https://in-opt-dit-01.in.vertical.com/DEV_Angular/#/login",   
+        "IsLHNTitleMandatory" : "true"
+    }
