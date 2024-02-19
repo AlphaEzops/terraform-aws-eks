@@ -15,7 +15,7 @@ data "aws_secretsmanager_secret_version" "secret_reveal" {
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
-  setting_json = jsonencode(
+  setting_json = jsonencode(<<EOT
     {
       "ConnectionStrings": {
         "VMDB": "Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
@@ -78,16 +78,17 @@ locals {
         "MaxDelayTryInSeconds": 30
       },
       "redis": {
-        "host": jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_host"],
-        "name": jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_name"],
-        "port": jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_port"],
-        "expiry": jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"],
+        "host": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_host"]},
+        "name": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_name"]},
+        "port": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_port"]},
+        "expiry": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"]},
       },
       "Environment": "dev",
       "Origion": "*",
       "Service": "AuthenticationService"
     }
-  )
+EOT  
+)
 }
 
 
@@ -120,13 +121,6 @@ spec:
       parameters:
         - name: "global.namespace"
           value: ${local.application_namespace}
-        - name: "application.resources.requests.cpu"
-          value: "100m"
-        - name: "application.resources.requests.memory"
-          value: "100m"
-        - name: "configMap.configuration"
-          value: |-
-            ${local.setting_json}
     path: dev/us-east-2/services/apps/authentication-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
