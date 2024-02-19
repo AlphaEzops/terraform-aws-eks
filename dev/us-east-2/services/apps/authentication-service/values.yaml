@@ -35,6 +35,25 @@ application:
       cpu: 1000m
       memory: 1000Mi
 
+
+ingress:
+  # -- The ingress class (set per ingress)
+  # -- Options:
+  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+  enabled: true
+  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+  hostname: "ligl-ui.dev.ezops.com.br"
+  class: "nginx"
+  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+  sslCertArn: ""
+  # -- Uncomment below to add custom annotations for the public ingress
+  annotations: {}
+  alb:
+    rules: []
+    paths: []
+
+    
 configMap:
   name: "authentication-service-config" 
   configuration: |2

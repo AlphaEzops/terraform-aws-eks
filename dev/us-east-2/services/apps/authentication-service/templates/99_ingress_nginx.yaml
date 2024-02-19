@@ -33,11 +33,11 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /
+          - path: /AuthenticationService/Token
             pathType:  Prefix
             backend:
               service:
-                name: service-ligl-ui
+                name: service-authentication-service
                 port:
                   number: 80
 {{- end }}
