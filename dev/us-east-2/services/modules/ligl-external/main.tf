@@ -6,6 +6,7 @@ data "aws_eks_cluster" "reveal-cluster" {
 
 locals {
   region = "us-east-2"
+  application_namespace = var.application_namespace
 }
 
 
@@ -14,7 +15,7 @@ locals {
 #==============================================================================================================
 
 
-resource "kubectl_manifest" "ligl-ui" {
+resource "kubectl_manifest" "ligl-external" {
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
@@ -24,17 +25,20 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   labels:
     argocd.argoproj.io/instance: app-of-apps
-  name: ligl-ui-development
+  name: ${local.application_namespace}-development
   namespace: argocd-system
 spec:
   destination:
-    namespace: ligl-ui
+    namespace: ${local.application_namespace}
     server: 'https://kubernetes.default.svc'
   project: default
   source:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "global.namespace"
+          value: ${local.application_namespace}
     path: dev/us-east-2/services/apps/ligl-external
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
@@ -53,7 +57,4 @@ spec:
       - CreateNamespace=true
       - PruneLast=true
 YAML
-  depends_on = [
-    aws_iam_role_policy_attachment.eks_ligl_ui_secrets_kms_access_policy
-  ]
 }

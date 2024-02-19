@@ -127,11 +127,11 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   labels:
     argocd.argoproj.io/instance: app-of-apps
-  name: ligl-ui-development
+  name: ${local.application_namespace}-development
   namespace: argocd-system
 spec:
   destination:
-    namespace: ligl-ui
+    namespace: ${local.application_namespace}
     server: 'https://kubernetes.default.svc'
   project: default
   source:
@@ -143,6 +143,8 @@ spec:
           value: ${local.service_account_name}
         - name: "secrets.externalSecrets.serviceAccount.arn"
           value: ${aws_iam_role.eks_ligl_ui_secrets_role.arn}
+        - name: "global.namespace"
+          value: ${local.application_namespace}
     path: dev/us-east-2/services/apps/ligl-ui-secrets
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
