@@ -12,6 +12,8 @@ data "aws_secretsmanager_secret_version" "secret_reveal" {
  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
 }
 
+
+# SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
