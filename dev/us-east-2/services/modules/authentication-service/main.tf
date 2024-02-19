@@ -18,7 +18,7 @@ locals {
   setting_json = jsonencode(<<EOT
     {
       "ConnectionStrings": {
-        "VMDB": "Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
+        "VMDB": 'Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false'
       },
       "Logging": {
         "LogLevel": {
@@ -121,6 +121,12 @@ spec:
       parameters:
         - name: "global.namespace"
           value: ${local.application_namespace}
+        - name: "application.resources.requests.cpu"
+          value: "100m"
+        - name: "application.resources.requests.memory"
+          value: "100m"
+        - name: "configMap.configuration"
+          value: ${local.setting_json}
     path: dev/us-east-2/services/apps/authentication-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD

@@ -37,10 +37,10 @@ application:
 
 configMap:
   name: "authentication-service-config" 
-  configuration: |-
+  configuration: |2
     {
       "ConnectionStrings": {
-        "VMDB": "Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
+        "VMDB": 'Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false'
       },
       "Logging": {
         "LogLevel": {
@@ -100,10 +100,10 @@ configMap:
         "MaxDelayTryInSeconds": 30
       },
       "redis": {
-        "host": "127.0.0.1",
-        "name": "localhost",
+        "host": 127.0.0.1,
+        "name": localhost,
         "port": 6379,
-        "expiry": 24
+        "expiry": 24,
       },
       "Environment": "dev",
       "Origion": "*",
