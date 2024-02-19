@@ -242,3 +242,8 @@ module "ligl-external" {
   source = "./modules/ligl-external"
   application_namespace = "ligl-external"
 }
+
+module "authentication-service" {
+  source = "./modules/authentication_service"
+  application_namespace = "authentication-service"
+}

@@ -121,8 +121,9 @@ spec:
         - name: "global.namespace"
           value: ${local.application_namespace}
         - name: "configMap.configuration"
-          value: ${local.settings_json}
-    path: dev/us-east-2/services/apps/ligl-external
+          value: |-
+            ${local.setting_json}
+    path: dev/us-east-2/services/apps/authentication_service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
   syncPolicy:
