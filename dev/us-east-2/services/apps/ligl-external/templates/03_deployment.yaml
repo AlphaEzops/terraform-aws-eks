@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: deployment-ligl-external
   progressDeadlineSeconds: 600
-  replicas: {{.Values.ui.replicaCount}}
+  replicas: {{.Values.application.replicaCount}}
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -30,19 +30,19 @@ spec:
         {{- end }}
       {{- end }}
       nodeSelector:
-        {{- toYaml .Values.ui.nodeSelector | nindent 8 }}
+        {{- toYaml .Values.application.nodeSelector | nindent 8 }}
       containers:
-        - name: {{ .Values.ui.name }}
-          image: {{ .Values.ui.image }}:{{ .Values.ui.tag }}
+        - name: {{ .Values.application.name }}
+          image: {{ .Values.application.image }}:{{ .Values.application.tag }}
           ports:
             - containerPort: 80
           volumeMounts:
             - name: config-ligl-external-volume
               mountPath: /usr/share/nginx/html/assets/configuration.json
               subPath: configuration.json  
-          {{- if .Values.ui.resources }}
+          {{- if .Values.application.resources }}
           resources:
-            {{- toYaml .Values.ui.resources | nindent 12 }}
+            {{- toYaml .Values.application.resources | nindent 12 }}
           {{- else }}
           # Default resource requests/limits
           resources:
