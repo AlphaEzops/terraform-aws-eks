@@ -232,18 +232,18 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
 }
 
 
-# module "ligl-ui" {
-#   source = "./modules/ligl-ui"
-#   application_namespace = "ligl-ui"
-#   service_account_name = "ligl-ui-sa"
-# }
+module "ligl-ui" {
+  source = "./modules/ligl-ui"
+  application_namespace = "ligl-ui"
+  service_account_name = "ligl-ui-sa"
+}
 
-# module "ligl-external" {
-#   source = "./modules/ligl-external"
-#   application_namespace = "ligl-external"
-# }
+module "ligl-external" {
+  source = "./modules/ligl-external"
+  application_namespace = "ligl-external"
+}
 
-# module "authentication-service" {
-#   source = "./modules/authentication-service"
-#   application_namespace = "authentication-service"
-# }
+module "authentication-service" {
+  source = "./modules/authentication-service"
+  application_namespace = "authentication-service"
+}

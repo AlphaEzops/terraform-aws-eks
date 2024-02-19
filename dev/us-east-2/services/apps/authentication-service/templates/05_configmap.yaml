@@ -4,6 +4,6 @@ metadata:
   name: {{ .Values.configMap.name }}
   namespace: {{ .Values.global.namespace | default .Release.Name }}
 data: 
-  configuration.json: |-
+  appsettings.json: |-
   {{ .Values.configMap.configuration | toJson | indent 4 }}
 

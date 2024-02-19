@@ -120,13 +120,13 @@ spec:
       parameters:
         - name: "global.namespace"
           value: ${local.application_namespace}
-        - name: "configMap.configuration"
-          value: |-
-            ${local.setting_json}
         - name: "application.resources.requests.cpu"
           value: "100m"
         - name: "application.resources.requests.memory"
           value: "100m"
+        - name: "configMap.configuration"
+          value: |-
+            ${local.setting_json}
     path: dev/us-east-2/services/apps/authentication-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
