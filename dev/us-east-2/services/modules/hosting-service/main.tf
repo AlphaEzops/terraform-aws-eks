@@ -130,7 +130,7 @@ spec:
           value: "100m"
         - name: "configMap.configuration"
           value: ${local.setting_json}
-    path: dev/us-east-2/services/apps/authentication-service
+    path: dev/us-east-2/services/apps/hosting-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
   syncPolicy:
