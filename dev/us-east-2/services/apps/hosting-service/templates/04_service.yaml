@@ -6,7 +6,7 @@ metadata:
   
 spec:
   selector:
-    app: deployment-hosting-service
+    app: {{.Values.service.name }}
   type: ClusterIP
   ports:
     - name: http
