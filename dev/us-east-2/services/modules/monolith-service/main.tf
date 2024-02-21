@@ -37,7 +37,7 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-    path: dev/us-east-2/services/apps/authentication-service
+    path: dev/us-east-2/services/apps/monolith-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
   syncPolicy:
