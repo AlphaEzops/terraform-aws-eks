@@ -47,6 +47,11 @@ resource "helm_release" "argocd_helm_release" {
       value = set.value.value
     }
   }
+
+  set {
+    name = "global.nodeSelector.kubernetes\\.io/os"
+    value = "linux"
+  }
 }
 
 #==============================================================================================================
@@ -73,6 +78,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "nodeSelector.kubernetes\\.io/os"
+          value: "linux"
     path: dev/us-east-2/services/system/cert-manager
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
@@ -117,6 +125,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "controller.nodeSelector.kubernetes\\.io/os"
+          value: "linux"
     chart: ingress-nginx
     repoURL: https://kubernetes.github.io/ingress-nginx
     targetRevision: 4.8.0
@@ -150,7 +161,7 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   labels:
     argocd.argoproj.io/instance: app-of-apps
-  name: ingress-nginx-development
+  name: external-secret-development
   namespace: argocd-system
 spec:
   destination:
@@ -161,6 +172,13 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "nodeSelector.kubernetes\\.io/os"
+          value: "linux"
+        - name: "webhook.nodeSelector.kubernetes\\.io/os"
+          value: "linux"
+        - name: "certController.nodeSelector.kubernetes\\.io/os"
+          value: "linux"
     chart: external-secrets
     repoURL: https://charts.external-secrets.io
     targetRevision: 0.9.5
@@ -233,17 +251,26 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
 
 
 module "ligl-ui" {
+  depends_on = [helm_release.argocd_helm_release]
   source = "./modules/ligl-ui"
   application_namespace = "ligl-ui"
   service_account_name = "ligl-ui-sa"
 }
 
 module "ligl-external" {
+  depends_on = [module.ligl-ui]
   source = "./modules/ligl-external"
   application_namespace = "ligl-external"
 }
 
 module "authentication-service" {
+  depends_on = [module.ligl-external]
   source = "./modules/authentication-service"
   application_namespace = "authentication-service"
+}
+
+module "taxonomy-service" {
+  depends_on = [module.authentication-service]
+  source = "./modules/taxonomy-service"
+  application_namespace = "taxonomy-service"
 }

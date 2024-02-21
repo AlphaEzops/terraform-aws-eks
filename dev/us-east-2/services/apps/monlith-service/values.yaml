@@ -1,0 +1,55 @@
+---
+global:
+  # K8s namespace. The name of the deployment.
+  namespace: "monolith-service"
+
+
+  ecr:
+    enabled: false
+    secret: "reveal-ecr"
+    # -- AWS Account ID (default "475250404638")
+    account: ""
+    # -- ECR AWS Region (default "us-east-1")
+    region: ""
+    # -- Set the full hostname/url for the secret rather than building it with account and region
+    host: ""
+    # -- Docker ECR Password (required)
+    # -- Command: aws ecr get-login-password
+    password: ""
+    # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
+    patchDefaultServiceAccount: true
+
+
+ingress:
+  # -- The ingress class (set per ingress)
+  # -- Options:
+  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+  enabled: true
+  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+  hostname: "ligl-ui.dev.ezops.com.br"
+  class: "nginx"
+  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+  sslCertArn: ""
+  # -- Uncomment below to add custom annotations for the public ingress
+  annotations: {}
+  alb:
+    rules: []
+    paths: []
+
+
+application:
+  image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  tag: "monolith-service"
+  name: "monolith-service"
+  replicaCount: 2
+  nodeSelector:
+    kubernetes.io/os: windows
+    kubernetes.io/arch: arm64
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 1000m
+      memory: 1000Mi

@@ -168,10 +168,10 @@ module "eks_cluster" {
   ]
 
   cluster_addons = {
-    aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = module.aws_ebs_csi_driver.iam_role_arn
-    }
+    # aws-ebs-csi-driver = {
+    #   most_recent              = true
+    #   service_account_role_arn = module.aws_ebs_csi_driver.iam_role_arn
+    # }
     kube-proxy = {
       most_recent = true
     }
@@ -218,18 +218,34 @@ module "eks_cluster" {
       iam_role_attach_cni_policy = true
     }
 
-    backend = {
-      name                    = "backend"
+    # backend = {
+    #   name                    = "backend"
+    #   min_size                = 1
+    #   desired_size            = 1
+    #   max_size                = 2
+    #   create_launch_template  = false
+    #   launch_template_id      = aws_launch_template.eks_cluster.id
+    #   launch_template_version = aws_launch_template.eks_cluster.default_version
+    #   ami_type                = "AL2_x86_64"
+    #   instance_types          = ["t3.medium"]
+    #   labels = {
+    #     "kube/nodetype" = "backend"
+    #   }
+    #   iam_role_attach_cni_policy = true
+    # }
+
+    windows = {
+      name                    = "windows"
       min_size                = 1
       desired_size            = 1
       max_size                = 2
       create_launch_template  = false
       launch_template_id      = aws_launch_template.eks_cluster.id
       launch_template_version = aws_launch_template.eks_cluster.default_version
-      ami_type                = "AL2_x86_64"
+      ami_type                = "WINDOWS_CORE_2019_x86_64"
       instance_types          = ["t3.medium"]
       labels = {
-        "kube/nodetype" = "backend"
+        "kube/nodetype" = "windows"
       }
       iam_role_attach_cni_policy = true
     }
