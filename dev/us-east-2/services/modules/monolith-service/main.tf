@@ -4,93 +4,10 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
-data "aws_secretsmanager_secret" "secret_reveal" {
- name = "prod/reveal/authentication-service"
-}
 
-data "aws_secretsmanager_secret_version" "secret_reveal" {
- secret_id = data.aws_secretsmanager_secret.secret_reveal.id
-}
-
-
-# SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
-  setting_json = jsonencode(<<EOT
-    {
-      "ConnectionStrings": {
-        "VMDB": 'Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false'
-      },
-      "Logging": {
-        "LogLevel": {
-          "Default": "Information",
-          "Microsoft.AspNetCore": "Warning"
-        }
-      },
-      "AllowedHosts": "*",
-      "Serilog": {
-        "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
-        "MinimumLevel": {
-          "Default": "Information",
-          "Override": {
-            "Microsoft": "Warning",
-            "System": "Warning"
-          }
-        },
-        "WriteTo": [
-          {
-            "Name": "Console"
-          },
-          {
-            "Name": "File",
-            "Args": {
-              "path": "/logs/AuthenticationCore/log-.txt",
-              "rollOnFileSizeLimit": true,
-              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
-              "rollingInterval": "Day"
-            }
-          }
-        ],
-        "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
-      },
-      "Tokens": {
-        "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
-        "Issuer": "VerticalAuthority",
-        "Audience": "Everyone",
-        "AccessTokenExpiryInMinutes": 10000,
-        "RefreshTokenExpiryInMinutes": 6000
-      },
-      "SecurityKeys": {
-        "EncyKey": "VDev@2016",
-        "DefaultPasswordKey": "VerticalPassword#123"
-      },
-      "WebSocketSetting": {
-        "KeepAliveInterval": 120,
-        "BufferSize": 4,
-        "DefaultBuffer": 1024,
-        "TimeOut": 3600000
-      },
-      "SwaggerSettings": {
-        "Version": "V1",
-        "Title": "Taxonomy Service"
-      },
-      "ConnectionStringSettings": {
-        "MaxTryCount": 10,
-        "MaxDelayTryInSeconds": 30
-      },
-      "redis": {
-        "host": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_host"]},
-        "name": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_name"]},
-        "port": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_port"]},
-        "expiry": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"]},
-      },
-      "Environment": "dev",
-      "Origion": "*",
-      "Service": "AuthenticationService"
-    }
-EOT  
-)
 }
 
 
@@ -99,7 +16,7 @@ EOT
 #==============================================================================================================
 
 
-resource "kubectl_manifest" "authentication_service" {
+resource "kubectl_manifest" "monolith_service" {
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
@@ -120,15 +37,6 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-      parameters:
-        - name: "global.namespace"
-          value: ${local.application_namespace}
-        - name: "application.resources.requests.cpu"
-          value: "100m"
-        - name: "application.resources.requests.memory"
-          value: "100m"
-        - name: "configMap.configuration"
-          value: ${local.setting_json}
     path: dev/us-east-2/services/apps/authentication-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
