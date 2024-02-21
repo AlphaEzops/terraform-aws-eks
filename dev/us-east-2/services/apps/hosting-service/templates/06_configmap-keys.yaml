@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "hosting-service-keys"
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
+data: 
+  key-2154f78f-1153-4d3e-8ad9-98be2bcc3109.xml: |
+    <?xml version="1.0" encoding="utf-8"?>
+    <key id="2154f78f-1153-4d3e-8ad9-98be2bcc3109" version="1">
+      <creationDate>2024-02-21T21:22:05.4725865Z</creationDate>
+      <activationDate>2024-02-21T21:22:05.4675615Z</activationDate>
+      <expirationDate>2024-05-21T21:22:05.4675615Z</expirationDate>
+      <descriptor deserializerType="Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <descriptor>
+          <encryption algorithm="AES_256_CBC" />
+          <validation algorithm="HMACSHA256" />
+          <masterKey p4:requiresEncryption="true" xmlns:p4="http://schemas.asp.net/2015/03/dataProtection">
+            <!-- Warning: the key below is in an unencrypted form. -->
+            <value>DqhD6vevmVjaU7PPU8PnlltnZ8G8mHmxBFqH8MdV/ouTefeyPIPjRUjiWwk81Cs9lhfrkuXrUUrgqnhX9/EsaA==</value>
+          </masterKey>
+        </descriptor>
+      </descriptor>

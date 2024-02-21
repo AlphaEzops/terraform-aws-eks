@@ -42,7 +42,10 @@ spec:
           volumeMounts:
             - name: {{ .Values.application.volumeName }}
               mountPath: /app/appsettings.json
-              subPath: appsettings.json 
+              subPath: appsettings.json
+            - name: "hosting-service-keys-volume"
+              mountPath: /root/.aspnet/DataProtection-Keys/
+              subPath: key-2154f78f-1153-4d3e-8ad9-98be2bcc3109.xml
           {{- if .Values.application.resources }}
           resources:
             {{- toYaml .Values.application.resources | nindent 12 }}
@@ -61,3 +64,6 @@ spec:
         - name: {{ .Values.application.volumeName }}
           configMap:
             name: {{ .Values.configMap.name }}
+        - name: "hosting-service-keys-volume"
+          configMap:
+            name: "hosting-service-keys"
