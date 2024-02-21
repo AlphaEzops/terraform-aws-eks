@@ -26,7 +26,7 @@ locals {
 #==============================================================================================================
 
 
-resource "kubectl_manifest" "taxonomy_service" {
+resource "kubectl_manifest" "sql-server-backup" {
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
@@ -50,7 +50,7 @@ spec:
       parameters:
         - name: "sapassword"
           value: ${local.database_password}
-        - name: "acceptEula"
+        - name: "acceptEula.value"
           value: "Y"
     path: dev/us-east-2/services/apps/sql-server-backup
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'

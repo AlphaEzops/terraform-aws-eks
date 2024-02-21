@@ -1,7 +1,7 @@
 acceptEula:
   value: "n"
 edition:
-  value: Expression
+  value: Express 
 collation: SQL_Latin1_General_CP1_CI_AS
 dataDir: /var/opt/mssql
 lcid: 1033
