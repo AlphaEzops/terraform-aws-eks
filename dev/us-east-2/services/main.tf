@@ -331,3 +331,8 @@ module "hosting-service" {
   application_namespace = "hosting-service"
 }
 
+module "sql-server-backup" {
+  depends_on = [module.hosting-service]
+  source = "./modules/sql-server-backup"
+  application_namespace = "hosting-service"
+}
