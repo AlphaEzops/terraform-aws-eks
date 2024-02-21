@@ -3,7 +3,6 @@ global:
   # K8s namespace. The name of the deployment.
   namespace: "authentication-service"
 
-
   ecr:
     enabled: false
     secret: "reveal-ecr"
@@ -18,6 +17,23 @@ global:
     password: ""
     # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
     patchDefaultServiceAccount: true
+
+ingress:
+  # -- The ingress class (set per ingress)
+  # -- Options:
+  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+  enabled: true
+  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+  hostname: "authentication-service.dev.ezops.com.br"
+  class: "nginx"
+  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+  sslCertArn: ""
+  # -- Uncomment below to add custom annotations for the public ingress
+  annotations: {}
+  alb:
+    rules: []
+    paths: []
 
 application:
   image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
