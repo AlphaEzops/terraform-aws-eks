@@ -40,8 +40,8 @@ ingress:
 
 application:
   image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
-  tag: "monolith-service"
-  name: "monolith-service"
+  tag: "monolith-service-master"
+  name: "monolith-service-master"
   replicaCount: 2
   nodeSelector:
     kubernetes.io/os: windows
