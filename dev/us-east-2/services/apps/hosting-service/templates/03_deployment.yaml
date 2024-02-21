@@ -35,7 +35,10 @@ spec:
         - name: {{ .Values.application.containerName }}
           image: {{ .Values.application.image }}:{{ .Values.application.tag }}
           ports:
-            - containerPort: 80
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
           volumeMounts:
             - name: {{ .Values.application.volumeName }}
               mountPath: /app/appsettings.json
