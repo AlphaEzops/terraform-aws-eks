@@ -26,18 +26,18 @@ spec:
   ingressClassName: {{ $ingress_class }}
   defaultBackend:
     service:
-      name: service-ligl-ui
+      name: {{.Values.service.name }}
       port:
         number: 80
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /AuthenticationService/Token
+          - path: /
             pathType:  Prefix
             backend:
               service:
-                name: service-hosting-service
+                name: {{.Values.service.name }}
                 port:
                   number: 80
 {{- end }}
