@@ -73,7 +73,7 @@ service:
 #  -- ConfigMap configuration
 configMap:
   name: "hosting-service-config" 
-  configuration: |-
+  configuration: |2
     {
       "ConnectionStrings": {
         "VMDB": "Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;integrated security=True;Encrypt=false"
