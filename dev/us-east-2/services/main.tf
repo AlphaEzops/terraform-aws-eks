@@ -281,3 +281,9 @@ module "monolith-service" {
   application_namespace = "monolith-service"
 }
 
+module "hosting-service" {
+  depends_on = [module.taxonomy-service]
+  source = "./modules/hosting-service"
+  application_namespace = "hosting-service"
+}
+
