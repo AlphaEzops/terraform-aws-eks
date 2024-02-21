@@ -44,9 +44,8 @@ application:
   name: "monolith-service"
   replicaCount: 2
   nodeSelector:
-    # kubernetes.io/os: windows
-    # kubernetes.io/arch: amd64
-    kube/nodetype: windows-large
+    kubernetes.io/os: windows
+    kubernetes.io/arch: amd64
   resources:
     requests:
       cpu: 500m

@@ -254,21 +254,21 @@ module "eks_cluster" {
       iam_role_attach_cni_policy = true
     }
 
-    windows_large = {
-      name                    = "windows-large"
-      min_size                = 1
-      desired_size            = 1
-      max_size                = 2
-      create_launch_template  = false
-      launch_template_id      = aws_launch_template.eks_cluster.id
-      launch_template_version = aws_launch_template.eks_cluster.default_version
-      ami_type                = "WINDOWS_CORE_2019_x86_64"
-      instance_types          = ["t3.large"]
-      labels = {
-        "kube/nodetype" = "windows-large"
-      }
-      iam_role_attach_cni_policy = true
-    }
+    # windows_large = {
+    #   name                    = "windows-large"
+    #   min_size                = 1
+    #   desired_size            = 1
+    #   max_size                = 2
+    #   create_launch_template  = false
+    #   launch_template_id      = aws_launch_template.eks_cluster.id
+    #   launch_template_version = aws_launch_template.eks_cluster.default_version
+    #   ami_type                = "WINDOWS_CORE_2019_x86_64"
+    #   instance_types          = ["t3.large"]
+    #   labels = {
+    #     "kube/nodetype" = "windows-large"
+    #   }
+    #   iam_role_attach_cni_policy = true
+    # }
   }
 
   tags = merge(var.tags.eks, local.tags)
