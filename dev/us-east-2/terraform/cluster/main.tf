@@ -184,7 +184,10 @@ module "eks_cluster" {
           # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
           ENABLE_PREFIX_DELEGATION = "true"
           WARM_PREFIX_TARGET       = "1"
-        }
+        },
+        # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/windows-support.html#enable-windows-support
+        enableWindowsIpam = "true"
+        enableWindowsPrefixDelegation = "true"
       })
     }
     #    vpc-cni = {
@@ -201,6 +204,7 @@ module "eks_cluster" {
   }
 
   eks_managed_node_groups = {
+    
     system-services = {
       name                    = "system-services"
       min_size                = 1

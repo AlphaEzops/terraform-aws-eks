@@ -23,6 +23,7 @@ spec:
         timestamp: {{ now | quote }}
       {{- end }}
     spec:
+      progressDeadlineSeconds: 1200 
       {{- if or .Values.global.imagePullSecrets .Values.global.ecr.enabled }}
       imagePullSecrets:
         {{- if .Values.global.ecr.enabled }}

@@ -3,6 +3,11 @@ output "eks_cluster_id" {
   value       = module.eks_cluster.cluster_id
 }
 
+output "eks_cluster_role_arn" {
+  description = "EKS role"
+  value       = module.eks_cluster.cluster_iam_role_arn
+}
+
 output "eks_cluster_name" {
   description = "EKS cluster name"
   value       = module.eks_cluster.cluster_name
