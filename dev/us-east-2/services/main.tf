@@ -274,3 +274,10 @@ module "taxonomy-service" {
   source = "./modules/taxonomy-service"
   application_namespace = "taxonomy-service"
 }
+
+module "monolith-service" {
+  depends_on = [module.taxonomy-service]
+  source = "./modules/monolith-service"
+  application_namespace = "monolith-service"
+}
+
