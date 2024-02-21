@@ -5,7 +5,6 @@ data "aws_eks_cluster" "reveal-cluster" {
 }
 
 data "aws_secretsmanager_secret" "secret_reveal" {
-
  name = "prod/reveal/authentication-service"
 }
 
@@ -87,7 +86,7 @@ locals {
         "expiry": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"]},
       },
       "Environment": "dev",
-      "Origion": "*", //This is the clientweb url and we can give multiple with comma seperator.
+      "Origion": "*",
       "Service": "TaxonomyService"
     }
 EOT  
