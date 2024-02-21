@@ -1,0 +1,44 @@
+{{- if .Values.ingress.enabled }}
+{{- $ingress_class := (.Values.ingress.class | default "alb") -}}
+{{- if eq $ingress_class "nginx" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
+  name: ligl-ui-ingress
+  annotations:
+    # {{- if .Values.ingress.hostname }}
+    # external-dns.alpha.kubernetes.io/hostname: {{ .Values.ingress.hostname }}
+    # {{- end }}
+    # Nginx ingress (nginx)
+    # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
+    # nginx.ingress.kubernetes.io/service-upstream: "true"
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /Token
+    # nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    # nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+    # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
+spec:
+  ingressClassName: {{ $ingress_class }}
+  defaultBackend:
+    service:
+      name: service-ligl-ui
+      port:
+        number: 80
+  rules:
+    - host: {{ .Values.ingress.hostname }}
+      http:
+        paths:
+          - path: /AuthenticationService/Token
+            pathType:  Prefix
+            backend:
+              service:
+                name: service-hosting-service
+                port:
+                  number: 80
+{{- end }}
+{{- end }}
