@@ -151,6 +151,50 @@ YAML
   ]
 }
 
+resource "kubectl_manifest" "metrics_server" {
+
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/instance: app-of-apps
+  name: metrics-server-development
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: metrics-server
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    helm:
+      valueFiles:
+        - values.yaml
+    path: dev/us-east-2/services/system/metrics-server
+    repoURL: git@github.com:AlphaEzops/reveal-eks.git
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      allowEmpty: false
+      prune: false
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 5
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+YAML
+  depends_on = [
+    helm_release.argocd_helm_release
+  ]
+}
+
 resource "kubectl_manifest" "external_secrets" {
 
   yaml_body = <<YAML
