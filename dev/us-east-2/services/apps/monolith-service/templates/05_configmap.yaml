@@ -15,6 +15,7 @@ data:
       <connectionStrings>
         <add name="DefaultConnection" connectionString={{ .Values.configMap.DefaultConnectionString }} providerName="System.Data.SqlClient" />
         <add name="CaseCustodianDataSourceContext" connectionString={{ .Values.configMap.CaseCustodianDataSourceContextConnectionString }} providerName="System.Data.EntityClient" />
+        <add name="MasterEntities" connectionString={{ .Values.configMap.MasterEntitiesConnectionString }} providerName="System.Data.EntityClient" />
         <add name="ProcessingEngineEntities" connectionString={{ .Values.configMap.ProcessingEngineEntitiesConnectionString }} providerName="System.Data.EntityClient" />
         <add name="ReportManagementEntities" connectionString={{ .Values.configMap.ReportManagementEntitiesConnectionString }} providerName="System.Data.EntityClient" />
         <add name="EntityDb" connectionString={{ .Values.configMap.EntityDbConnectionString }} providerName="System.Data.EntityClient" />
