@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.configMap.name }}
   namespace: {{ .Values.global.namespace | default .Release.Name }}
 data: 
-  Test.config: |
+  Web.config: |
     <?xml version="1.0" encoding="utf-8"?>
     <configuration>
       <configSections>
