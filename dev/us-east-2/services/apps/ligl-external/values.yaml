@@ -56,11 +56,11 @@ configMap:
   name: "ligl-external-config" 
   configuration: |-
     {
-        "serviceIp":"http://10.0.0.10:8092/",
+        "serviceIp":"ligl-ui.dev.ezops.com.br",
         "IsNuixEnvironment":false,
         "UserLHNSignature":"true",
         "UserLHNCurrentStatus":"true",
         "IsSSOEnabledForLHNAcknowledgement":"true",
-        "LiglUILoginURL" : "https://in-opt-dit-01.in.vertical.com/DEV_Angular/#/login",   
+        "LiglUILoginURL" : "ligl-ui.dev.ezops.com.br/#/login",   
         "IsLHNTitleMandatory" : "true"
     }

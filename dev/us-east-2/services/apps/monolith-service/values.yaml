@@ -98,5 +98,5 @@ configMap:
   CCDInsertChunk: 100
   MaximumCCDInsertions: 1000
   ClientAppConfigDecryptKey: verticaldev@1234
-  UIUrl: https://in-opt-dit-01.in.vertical.com/Dev_Angular/
+  UIUrl: ligl-ui.dev.ezops.com.br
   AntiVirusCheckerClamAV: false

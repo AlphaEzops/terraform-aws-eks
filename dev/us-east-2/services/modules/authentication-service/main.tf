@@ -20,7 +20,7 @@ locals {
   setting_json = jsonencode(<<EOT
     {
       "ConnectionStrings": {
-        "VMDB": 'Data Source=sql-server-backup-development.sql-server-backup.svc.cluster.local;Initial Catalog=UAT_ENT_VMDB;Persist Security Info=True;User ID=sa;Password=password123@;Encrypt=false'
+        "VMDB": "Data Source=sql-server-backup-development.sql-server-backup.svc.cluster.local,1433;Initial Catalog=UAT_ENT_VMDB;Persist Security Info=True;User ID=sa;Password=password123@;Encrypt=false"
       },
       "Logging": {
         "LogLevel": {
