@@ -39,7 +39,7 @@ spec:
             - containerPort: 80
           volumeMounts:
             - name: config-monolith-volume
-              mountPath: C:\\inetpub\\wwwroot\\Test.config
+              mountPath: C:\\inetpub\\wwwroot\\
           {{- if .Values.application.resources }}
           resources:
             {{- toYaml .Values.application.resources | nindent 12 }}
@@ -58,3 +58,6 @@ spec:
         - name: config-monolith-volume
           configMap:
             name: {{ .Values.configMap.name }}
+            items:
+              - key: "Test.config"
+                path: "Test.config"
