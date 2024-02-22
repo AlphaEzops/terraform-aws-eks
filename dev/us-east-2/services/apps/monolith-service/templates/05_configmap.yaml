@@ -21,46 +21,42 @@ data:
         <add name="StagingEntities" connectionString={{ .Values.configMap.StagingEntitiesConnectionString }} providerName="System.Data.EntityClient" />
       </connectionStrings>
       <appSettings>
-        <add key="FileRepositoryLocation" value="FileRepository" />
-        <add key="EmployeeImportTemplateLocation" value="EmployeeImportTemplates" />
-        <add key="NonLegalHelpDocumentName" value="HelpDocument.pdf" />
-        <add key="EncyKey" value="VDev@2016" />
-        <add key="DocumentStoreLocation" value="Document_Store" />
-        <add key="documentStore_path" value="http://localhost:10892/document_store/" />
-        <add key="document_physical_path" value="" />
-        <add key="WebUrl" value="http://localhost:13399/" />
-        <add key="StaticUrl" value="http://localhost:15587/index.aspx" />
-        <add key="LHExpiryTimeInHours" value="48" />
-        <add key="redis-cache" value="localhost" />
-        <add key="Log4NetConfigPath" value="log4net.config" />
-        <add key="EventLogName" value="Application" />
-        <add key="EventLogSource" value="Vertical-Log" />
-        <add key="IsAsyncLoggingEnabled" value="true" />
-        <add key="PrivateKey" value="password@123" />
-        <add key="DefaultPasswordKey" value="VerticalPassword#123" />
-        <add key="AccessTokenExpiryInMinutes" value="60" />
-        <add key="AccessControlAllowOrigin" value="*" />
-        <add key="PluginUserFullName" value="pluginacc" />
-        <add key="ImportRowsThreshold" value="100" />
-        <add key="AllowedFileTypesForImport" value=".csv" />
-        <add key="PublishStackTrace" value="true" />
-        <add key="ClientInstance" value="OptimumDevVerticalNas" />
-        <add key="ClientDoamins" value="vertical,in.vertical.com,verticaldiscovery.com,verticaldiscoverytest.onmicrosoft.com" />
-        <add key="aspnet:UseTaskFriendlySynchronizationContext" value="true" />
-        <add key="ForgotPwdExpiryTimeInHours" value="48" />
-        <!--<add key="redis-cache"
-            value="vertical.redis.cache.windows.net:6380,password=74qaa13i+7LX/DCtaHFEX6wfWWtA4qa6Lh50Qv29mnM=,ssl=True,abortConnect=False" />-->
-        <add key="Issuer" value="VerticalAuthority" />
-        <add key="Audience" value="Everyone" />
-        <add key="Secret" value="IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa" />
-        <add key="IsAngularMigrated" value="true" />
-        <add key="CCDInsertChunk" value="100" />
-        <add key="MaximumCCDInsertions" value="1000" />
-        <add key="ClientAppConfigDecryptKey" value="verticaldev@1234" />
-      <add key="UIUrl" value="https://in-opt-dit-01.in.vertical.com/Dev_Angular/" />
-        <!--Below key should be uncommented when code is deployed in azure enviroment.-->
-        <!--<add key="SubscriptionKey" value="daf5e8d09648422699a77c11bfd0333f"/>-->
-        <add key="AntiVirusCheckerClamAV" value="false" />
+        <add key="FileRepositoryLocation" value="{{ .Values.configMap.FileRepositoryLocation }}" />
+        <add key="EmployeeImportTemplateLocation" value="{{ .Values.configMap.EmployeeImportTemplateLocation }}" />
+        <add key="NonLegalHelpDocumentName" value="{{ .Values.configMap.NonLegalHelpDocumentName }}" />
+        <add key="EncyKey" value="{{ .Values.configMap.EncyKey }}" />
+        <add key="DocumentStoreLocation" value="{{ .Values.configMap.DocumentStoreLocation }}" />
+        <add key="documentStore_path" value="{{ .Values.configMap.documentStore_path }}" />
+        <add key="document_physical_path" value="{{ .Values.configMap.document_physical_path }}" />
+        <add key="WebUrl" value="{{ .Values.configMap.WebUrl }}" />
+        <add key="StaticUrl" value="{{ .Values.configMap.StaticUrl }}" />
+        <add key="LHExpiryTimeInHours" value="{{ .Values.configMap.LHExpiryTimeInHours }}" />
+        <add key="redis-cache" value="{{ .Values.configMap.redisCache }}" />
+        <add key="Log4NetConfigPath" value="{{ .Values.configMap.Log4NetConfigPath }}" />
+        <add key="EventLogName" value="{{ .Values.configMap.EventLogName }}" />
+        <add key="EventLogSource" value="{{ .Values.configMap.EventLogSource }}" />
+        <add key="IsAsyncLoggingEnabled" value="{{ .Values.configMap.IsAsyncLoggingEnabled }}" />
+        <add key="PrivateKey" value="{{ .Values.configMap.PrivateKey }}" />
+        <add key="DefaultPasswordKey" value="{{ .Values.configMap.DefaultPasswordKey }}" />
+        <add key="AccessTokenExpiryInMinutes" value="{{ .Values.configMap.AccessTokenExpiryInMinutes }}" />
+        <add key="AccessControlAllowOrigin" value="{{ .Values.configMap.AccessControlAllowOrigin }}" />
+        <add key="PluginUserFullName" value="{{ .Values.configMap.PluginUserFullName }}" />
+        <add key="ImportRowsThreshold" value="{{ .Values.configMap.ImportRowsThreshold }}" />
+        <add key="AllowedFileTypesForImport" value="{{ .Values.configMap.AllowedFileTypesForImport }}" />
+        <add key="PublishStackTrace" value="{{ .Values.configMap.PublishStackTrace }}" />
+        <add key="ClientInstance" value="{{ .Values.configMap.ClientInstance }}" />
+        <add key="ClientDoamins" value="{{ .Values.configMap.ClientDoamins }}" />
+        <add key="aspnet:UseTaskFriendlySynchronizationContext" value="{{ .Values.configMap.useTaskFriendlySynchronizationContext }}" />
+        <add key="ForgotPwdExpiryTimeInHours" value="{{ .Values.configMap.ForgotPwdExpiryTimeInHours }}" />
+        <add key="Issuer" value="{{ .Values.configMap.Issuer }}" />
+        <add key="Audience" value="{{ .Values.configMap.Audience }}" />
+        <add key="Secret" value="{{ .Values.configMap.Secret }}" />
+        <add key="IsAngularMigrated" value="{{ .Values.configMap.IsAngularMigrated }}" />
+        <add key="CCDInsertChunk" value="{{ .Values.configMap.CCDInsertChunk }}" />
+        <add key="MaximumCCDInsertions" value="{{ .Values.configMap.MaximumCCDInsertions }}" />
+        <add key="ClientAppConfigDecryptKey" value="{{ .Values.configMap.ClientAppConfigDecryptKey }}" />
+        <add key="UIUrl" value="{{ .Values.configMap.UIUrl }}" />
+        <add key="AntiVirusCheckerClamAV" value="{{ .Values.configMap.AntiVirusCheckerClamAV }}" />
       </appSettings>
       <!--
         For a description of web.config changes see http://go.microsoft.com/fwlink/?LinkId=235367.
