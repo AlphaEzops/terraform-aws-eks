@@ -1,0 +1,296 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
+data: 
+  webconfig: |
+    <?xml version="1.0" encoding="utf-8"?>
+    <configuration>
+      <configSections>
+        <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+      <sectionGroup name="nwebsec">
+          <section name="httpHeaderSecurityModule" type="NWebsec.Modules.Configuration.HttpHeaderSecurityConfigurationSection, NWebsec" requirePermission="false" />
+        </sectionGroup></configSections>
+      <connectionStrings>
+        <add name="DefaultConnection" connectionString={{ .Values.configMap.DefaultConnectionString }} providerName="System.Data.SqlClient" />
+        <add name="CaseCustodianDataSourceContext" connectionString={{ .Values.configMap.CaseCustodianDataSourceContextConnectionString }} providerName="System.Data.EntityClient" />
+        <add name="ProcessingEngineEntities" connectionString={{ .Values.configMap.ProcessingEngineEntitiesConnectionString }} providerName="System.Data.EntityClient" />
+        <add name="ReportManagementEntities" connectionString={{ .Values.configMap.ReportManagementEntitiesConnectionString }} providerName="System.Data.EntityClient" />
+        <add name="EntityDb" connectionString={{ .Values.configMap.EntityDbConnectionString }} providerName="System.Data.EntityClient" />
+        <add name="StagingEntities" connectionString={{ .Values.configMap.StagingEntitiesConnectionString }} providerName="System.Data.EntityClient" />
+      </connectionStrings>
+      <appSettings>
+        <add key="FileRepositoryLocation" value="FileRepository" />
+        <add key="EmployeeImportTemplateLocation" value="EmployeeImportTemplates" />
+        <add key="NonLegalHelpDocumentName" value="HelpDocument.pdf" />
+        <add key="EncyKey" value="VDev@2016" />
+        <add key="DocumentStoreLocation" value="Document_Store" />
+        <add key="documentStore_path" value="http://localhost:10892/document_store/" />
+        <add key="document_physical_path" value="" />
+        <add key="WebUrl" value="http://localhost:13399/" />
+        <add key="StaticUrl" value="http://localhost:15587/index.aspx" />
+        <add key="LHExpiryTimeInHours" value="48" />
+        <add key="redis-cache" value="localhost" />
+        <add key="Log4NetConfigPath" value="log4net.config" />
+        <add key="EventLogName" value="Application" />
+        <add key="EventLogSource" value="Vertical-Log" />
+        <add key="IsAsyncLoggingEnabled" value="true" />
+        <add key="PrivateKey" value="password@123" />
+        <add key="DefaultPasswordKey" value="VerticalPassword#123" />
+        <add key="AccessTokenExpiryInMinutes" value="60" />
+        <add key="AccessControlAllowOrigin" value="*" />
+        <add key="PluginUserFullName" value="pluginacc" />
+        <add key="ImportRowsThreshold" value="100" />
+        <add key="AllowedFileTypesForImport" value=".csv" />
+        <add key="PublishStackTrace" value="true" />
+        <add key="ClientInstance" value="OptimumDevVerticalNas" />
+        <add key="ClientDoamins" value="vertical,in.vertical.com,verticaldiscovery.com,verticaldiscoverytest.onmicrosoft.com" />
+        <add key="aspnet:UseTaskFriendlySynchronizationContext" value="true" />
+        <add key="ForgotPwdExpiryTimeInHours" value="48" />
+        <!--<add key="redis-cache"
+            value="vertical.redis.cache.windows.net:6380,password=74qaa13i+7LX/DCtaHFEX6wfWWtA4qa6Lh50Qv29mnM=,ssl=True,abortConnect=False" />-->
+        <add key="Issuer" value="VerticalAuthority" />
+        <add key="Audience" value="Everyone" />
+        <add key="Secret" value="IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa" />
+        <add key="IsAngularMigrated" value="true" />
+        <add key="CCDInsertChunk" value="100" />
+        <add key="MaximumCCDInsertions" value="1000" />
+        <add key="ClientAppConfigDecryptKey" value="verticaldev@1234" />
+      <add key="UIUrl" value="https://in-opt-dit-01.in.vertical.com/Dev_Angular/" />
+        <!--Below key should be uncommented when code is deployed in azure enviroment.-->
+        <!--<add key="SubscriptionKey" value="daf5e8d09648422699a77c11bfd0333f"/>-->
+        <add key="AntiVirusCheckerClamAV" value="false" />
+      </appSettings>
+      <!--
+        For a description of web.config changes see http://go.microsoft.com/fwlink/?LinkId=235367.
+
+        The following attributes can be set on the <httpRuntime> tag.
+          <system.Web>
+            <httpRuntime targetFramework="4.6.2" />
+          </system.Web>
+      -->
+      <system.web>
+        <authentication mode="None" />
+        <compilation debug="true" targetFramework="4.8" />
+        <httpRuntime targetFramework="4.5.2" maxQueryStringLength="32768" maxUrlLength="65536" executionTimeout="240" maxRequestLength="25600" enableVersionHeader="false" />
+        <customErrors mode="RemoteOnly" />
+      </system.web>
+      <system.webServer>
+        <httpProtocol>
+          <customHeaders>
+            <remove name="X-Powered-By" />
+          <clear /></customHeaders>
+        </httpProtocol>
+        <modules>
+          <remove name="FormsAuthentication" />
+        <add name="NWebsecHttpHeaderSecurityModule" type="NWebsec.Modules.HttpHeaderSecurityModule, NWebsec" /></modules>
+        <handlers>
+          <remove name="ExtensionlessUrl-Integrated-4.0" />
+          <add name="ExtensionlessUrl-Integrated-4.0" path="*." verb="GET,HEAD,POST,DEBUG,DELETE,PUT,OPTIONS" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+        <remove name="ExtensionlessUrlHandler-Integrated-4.0" /><remove name="OPTIONSVerbHandler" /><remove name="TRACEVerbHandler" /><add name="ExtensionlessUrlHandler-Integrated-4.0" path="*." verb="*" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" /></handlers>
+        <security>
+          <requestFiltering>
+            <requestLimits maxQueryString="32768" maxAllowedContentLength="26214400" />
+          <hiddenSegments>
+              <add segment="NWebsecConfig" />
+            </hiddenSegments></requestFiltering>
+        </security>
+      </system.webServer>
+      <runtime>
+        <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Owin.Security" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="0.0.0.0-4.2.2.0" newVersion="4.2.2.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Owin.Security.OAuth" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="0.0.0.0-4.2.2.0" newVersion="4.2.2.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Owin.Security.Cookies" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="0.0.0.0-4.2.2.0" newVersion="4.2.2.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Owin" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="0.0.0.0-4.2.2.0" newVersion="4.2.2.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Newtonsoft.Json" culture="neutral" publicKeyToken="30ad4fe6b2a6aeed" />
+            <bindingRedirect oldVersion="0.0.0.0-13.0.0.0" newVersion="13.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Web.Optimization" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="1.0.0.0-1.1.0.0" newVersion="1.1.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="WebGrease" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="0.0.0.0-1.6.5135.21930" newVersion="1.6.5135.21930" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Web.Http" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.2.9.0" newVersion="5.2.9.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Net.Http.Formatting" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.2.9.0" newVersion="5.2.9.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Antlr3.Runtime" publicKeyToken="eb42632606e9261f" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-3.5.0.2" newVersion="3.5.0.2" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Web.Cors" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.2.9.0" newVersion="5.2.9.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Xml.ReaderWriter" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.1.0.0" newVersion="4.1.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Net.Http" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.0.0.0" newVersion="4.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Extensions.DependencyInjection.Abstractions" publicKeyToken="adb9793829ddae60" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.0" newVersion="7.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Extensions.DependencyInjection" publicKeyToken="adb9793829ddae60" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.0" newVersion="7.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Diagnostics.DiagnosticSource" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.2" newVersion="7.0.0.2" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.IO.Compression" publicKeyToken="b77a5c561934e089" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.1.2.0" newVersion="4.1.2.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.IdentityModel.Tokens" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-6.32.1.0" newVersion="6.32.1.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.IdentityModel.Tokens.Jwt" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-6.32.1.0" newVersion="6.32.1.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Data.Edm" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.8.4.0" newVersion="5.8.4.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Data.OData" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.8.4.0" newVersion="5.8.4.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Spatial" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.8.4.0" newVersion="5.8.4.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Reflection.TypeExtensions" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.1.0.0" newVersion="4.1.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Web.Helpers" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Web.WebPages" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="1.0.0.0-3.0.0.0" newVersion="3.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Web.Mvc" publicKeyToken="31bf3856ad364e35" />
+            <bindingRedirect oldVersion="1.0.0.0-5.2.9.0" newVersion="5.2.9.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Azure.KeyVault.Core" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-3.0.5.0" newVersion="3.0.5.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Web.Infrastructure" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-2.0.0.0" newVersion="2.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Security.Cryptography.Pkcs" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.3" newVersion="7.0.0.3" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Memory" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.0.1.2" newVersion="4.0.1.2" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Buffers" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.0.3.0" newVersion="4.0.3.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Text.Encodings.Web" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.0.5.1" newVersion="4.0.5.1" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.ValueTuple" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.0.3.0" newVersion="4.0.3.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Threading.Tasks.Extensions" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-4.2.0.1" newVersion="4.2.0.1" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Bcl.AsyncInterfaces" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.0" newVersion="7.0.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.OData.Edm" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.17.0.0" newVersion="7.17.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.OData.Core" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.17.0.0" newVersion="7.17.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Spatial" publicKeyToken="31bf3856ad364e35" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.17.0.0" newVersion="7.17.0.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Unity.Abstractions" publicKeyToken="489b6accfaf20ef0" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-5.11.7.0" newVersion="5.11.7.0" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Extensions.Logging.Abstractions" publicKeyToken="adb9793829ddae60" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.1" newVersion="7.0.0.1" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="System.Text.Json" publicKeyToken="cc7b13ffcd2ddd51" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.3" newVersion="7.0.0.3" />
+          </dependentAssembly>
+          <dependentAssembly>
+            <assemblyIdentity name="Microsoft.Extensions.Options" publicKeyToken="adb9793829ddae60" culture="neutral" />
+            <bindingRedirect oldVersion="0.0.0.0-7.0.0.1" newVersion="7.0.0.1" />
+          </dependentAssembly>
+        </assemblyBinding>
+      </runtime>
+      <entityFramework>
+        <defaultConnectionFactory type="System.Data.Entity.Infrastructure.SqlConnectionFactory, EntityFramework" />
+        <providers>
+          <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+        </providers>
+        <interceptors>
+          <interceptor type="Vertical.Business.Authorization.Interceptors.AuthorizationTreeInterceptor,Vertical.Business" />
+          <interceptor type="Vertical.Business.Authorization.Interceptors.AuthorizationCommandInterceptor,Vertical.Business" />
+        </interceptors>
+      </entityFramework>
+      <nwebsec>
+        <httpHeaderSecurityModule xmlns="http://nwebsec.com/HttpHeaderSecurityModuleConfig.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="NWebsecConfig/HttpHeaderSecurityModuleConfig.xsd">
+          <securityHttpHeaders>
+            <x-Frame-Options policy="Deny" />
+            <x-Content-Type-Options enabled="true" />
+            <x-XSS-Protection policy="FilterEnabled" blockMode="true" />
+          </securityHttpHeaders>
+        </httpHeaderSecurityModule>
+      </nwebsec>
+    </configuration>
+

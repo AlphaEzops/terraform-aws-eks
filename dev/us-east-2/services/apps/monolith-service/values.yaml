@@ -53,3 +53,12 @@ application:
     limits:
       cpu: 2000m
       memory: 2000Mi
+
+configMap:
+  name: "monolith-config" 
+  DefaultConnectionString: "data source=10.0.0.8\\vertical_dev,58081;initial catalog=DEV_MIGRATION;integrated security=True;MultipleActiveResultSets=True;Enlist=false;App=EntityFramework"
+  CaseCustodianDataSourceContextConnectionString: "data source=10.0.0.8\\vertical_dev,58081;initial catalog=DEV_MIGRATION;integrated security=True;multipleactiveresultsets=True;application name=EntityFramework"
+  ProcessingEngineEntitiesConnectionString: "metadata=res://*/Master.Master.csdl|res://*/Master.Master.ssdl|res://*/Master.Master.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=10.0.0.8\\vertical_dev,58081;initial catalog=DEV_MASTER;integrated security=True;MultipleActiveResultSets=True;Enlist=false;App=EntityFramework&quot;"
+  ReportManagementEntitiesConnectionString: "metadata=res://*/ProcessingEngineManagement.ProcessingEngine.csdl|res://*/ProcessingEngineManagement.ProcessingEngine.ssdl|res://*/ProcessingEngineManagement.ProcessingEngine.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=10.0.0.8\\vertical_dev,58081;initial catalog=DEV_MASTER;integrated security=True;MultipleActiveResultSets=True;Enlist=false;App=EntityFramework&quot;"
+  EntityDbConnectionString: "metadata={0};provider=System.Data.SqlClient;provider connection string=&quot;data source={1};initial catalog={2};{3};MultipleActiveResultSets=True;Enlist={4};App=EntityFramework&quot;"
+  StagingEntitiesConnectionString: "metadata=res://*/Staging.Staging.csdl|res://*/Staging.Staging.ssdl|res://*/Staging.Staging.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=10.0.0.8\\vertical_dev,58081;initial catalog=DEV_STAGING;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework&quot;"

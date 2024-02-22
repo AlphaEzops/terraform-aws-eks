@@ -52,6 +52,10 @@ spec:
           value: ${local.database_password}
         - name: "acceptEula.value"
           value: "Y"
+        - name: "nodeSelector.kubernetes\\.io/os"
+          value: "linux"
+        - name: "persistence.dataSize"
+          value: "6Gi"
     path: dev/us-east-2/services/apps/sql-server-backup
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
