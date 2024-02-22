@@ -72,7 +72,7 @@ configMap:
   DocumentStoreLocation: Document_Store
   documentStore_path: http://localhost:10892/document_store/
   document_physical_path: ""
-  WebUrl: http://localhost:13399/
+  WebUrl: ligl-ui.dev.ezops.com.br
   StaticUrl: http://localhost:15587/index.aspx
   LHExpiryTimeInHours: 48
   redisCache: localhost
