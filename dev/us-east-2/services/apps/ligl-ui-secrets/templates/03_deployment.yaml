@@ -36,10 +36,10 @@ spec:
           image: {{ .Values.application.image }}:{{ .Values.application.tag }}
           ports:
             - containerPort: 80
-          volumeMounts:
-            - name: config-ligl-ui-volume
-              mountPath: /usr/share/nginx/html/assets/config/configuration.json
-              subPath: configuration.json  
+          # volumeMounts:
+          #   - name: config-ligl-ui-volume
+          #     mountPath: /usr/share/nginx/html/assets/config/configuration.json
+          #     subPath: configuration.json  
           {{- if .Values.application.resources }}
           resources:
             {{- toYaml .Values.application.resources | nindent 12 }}
