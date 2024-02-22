@@ -54,13 +54,11 @@ ingress:
 
 configMap:
   name: "ligl-external-config" 
-  configuration: |-
-    {
-        "serviceIp":"ligl-ui.dev.ezops.com.br",
-        "IsNuixEnvironment":false,
-        "UserLHNSignature":"true",
-        "UserLHNCurrentStatus":"true",
-        "IsSSOEnabledForLHNAcknowledgement":"true",
-        "LiglUILoginURL" : "ligl-ui.dev.ezops.com.br/#/login",   
-        "IsLHNTitleMandatory" : "true"
-    }
+  serviceIp: "ligl-ui.dev.ezops.com.br"
+  IsNuixEnvironment: false
+  UserLHNSignature: "true"
+  UserLHNCurrentStatus: "true"
+  IsSSOEnabledForLHNAcknowledgement: "true"
+  LiglUILoginURL: "ligl-ui.dev.ezops.com.br/#/login"
+  IsLHNTitleMandatory: "true"
+
