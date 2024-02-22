@@ -121,30 +121,30 @@ secrets:
 
   secretDefinitions:
     data:
-      - name: LOGIN_URL
-        key: prod/reveal/ligl-ui
-        property: LOGIN_URL
-      - name: GET_USER_URL
-        key: prod/reveal/ligl-ui
-        property: GET_USER_URL
-      - name: ODATA
-        key: prod/reveal/ligl-ui
-        property: ODATA
-      - name: MODULE_LOOKUP_URL
-        key: prod/reveal/ligl-ui
-        property: MODULE_LOOKUP_URL
-      - name: APP_SETTING_URL
-        key: prod/reveal/ligl-ui
-        property: APP_SETTING_URL
-      - name: ODATA_TAXONOMY_URL
-        key: prod/reveal/ligl-ui
-        property: ODATA_TAXONOMY_URL
-      - name: USER_PERMISSIONS
-        key: prod/reveal/ligl-ui
-        property: USER_PERMISSIONS
-      - name: LOGOUT_URL
-        key: prod/reveal/ligl-ui
-        property: LOGOUT_URL
-      - name: API_PREFIX_URL
-        key: prod/reveal/ligl-ui
-        property: API_PREFIX_URL
+      # - name: LOGIN_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: LOGIN_URL
+      # - name: GET_USER_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: GET_USER_URL
+      # - name: ODATA
+      #   key: prod/reveal/ligl-ui
+      #   property: ODATA
+      # - name: MODULE_LOOKUP_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: MODULE_LOOKUP_URL
+      # - name: APP_SETTING_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: APP_SETTING_URL
+      # - name: ODATA_TAXONOMY_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: ODATA_TAXONOMY_URL
+      # - name: USER_PERMISSIONS
+      #   key: prod/reveal/ligl-ui
+      #   property: USER_PERMISSIONS
+      # - name: LOGOUT_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: LOGOUT_URL
+      # - name: API_PREFIX_URL
+      #   key: prod/reveal/ligl-ui
+      #   property: API_PREFIX_URL

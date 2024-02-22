@@ -53,8 +53,10 @@ spec:
               cpu: 1000m
               memory: 1000Mi
           {{- end }}
-          # env:
-          # {{- include "helpers.create-env-secrets" . | indent 10}}
+          {{- if .Values.secrets.secretDefinitions.data }}
+          env:
+          {{- include "helpers.create-env-secrets" . | indent 10}}
+          {{- end }}
 
       volumes:
         - name: config-ligl-ui-volume
