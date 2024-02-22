@@ -38,7 +38,7 @@ spec:
             - containerPort: 80
           volumeMounts:
             - name: config-ligl-external-volume
-              mountPath: /usr/share/nginx/html/assets/configuration.json
+              mountPath: /usr/share/nginx/html/assets/config/configuration.json
               subPath: configuration.json  
           {{- if .Values.application.resources }}
           resources:
