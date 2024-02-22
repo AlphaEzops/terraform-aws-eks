@@ -37,6 +37,10 @@ spec:
           image: {{ .Values.application.image }}:{{ .Values.application.tag }}
           ports:
             - containerPort: 80
+          volumeMounts:
+            - name: config-monolith-volume
+              mountPath: C:\\inetpub\\wwwroot\\Web.config
+              subPath: Web.config  
           {{- if .Values.application.resources }}
           resources:
             {{- toYaml .Values.application.resources | nindent 12 }}
@@ -50,3 +54,8 @@ spec:
               cpu: 1000m
               memory: 1000Mi
           {{- end }}
+
+      volumes:
+        - name: config-monolith-volume
+          configMap:
+            name: {{ .Values.configMap.name }}
