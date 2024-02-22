@@ -13,13 +13,13 @@ data:
           <section name="httpHeaderSecurityModule" type="NWebsec.Modules.Configuration.HttpHeaderSecurityConfigurationSection, NWebsec" requirePermission="false" />
         </sectionGroup></configSections>
       <connectionStrings>
-        <add name="DefaultConnection" connectionString={{ .Values.configMap.DefaultConnectionString }} providerName="System.Data.SqlClient" />
-        <add name="CaseCustodianDataSourceContext" connectionString={{ .Values.configMap.CaseCustodianDataSourceContextConnectionString }} providerName="System.Data.EntityClient" />
-        <add name="MasterEntities" connectionString={{ .Values.configMap.MasterEntitiesConnectionString }} providerName="System.Data.EntityClient" />
-        <add name="ProcessingEngineEntities" connectionString={{ .Values.configMap.ProcessingEngineEntitiesConnectionString }} providerName="System.Data.EntityClient" />
-        <add name="ReportManagementEntities" connectionString={{ .Values.configMap.ReportManagementEntitiesConnectionString }} providerName="System.Data.EntityClient" />
-        <add name="EntityDb" connectionString={{ .Values.configMap.EntityDbConnectionString }} providerName="System.Data.EntityClient" />
-        <add name="StagingEntities" connectionString={{ .Values.configMap.StagingEntitiesConnectionString }} providerName="System.Data.EntityClient" />
+        <add name="DefaultConnection" connectionString="{{ .Values.configMap.DefaultConnectionString }}" providerName="System.Data.SqlClient" />
+        <add name="CaseCustodianDataSourceContext" connectionString="{{ .Values.configMap.CaseCustodianDataSourceContextConnectionString }}" providerName="System.Data.EntityClient" />
+        <add name="MasterEntities" connectionString="{{ .Values.configMap.MasterEntitiesConnectionString }}" providerName="System.Data.EntityClient" />
+        <add name="ProcessingEngineEntities" connectionString="{{ .Values.configMap.ProcessingEngineEntitiesConnectionString }}" providerName="System.Data.EntityClient" />
+        <add name="ReportManagementEntities" connectionString="{{ .Values.configMap.ReportManagementEntitiesConnectionString }}" providerName="System.Data.EntityClient" />
+        <add name="EntityDb" connectionString="{{ .Values.configMap.EntityDbConnectionString }}" providerName="System.Data.EntityClient" />
+        <add name="StagingEntities" connectionString="{{ .Values.configMap.StagingEntitiesConnectionString }}" providerName="System.Data.EntityClient" />
       </connectionStrings>
       <appSettings>
         <add key="FileRepositoryLocation" value="{{ .Values.configMap.FileRepositoryLocation }}" />
