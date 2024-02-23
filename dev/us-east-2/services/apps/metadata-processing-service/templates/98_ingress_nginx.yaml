@@ -29,11 +29,11 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /MonolithicService/odata(/|$)(.*)
+          - path: /MetadataProcessingService/odata(/|$)(.*)
             pathType:  Prefix
             backend:
               service:
-                name: service-monolith-service
+                name: {{.Values.service.name }}
                 port:
                   number: 80
 {{- end }}
