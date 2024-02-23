@@ -1,18 +1,17 @@
 # Reveal Installation and Usage Guide
 
-![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/diagram.gif)
+![](https://github.com/AlphaEzops/reveal-eks/tree/main/docs/assets/macro-system.gif)
 
 ---
 
-This comprehensive guide will walk you through the process of installing and using various tools commonly used in the DevOps workflow. From infrastructure provisioning to configuration management, automation, and container orchestration, this guide will cover everything you need to get started.
-# Devops Project
+# REVEAL INFRA INSTALLATION AND USAGE GUIDE
 
 ## Table of Contents
 1. [Requirements](#1-requirements)
 2. [Deploy Infrastructure](#2-deploy-infrastructure)
-3. [Network Overview](#3-network)
-4. [EKS Cluster](#4-eks-cluster)
-5. [Pipeline](#5-pipeline)
+3. [Deploy Services](#3-deploy-services)
+4. [Network Overview](#4-network)
+5. [EKS Cluster](#5-eks-cluster)
 6. [Conclusion](#6-conclusion)
 
 ## 1. Requirements
@@ -23,18 +22,36 @@ This comprehensive guide will walk you through the process of installing and usi
 - [tfenv](./docs/tfenv.md) - terraform version manager **optional**
 - [aws vault](./docs/aws-vault.md) - tool for securely storing and accessing AWS credentials in development environments **optional**
 
+
 ## 2. Deploy Infrastructure
 
-### Environments 
+### PROVISION INFRASTRUCTURE 
 
-[GUIDE DEV](https://github.com/ArthurMaverick/devops_project/tree/main/dev)
-**Folder structure**
+- Before getting started, make sure you have the following prerequisites installed and configured:
+- Run AWS Vault to add your AWS credentials to the vault.
+  ```bash
+    aws-vault add $PROFILE
+  ```
+- Check if you have the necessary environment variables configured in the `.env` file.
 
-![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/repo-structure-folder.gif)
- 
-_only the dev environment was created for demo purposes so follow the documentation of [DEV GUIDE](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
+- Run the command below to init and plan the infrastructure:
+  ```bash
+    make init_cluster && make plan_cluster
+  ```
+- If the plan is as expected, apply the infrastructure:
+  ```bash
+    make apply_cluster
+  ```
 
-## 3. Network
+## 3. Deploy Services
+
+### PROVISION SERVICES 
+  - Run the command below to init and plan the services:
+  ```bash
+    make init_services && make plan_services
+  ```
+
+## 4. Network
 Overview of the infrastructure created by terraform:
 
 - A network was created with 6 subnets (3 public and 3 private) in 3 different availability zones.
@@ -42,9 +59,9 @@ Overview of the infrastructure created by terraform:
 - The traffic for the public network is routed through an internet gateway.
 - Security groups were created to allow traffic between the subnets and to allow inbound and outbound network traffic.
 
-![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/network.gif)
+![](https://github.com/AlphaEzops/reveal-eks/tree/main/docs/assets/network.gif)
 
-## 4. EKS Cluster
+## 5. EKS Cluster
 
 - A Kubernetes cluster was created with 4 nodes divided into 2 node groups.
 - Each node group is in a different availability zone, ensuring high availability.
@@ -55,16 +72,8 @@ Overview of the infrastructure created by terraform:
 - ArgoCD was installed to manage cluster deployments.
 
 
-![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/cluster.gif)
+![](https://github.com/AlphaEzops/reveal-eks/tree/main/docs/assets/cluster.gif)
 
-## 5. Pipeline
-- A pipeline was created to automate the application deployment.
-- The pipeline was set up using Jenkins jobs and CodeBuild.
-- The pipeline is triggered by a GitHub webhook.
-- The pipeline builds the Docker image of the application and deploys it to the Kubernetes cluster.
-- The pipeline deploys the application to a specific namespace.
-
-![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/pipeline.gif)
 
 ## 6. Conclusion
 

@@ -38,7 +38,7 @@ init_cluster:
 
 plan_cluster:
 	cd $(ENV)/$(REGION)/terraform && tofu plan \
-	-out="./tfplan.bin" -input=false \
+	-out="./tfplan.bin" -input=false           \
 	-var-file=./terraform.tfvars
 
 apply_cluster:
