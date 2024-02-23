@@ -17,7 +17,7 @@ metadata:
     # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     # nginx.ingress.kubernetes.io/ssl-redirect: "true"
     # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /api/$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     # nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
     # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
@@ -33,7 +33,14 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /api/(.*)
+          - path: /MonolithicService/Api(/|$)(.*)
+            pathType:  Prefix
+            backend:
+              service:
+                name: service-monolith-service
+                port:
+                  number: 80
+          - path: /MonolithicService/odata(/|$)(.*)
             pathType:  Prefix
             backend:
               service:
