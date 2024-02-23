@@ -4,13 +4,13 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
-data "aws_secretsmanager_secret" "secret_reveal" {
- name = "prod/reveal/authentication-service"
-}
+# data "aws_secretsmanager_secret" "secret_reveal" {
+#  name = "prod/reveal/authentication-service"
+# }
 
-data "aws_secretsmanager_secret_version" "secret_reveal" {
- secret_id = data.aws_secretsmanager_secret.secret_reveal.id
-}
+# data "aws_secretsmanager_secret_version" "secret_reveal" {
+#  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+# }
 
 
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
@@ -57,7 +57,7 @@ locals {
       "Hosting": {
           "address": "http://*:50001"
       },
-      "Origion": "http://10.1.0.13:8081", //This is the clientweb url and we can give multiple with comma seperator.
+      "Origion": "http://10.1.0.13:8081",
       "Service": "NUIXMicroservice"
     }
 EOT  
@@ -66,9 +66,9 @@ EOT
 
 
 #==============================================================================================================
-# APPLICATION - AUTHENTICATION SERVICE
+# APPLICATION - METADATA SERVICE
 #==============================================================================================================
-resource "kubectl_manifest" "authentication_service" {
+resource "kubectl_manifest" "metadata_service" {
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
@@ -98,7 +98,7 @@ spec:
           value: "100m"
         - name: "configMap.configuration"
           value: ${local.setting_json}
-    path: dev/us-east-2/services/apps/hosting-service
+    path: dev/us-east-2/services/apps/metadata-processing-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD
   syncPolicy:
