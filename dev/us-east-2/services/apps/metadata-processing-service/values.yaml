@@ -1,0 +1,121 @@
+---
+global:
+  # K8s namespace. The name of the deployment.
+  namespace: "metadata-processing-service"
+  name: "metadata-processing-service"
+
+  ecr:
+    enabled: false
+    secret: "metadata-processing-service"
+    # -- AWS Account ID (default "475250404638")
+    account: ""
+    # -- ECR AWS Region (default "us-east-1")
+    region: ""
+    # -- Set the full hostname/url for the secret rather than building it with account and region
+    host: ""
+    # -- Docker ECR Password (required)
+    # -- Command: aws ecr get-login-password
+    password: ""
+    # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
+    patchDefaultServiceAccount: true
+
+
+ingress:
+  # -- The ingress class (set per ingress)
+  # -- Options:
+  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+  enabled: true
+  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+  hostname: "metadata-processing-service.dev.ezops.com.br"
+  class: "nginx"
+  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+  sslCertArn: ""
+  # -- Uncomment below to add custom annotations for the public ingress
+  annotations: {}
+  alb:
+    rules: []
+    paths: []
+
+# -- Application deployment
+application:
+  deploymentName: "metadata-processing-service-deployment"
+  
+  # -- Scope of the deployment image
+  containerName: "metadata-processing"
+  image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  tag: "metadata-processing-service"
+  volumeName: "metadata-processing-service-volume"
+  replicaCount: 2
+  progressDeadlineSeconds: 600
+  
+  #  -- NodeSelector is a field that specifies a map of key-value pairs. For the pod to be eligible to run on a node,
+  nodeSelector:
+    kubernetes.io/os: linux
+    kubernetes.io/arch: amd64
+  
+  # -- Resources for the container
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 1000m
+      memory: 1000Mi
+  
+# -- Service configuration 
+service:
+  name: "metadata-processing-service"
+  type: "ClusterIP"
+  port: 80
+  targetPort: 80
+
+#  -- ConfigMap configuration
+configMap:
+  name: "metadata-processing-service-config" 
+  configuration: |2
+    {
+      "Logging": {
+          "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning"
+          }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+          "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+          "MinimumLevel": {
+              "Default": "Information",
+              "Override": {
+                  "Microsoft": "Warning",
+                  "System": "Warning"
+              }
+          },
+          "WriteTo": [
+              {
+                  "Name": "Console"
+              },
+              {
+                  "Name": "File",
+                  "Args": {
+                      "path": "/logs/core/log-.txt",
+                      "rollOnFileSizeLimit": true,
+                      "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+                      "rollingInterval": "Day"
+                  }
+              }
+          ],
+          "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "ConnectionStrings": {
+          "VMDB": "Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;User Id=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
+      },
+      "Hosting": {
+          "address": "http://*:50001"
+      },
+      "Origion": "http://10.1.0.13:8081", //This is the clientweb url and we can give multiple with comma seperator.
+      "Service": "NUIXMicroservice"
+    }
+
+
+
