@@ -360,3 +360,9 @@ module "request-tracker-service" {
   source = "./modules/request-tracker-service"
   application_namespace = "request-tracker-service"
 }
+
+module "metadata-process-service" {
+  depends_on = [module.notification-service]
+  source = "./modules/metadata-process-service"
+  application_namespace = "metadata-process-service"
+}
