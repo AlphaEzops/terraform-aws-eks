@@ -357,6 +357,6 @@ module "process-service" {
 
 module "request-tracker-service" {
   depends_on = [module.notification-service]
-  source = "./modules/process-service"
-  application_namespace = "process-service"
+  source = "./modules/request-tracker-service"
+  application_namespace = "request-tracker-service"
 }
