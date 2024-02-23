@@ -1,12 +1,11 @@
 ---
 global:
   # K8s namespace. The name of the deployment.
-  namespace: "hosting-service"
-  name: "hosting-service"
+  namespace: "reports-service"
 
   ecr:
     enabled: false
-    secret: "hosting-service"
+    secret: "reveal-ecr"
     # -- AWS Account ID (default "475250404638")
     account: ""
     # -- ECR AWS Region (default "us-east-1")
@@ -19,7 +18,6 @@ global:
     # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
     patchDefaultServiceAccount: true
 
-
 ingress:
   # -- The ingress class (set per ingress)
   # -- Options:
@@ -27,7 +25,7 @@ ingress:
   # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
   enabled: true
   # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
-  hostname: "hosting-service.dev.ezops.com.br"
+  hostname: "ligl-ui.dev.ezops.com.br"
   class: "nginx"
   # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
   sslCertArn: ""
@@ -37,24 +35,14 @@ ingress:
     rules: []
     paths: []
 
-# -- Application deployment
 application:
-  deploymentName: "hosting-service-deployment"
-  
-  # -- Scope of the deployment image
-  containerName: "hosting"
   image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
-  tag: "hosting-service"
-  volumeName: "hosting-service-volume"
+  tag: "report-service"
+  name: "reports-service"
   replicaCount: 2
-  progressDeadlineSeconds: 600
-  
-  #  -- NodeSelector is a field that specifies a map of key-value pairs. For the pod to be eligible to run on a node,
   nodeSelector:
     kubernetes.io/os: linux
     kubernetes.io/arch: amd64
-  
-  # -- Resources for the container
   resources:
     requests:
       cpu: 500m
@@ -62,21 +50,14 @@ application:
     limits:
       cpu: 1000m
       memory: 1000Mi
-  
-# -- Service configuration 
-service:
-  name: "hosting-service"
-  type: "ClusterIP"
-  port: 80
-  targetPort: 80
 
-#  -- ConfigMap configuration
 configMap:
-  name: "hosting-service-config" 
+  name: "reports-service-config" 
   configuration: |2
     {
       "ConnectionStrings": {
-        "VMDB": "Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;integrated security=True;Encrypt=false"
+        "VMDB": "Server=IN-DEMO-DB-01\\VDSQL,60444;Database=OPTIMUM_DIT_MASTER;integrated security=True;Encrypt=false",
+        "VRDB": "Server=IN-DEMO-DB-01\\VDSQL,60444;Database=OPTIMUM_DIT_REPORTS;integrated security=True;Encrypt=false"
       },
       "Logging": {
         "LogLevel": {
@@ -139,11 +120,9 @@ configMap:
         "host": "127.0.0.1",
         "name": "localhost",
         "port": 6379,
-        "expiry": 24
+        "expiry": 24 
       },
       "Environment": "dev",
       "Origion": "http://10.1.0.13:8081", 
       "Service": "TaxonomyService"
     }
-
-

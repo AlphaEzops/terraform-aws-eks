@@ -5,5 +5,15 @@ metadata:
   namespace: {{ .Values.global.namespace | default .Release.Name }}
 data: 
   configuration.json: |-
-  {{ .Values.configMap.configuration | toJson | indent 4 }}
+    {
+      "serviceIp": "{{ .Values.configMap.serviceIp }}",
+      "IsNuixEnvironment": {{ .Values.configMap.IsNuixEnvironment }},
+      "UserLHNSignature": "{{ .Values.configMap.UserLHNSignature }}",
+      "UserLHNCurrentStatus": "{{ .Values.configMap.UserLHNCurrentStatus }}",
+      "IsSSOEnabledForLHNAcknowledgement": "{{ .Values.configMap.IsSSOEnabledForLHNAcknowledgement }}",
+      "LiglUILoginURL": "{{ .Values.configMap.LiglUILoginURL }}",
+      "IsLHNTitleMandatory": "{{ .Values.configMap.IsLHNTitleMandatory }}"
+    }
+
+
 

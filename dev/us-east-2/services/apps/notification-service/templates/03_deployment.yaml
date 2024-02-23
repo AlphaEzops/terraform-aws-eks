@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ligl-ui-deployment
+  name: notification-service-deployment
   namespace: {{ .Values.global.namespace | default .Release.Name }}
 spec:
   selector:
     matchLabels:
-      app: deployment-ligl-ui
+      app: deployment-notification-service
   progressDeadlineSeconds: 600
   replicas: {{.Values.application.replicaCount}}
   strategy:
@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       labels:
-        app: deployment-ligl-ui
+        app: deployment-notification-service
       {{- if .Values.global.reloadOnUpgrade }}
       annotations:
         timestamp: {{ now | quote }}
@@ -37,9 +37,9 @@ spec:
           ports:
             - containerPort: 80
           volumeMounts:
-            - name: config-ligl-ui-volume
-              mountPath: /usr/share/nginx/html/assets/config/configuration.json
-              subPath: configuration.json 
+            - name: config-notification-service-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json 
           {{- if .Values.application.resources }}
           resources:
             {{- toYaml .Values.application.resources | nindent 12 }}
@@ -53,12 +53,8 @@ spec:
               cpu: 1000m
               memory: 1000Mi
           {{- end }}
-          {{- if .Values.secrets.secretDefinitions.data }}
-          env:
-          {{- include "helpers.create-env-secrets" . | indent 10}}
-          {{- end }}
 
       volumes:
-        - name: config-ligl-ui-volume
+        - name: config-notification-service-volume
           configMap:
             name: {{ .Values.configMap.name }}
