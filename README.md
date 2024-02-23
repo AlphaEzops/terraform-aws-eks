@@ -1,4 +1,4 @@
-# DevOps Toolchain Installation and Usage Guide
+# Reveal Installation and Usage Guide
 
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/diagram.gif)
 
@@ -19,7 +19,6 @@ This comprehensive guide will walk you through the process of installing and usi
 1. you need install all the tools below:
 - [terraform](./docs/terraform.md) - tools for provisioning and managing cloud infrastructure **required**
 - [kubectl](./docs/kubectl.md) - command-line tool for Kubernetes **required**
-- [ansible](./docs/ansible.md) - configuration management and automation tool **optional**
 - [aws cli](./docs/aws-cli.md) - command-line tool for AWS **required**
 - [tfenv](./docs/tfenv.md) - terraform version manager **optional**
 - [aws vault](./docs/aws-vault.md) - tool for securely storing and accessing AWS credentials in development environments **optional**
@@ -28,11 +27,12 @@ This comprehensive guide will walk you through the process of installing and usi
 
 ### Environments 
 
-[GUIDE DEV](https://github.com/ArthurMaverick/devops_project/tree/main/dev) **|** [STAGE GUIDE](https://github.com/ArthurMaverick/devops_project/tree/main/stage) **|** [PROD GUIDE](https://github.com/ArthurMaverick/devops_project/tree/main/prod)
+[GUIDE DEV](https://github.com/ArthurMaverick/devops_project/tree/main/dev)
 **Folder structure**
+
 ![](https://github.com/ArthurMaverick/devops_project/blob/main/docs/repo-structure-folder.gif)
  
-_only the dev environment was created for demo purposes so follow the documentation of [DEV GUIA](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
+_only the dev environment was created for demo purposes so follow the documentation of [DEV GUIDE](https://github.com/ArthurMaverick/devops_project/tree/main/dev)_
 
 ## 3. Network
 Overview of the infrastructure created by terraform:
