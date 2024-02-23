@@ -53,7 +53,7 @@ application:
 
 configMap:
   name: "request-tracker-service-config" 
-  configuration: |-
+  configuration: |2
     {
       "ConnectionStrings": {
         "VMDB": "Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER1;Persist Security Info=True;IntegratedSecurity=True;Encrypt=false"
