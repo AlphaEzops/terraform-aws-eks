@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: deployment-monolith-service
-  progressDeadlineSeconds: 600
+  progressDeadlineSeconds: 1200
   replicas: {{.Values.application.replicaCount}}
   strategy:
     rollingUpdate:
