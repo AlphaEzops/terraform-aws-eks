@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-request-tracker-service
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
+  
+spec:
+  selector:
+    app: deployment-request-tracker-service
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
