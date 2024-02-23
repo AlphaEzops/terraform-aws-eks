@@ -27,11 +27,10 @@ spec:
     ## Init script will run and update the connection string with env variables
       initContainers:
         - name: update-connection-string
-          image: 975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal:transform-script
+          image: 975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal:transform-script-new
           volumeMounts:
             - name: config-taxonomy-service-volume
-              mountPath: /app/appsettings.json
-              subPath: appsettings.json 
+              mountPath: /app
           env:
             - name: DB_HOST
               value: "teste" 
