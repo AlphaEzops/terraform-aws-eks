@@ -31,14 +31,14 @@ resource "kubernetes_namespace_v1" "argo_cd_namespace" {
 # HELM RELEASE - ARGO CD
 #==============================================================================================================
 resource "helm_release" "argocd_helm_release" {
-  depends_on = [kubernetes_namespace_v1.argo_cd_namespace]
-  name             = format("argo-cd-%s", var.stage)
-  repository       = var.argo_repository
-  version          = var.argo_version
-  chart            = var.argo_chart
-  namespace        = var.create_namespace ? var.namespace : "kube-system"
-  wait             = false
-  cleanup_on_fail  = true
+  depends_on      = [kubernetes_namespace_v1.argo_cd_namespace]
+  name            = format("argo-cd-%s", var.stage)
+  repository      = var.argo_repository
+  version         = var.argo_version
+  chart           = var.argo_chart
+  namespace       = var.create_namespace ? var.namespace : "kube-system"
+  wait            = false
+  cleanup_on_fail = true
 
   dynamic "set" {
     for_each = try(var.values, {})
@@ -49,7 +49,7 @@ resource "helm_release" "argocd_helm_release" {
   }
 
   set {
-    name = "global.nodeSelector.kubernetes\\.io/os"
+    name  = "global.nodeSelector.kubernetes\\.io/os"
     value = "linux"
   }
 }
@@ -257,19 +257,19 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
     name      = "argocd"
     namespace = var.create_namespace ? var.namespace : "argocd-system"
     annotations = {
-      "cert-manager.io/cluster-issuer" = "letsencrypt-staging"
-      "nginx.ingress.kubernetes.io/backend-protocol" =  "HTTPS"
+      "cert-manager.io/cluster-issuer"                    = "letsencrypt-staging"
+      "nginx.ingress.kubernetes.io/backend-protocol"      = "HTTPS"
       "nginx.ingress.kubernetes.io/proxy-connect-timeout" = "300"
-      "nginx.ingress.kubernetes.io/proxy-read-timeout" = "300"
-      "nginx.ingress.kubernetes.io/proxy-send-timeout" = "300"
-      "ingress.kubernetes.io/force-ssl-redirect" =  "true"
-      "nginx.ingress.kubernetes.io/ssl-passthrough" = "true"
+      "nginx.ingress.kubernetes.io/proxy-read-timeout"    = "300"
+      "nginx.ingress.kubernetes.io/proxy-send-timeout"    = "300"
+      "ingress.kubernetes.io/force-ssl-redirect"          = "true"
+      "nginx.ingress.kubernetes.io/ssl-passthrough"       = "true"
     }
   }
 
   spec {
     tls {
-      hosts = ["argocd.dev.ezops.com.br"]
+      hosts       = ["argocd.dev.ezops.com.br"]
       secret_name = "reveal-ops"
     }
     ingress_class_name = "nginx"
@@ -278,12 +278,12 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
       http {
         path {
           path_type = "Prefix"
-          path = "/"
+          path      = "/"
           backend {
             service {
               name = "argo-cd-dev-argocd-server"
               port {
-                 name = "http"
+                name = "http"
               }
             }
           }
@@ -295,68 +295,74 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
 
 
 module "ligl-ui" {
-  depends_on = [helm_release.argocd_helm_release]
-  source = "./modules/ligl-ui"
+  depends_on            = [helm_release.argocd_helm_release]
+  source                = "./modules/ligl-ui"
   application_namespace = "ligl-ui"
-  service_account_name = "ligl-ui-sa"
+  service_account_name  = "ligl-ui-sa"
 }
 
 module "ligl-external" {
-  depends_on = [module.ligl-ui]
-  source = "./modules/ligl-external"
+  depends_on            = [module.ligl-ui]
+  source                = "./modules/ligl-external"
   application_namespace = "ligl-external"
 }
 
 module "authentication-service" {
-  depends_on = [module.ligl-external]
-  source = "./modules/authentication-service"
+  depends_on            = [module.ligl-external]
+  source                = "./modules/authentication-service"
   application_namespace = "authentication-service"
 }
 
 module "taxonomy-service" {
-  depends_on = [module.authentication-service]
-  source = "./modules/taxonomy-service"
+  depends_on            = [module.authentication-service]
+  source                = "./modules/taxonomy-service"
   application_namespace = "taxonomy-service"
 }
 
 module "monolith-service" {
-  depends_on = [module.taxonomy-service]
-  source = "./modules/monolith-service"
+  depends_on            = [module.taxonomy-service]
+  source                = "./modules/monolith-service"
   application_namespace = "monolith-service"
 }
 
 module "hosting-service" {
-  depends_on = [module.taxonomy-service]
-  source = "./modules/hosting-service"
+  depends_on            = [module.taxonomy-service]
+  source                = "./modules/hosting-service"
   application_namespace = "hosting-service"
 }
 
 module "sql-server-backup" {
-  depends_on = [module.hosting-service]
-  source = "./modules/sql-server-backup"
+  depends_on            = [module.hosting-service]
+  source                = "./modules/sql-server-backup"
   application_namespace = "sql-server-backup"
 }
 
 module "reports-service" {
-  depends_on = [module.sql-server-backup]
-  source = "./modules/reports-service"
+  depends_on            = [module.sql-server-backup]
+  source                = "./modules/reports-service"
   application_namespace = "reports-service"
 }
 
 module "notification-service" {
-  depends_on = [module.reports-service]
-  source = "./modules/notification-service"
+  depends_on            = [module.reports-service]
+  source                = "./modules/notification-service"
   application_namespace = "notification-service"
 }
 
 module "process-service" {
-  depends_on = [module.notification-service]
-  source = "./modules/process-service"
+  depends_on            = [module.notification-service]
+  source                = "./modules/process-service"
   application_namespace = "process-service"
 }
 
 module "request-tracker-service" {
-  depends_on = [module.notification-service]
-  source = "./modules/process-service"
+  depends_on            = [module.notification-service]
+  source                = "./modules/process-service"
   application_namespace = "process-service"
+}
+
+module "metadata-process-service" {
+  depends_on            = [module.notification-service]
+  source                = "./modules/metadata-process-service"
+  application_namespace = "metadata-process-service"
 }
