@@ -102,7 +102,7 @@ EOT
 #==============================================================================================================
 
 
-resource "kubectl_manifest" " request_tracker_service" {
+resource "kubectl_manifest" "request_tracker_service" {
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1

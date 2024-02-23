@@ -25,11 +25,6 @@ metadata:
     # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
 spec:
   ingressClassName: {{ $ingress_class }}
-  defaultBackend:
-    service:
-      name: service-ligl-ui
-      port:
-        number: 80
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:
