@@ -23,20 +23,18 @@ metadata:
     # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
     # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
     cert-manager.io/cluster-issuer: "letsencrypt-staging"
-    nginx.ingress.kubernetes.io/backend-protocol:  "HTTPS"
     ingress.kubernetes.io/force-ssl-redirect:  "true"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol:  "HTTP"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300" 
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"  
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300" 
 spec:
   ingressClassName: {{ $ingress_class }}
   tls:
     - hosts:
       - {{ .Values.ingress.hostname }}
       secretName: "reveal-ops"
-  defaultBackend:
-    service:
-      name: service-ligl-ui
-      port:
-        number: 80
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:
