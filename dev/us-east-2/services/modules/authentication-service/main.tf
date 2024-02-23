@@ -22,73 +22,74 @@ locals {
       "ConnectionStrings": {
         "VMDB": "Data Source=sql-server-backup-development.sql-server-backup.svc.cluster.local,1433;Initial Catalog=UAT_ENT_VMDB;Persist Security Info=True;User ID=sa;Password=password123@;Encrypt=false"
       },
-      "Logging": {
-        "LogLevel": {
-          "Default": "Information",
-          "Microsoft.AspNetCore": "Warning"
+    "Logging": {
+      "LogLevel": {
+        "Default": "Information",
+        "Microsoft.AspNetCore": "Warning"
+      }
+    },
+    "AllowedHosts": "*",
+    "Serilog": {
+      "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+      "MinimumLevel": {
+        "Default": "Information",
+        "Override": {
+          "Microsoft": "Warning",
+          "System": "Warning"
         }
       },
-      "AllowedHosts": "*",
-      "Serilog": {
-        "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
-        "MinimumLevel": {
-          "Default": "Information",
-          "Override": {
-            "Microsoft": "Warning",
-            "System": "Warning"
-          }
+      "WriteTo": [
+        {
+          "Name": "Console"
         },
-        "WriteTo": [
-          {
-            "Name": "Console"
-          },
-          {
-            "Name": "File",
-            "Args": {
-              "path": "/logs/AuthenticationCore/log-.txt",
-              "rollOnFileSizeLimit": true,
-              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
-              "rollingInterval": "Day"
-            }
+        {
+          "Name": "File",
+          "Args": {
+            "path": "/logs/AuthenticationCore/log-.txt",
+            "rollOnFileSizeLimit": true,
+            "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+            "rollingInterval": "Day"
           }
-        ],
-        "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
-      },
-      "Tokens": {
-        "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
-        "Issuer": "VerticalAuthority",
-        "Audience": "Everyone",
-        "AccessTokenExpiryInMinutes": 10000,
-        "RefreshTokenExpiryInMinutes": 6000
-      },
-      "SecurityKeys": {
-        "EncyKey": "VDev@2016",
-        "DefaultPasswordKey": "VerticalPassword#123"
-      },
-      "WebSocketSetting": {
-        "KeepAliveInterval": 120,
-        "BufferSize": 4,
-        "DefaultBuffer": 1024,
-        "TimeOut": 3600000
-      },
-      "SwaggerSettings": {
-        "Version": "V1",
-        "Title": "Taxonomy Service"
-      },
-      "ConnectionStringSettings": {
-        "MaxTryCount": 10,
-        "MaxDelayTryInSeconds": 30
-      },
-      "redis": {
-        "host": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_host"]},
-        "name": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_name"]},
-        "port": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_port"]},
-        "expiry": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"]},
-      },
-      "Environment": "dev",
-      "Origion": "*",
-      "Service": "AuthenticationService"
-    }
+        }
+      ],
+      "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+    },
+    "Tokens": {
+      "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
+      "Issuer": "VerticalAuthority",
+      "Audience": "Everyone",
+      "AccessTokenExpiryInMinutes": 480,
+      "RefreshTokenExpiryInMinutes": 480
+    },
+    "SecurityKeys": {
+      "EncyKey": "VDev@2016",
+      "DefaultPasswordKey": "VerticalPassword#123"
+    },
+    "WebSocketSetting": {
+      "KeepAliveInterval": 120,
+      "BufferSize": 4,
+      "DefaultBuffer": 1024,
+      "TimeOut": 3600000
+    },
+    "SwaggerSettings": {
+      "Version": "V1",
+      "Title": "Authentication Service"
+    },
+    "ConnectionStringSettings": {
+      "MaxTryCount": 10,
+      "MaxDelayTryInSeconds": 30
+    },
+    "redis": {
+      "host": "127.0.0.1",
+      "name": "localhost",
+      "port": 6379,
+      "expiry": 24 
+    },
+    "Environment": "dev",
+    "Origion": "*", 
+    "Service": "AuthenticationService",
+    "NonLegalUserCreatedBy" :  "NonLegalUser"
+  }
 EOT  
 )
 }

@@ -4,13 +4,13 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
-data "aws_secretsmanager_secret" "secret_reveal" {
- name = "prod/reveal/authentication-service"
-}
+# data "aws_secretsmanager_secret" "secret_reveal" {
+#  name = "prod/reveal/authentication-service"
+# }
 
-data "aws_secretsmanager_secret_version" "secret_reveal" {
- secret_id = data.aws_secretsmanager_secret.secret_reveal.id
-}
+# data "aws_secretsmanager_secret_version" "secret_reveal" {
+#  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+# }
 
 
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
@@ -80,10 +80,10 @@ locals {
         "MaxDelayTryInSeconds": 30
       },
       "redis": {
-        "host": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_host"]},
-        "name": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_name"]},
-        "port": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_port"]},
-        "expiry": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"]},
+        "host": "127.0.0.1",
+        "name": "localhost",
+        "port": 6379,
+        "expiry": 24 
       },
       "Environment": "dev",
       "Origion": "*",

@@ -73,11 +73,11 @@ locals {
         "Version": "V1",
         "Title": "Taxonomy Service"
       },
-     "redis": {
-        "host": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_host"]},
-        "name": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_name"]},
-        "port": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_port"]},
-        "expiry": ${jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["redis_expiry"]},
+      "redis": {
+        "host": "127.0.0.1",
+        "name": "localhost",
+        "port": 6379,
+        "expiry": 24 
       },
       "Environment": "dev",
       "Origion": "*",

@@ -22,8 +22,16 @@ metadata:
     # nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
     # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
     # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/backend-protocol:  "HTTPS"
+    ingress.kubernetes.io/force-ssl-redirect:  "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
   ingressClassName: {{ $ingress_class }}
+  tls:
+    - hosts:
+      - {{ .Values.ingress.hostname }}
+      secretName: "reveal-ops"
   defaultBackend:
     service:
       name: service-ligl-ui
