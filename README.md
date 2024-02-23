@@ -59,7 +59,7 @@ Overview of the infrastructure created by terraform:
 - The traffic for the public network is routed through an internet gateway.
 - Security groups were created to allow traffic between the subnets and to allow inbound and outbound network traffic.
 
-![](https://github.com/AlphaEzops/reveal-eks/tree/main/docs/assets/network.gif)
+![](docs/assets/network.gif)
 
 ## 5. EKS Cluster
 
@@ -72,12 +72,10 @@ Overview of the infrastructure created by terraform:
 - ArgoCD was installed to manage cluster deployments.
 
 
-![](https://github.com/AlphaEzops/reveal-eks/tree/main/docs/assets/cluster.gif)
+![](docs/assets/cluster.gif)
 
 
 ## 6. Conclusion
-
-Congratulations! You've successfully installed and set up a suite of powerful tools commonly used in DevOps workflows. With AWS CLI, Terraform, kubectl, and Ansible at your disposal, you can manage infrastructure, provision resources, orchestrate containers, and automate configurations effectively.
 
 Remember to refer to the official documentation and guides for each tool to learn more about their features, usage, and best practices:
 
