@@ -317,6 +317,7 @@ module "taxonomy-service" {
   depends_on = [module.authentication-service]
   source = "./modules/taxonomy-service"
   application_namespace = "taxonomy-service"
+  service_account_name = "taxonomy-service-sa"
 }
 
 module "monolith-service" {

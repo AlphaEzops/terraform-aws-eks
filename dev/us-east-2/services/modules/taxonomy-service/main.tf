@@ -16,6 +16,7 @@ data "aws_secretsmanager_secret_version" "secret_reveal" {
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
 locals {
   region = "us-east-2"
+  service_account_name = var.service_account_name
   application_namespace = var.application_namespace
   setting_json = jsonencode(<<EOT
     {
@@ -87,6 +88,109 @@ EOT
 )
 }
 
+# -------------------------------------------------------------------
+# External Secrets Role/Policy
+# -------------------------------------------------------------------
+
+data "aws_iam_policy_document" "eks_external_secrets_access_policy" {
+  statement {
+    sid    = "AllowUseOfTheKey"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "eks_external_secrets_access_policy" {
+  name        = "taxonomy_service-${local.region}-eks-external-secrets-kms-access-irsa"
+  description = "External Secrets access policy for EKS"
+  policy      = data.aws_iam_policy_document.eks_external_secrets_access_policy.json
+}
+
+
+# -------------------------------------------------------------------
+# Lilg-ui Secrets Reader/Writer Role/Policy
+# -------------------------------------------------------------------
+
+data "aws_iam_policy_document" "eks_taxonomy_service_secrets_access_policy" {
+  statement {
+    sid = "Statement1"
+    actions = [
+      "secretsmanager:ListSecretVersionIds",
+      "secretsmanager:GetSecretValue",
+      "secretsmanager:GetResourcePolicy",
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:PutSecretValue",
+      "secretsmanager:CreateSecret",
+      "secretsmanager:DeleteSecret",
+      "secretsmanager:RotateSecret",
+      "secretsmanager:UpdateSecret",
+      "secretsmanager:TagResource",
+    ]
+    effect = "Allow"
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "eks_taxonomy_service_secrets_access_policy" {
+  name        = "taxonomy_service-${local.region}-secrets-access-policy-irsa"
+  description = "taxonomy_service ReadWrite access policy for EKS"
+  policy      = data.aws_iam_policy_document.eks_taxonomy_service_secrets_access_policy.json
+}
+
+data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
+  statement {
+    sid     = "Statement1"
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    condition {
+      test = "StringEquals"
+      values = [
+        "system:serviceaccount:${local.application_namespace}:${local.service_account_name}",
+      ]
+      variable = "${replace(data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer, "https://", "")}:sub"
+    }
+    condition {
+      test = "StringEquals"
+      values = [
+        "sts.amazonaws.com"
+      ]
+      variable = "${replace(data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer, "https://", "")}:aud"
+    }
+    principals {
+      type = "Federated"
+      identifiers = [
+        "arn:${data.aws_partition.this.partition}:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${replace(data.aws_eks_cluster.reveal-cluster.identity[0].oidc[0].issuer, "https://", "")}",
+      ]
+    }
+  }
+}
+
+resource "aws_iam_role" "eks_taxonomy_service_secrets_role" {
+  name               = "taxonomy_service-${local.region}-eks-secrets-role-irsa"
+  assume_role_policy = data.aws_iam_policy_document.ligl_ui_secrets_assume_role_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "eks_taxonomy_service_secrets_access_policy" {
+  role       = aws_iam_role.eks_taxonomy_service_secrets_role.name
+  policy_arn = aws_iam_policy.eks_taxonomy_service_secrets_access_policy.arn
+}
+
+# Secrets reader user needs to be able to read KMS for secrets
+resource "aws_iam_role_policy_attachment" "eks_taxonomy_service_secrets_kms_access_policy" {
+  role       = aws_iam_role.eks_taxonomy_service_secrets_role.name
+  policy_arn = aws_iam_policy.eks_external_secrets_access_policy.arn
+}
+
+
+
+
 
 #==============================================================================================================
 # APPLICATION - TAXONOMY SERVICE
@@ -115,6 +219,10 @@ spec:
       valueFiles:
         - values.yaml
       parameters:
+        - name: "secrets.externalSecrets.serviceAccount.name"
+          value: ${local.service_account_name}
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${aws_iam_role.eks_taxonomy_service_secrets_role.arn}
         - name: "global.namespace"
           value: ${local.application_namespace}
         - name: "application.resources.requests.cpu"

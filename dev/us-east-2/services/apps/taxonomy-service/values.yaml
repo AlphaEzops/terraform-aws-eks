@@ -121,3 +121,46 @@ configMap:
       "Origion": "*",
       "Service": "TaxonomyService"
     }
+
+
+secrets:
+  enabled: true
+  # -- The secrets provider
+  # -- Providers:
+  # --- external-secrets: (https://external-secrets.io/v0.5.9/)
+  # --- kubernetes: Use kubernetes secret. Add secrets to the 'kubernetes' section below.
+  provider: "external-secrets"
+
+  # -- OPTIONS FOR: 'external-secrets' -- #
+  externalSecrets:
+    # -- The external-secrets provider
+    # -- Providers:
+    # --- aws: AWS SecretsManager
+    provider: aws
+    # -- Options for aws (AWS SecretsManager)
+    aws:
+      # -- Region: The AWS region where the secret resides (default "us-east-1")
+      region: "us-east-2"
+    enabled: true
+    # Specifies whether a service account should be created
+    create: true
+
+    # Specifies the name of the kubernetes secrets
+    name: "taxonomy-service-secrets"
+
+    # Specifies the service account for external-secrets
+    serviceAccount:
+      name: "taxonomy-service-sa"
+      arn: "arn:aws:iam::975635808270:role/taxonomy-service-us-east-2-eks-secrets-role-irsa"
+
+  secretDefinitions:
+    data:
+      - name: LOGIN_URL
+        key: prod/reveal/ligl-ui
+        property: LOGIN_URL
+      - name: GET_USER_URL
+        key: prod/reveal/ligl-ui
+        property: GET_USER_URL
+      - name: ODATA
+        key: prod/reveal/ligl-ui
+        property: ODATA
