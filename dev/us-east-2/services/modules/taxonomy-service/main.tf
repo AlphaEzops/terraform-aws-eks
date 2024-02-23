@@ -106,7 +106,7 @@ data "aws_iam_policy_document" "eks_external_secrets_access_policy" {
 }
 
 resource "aws_iam_policy" "eks_external_secrets_access_policy" {
-  name        = "ligl-ui-${local.region}-eks-external-secrets-kms-access-irsa"
+  name        = "taxonomy_service-${local.region}-eks-external-secrets-kms-access-irsa"
   description = "External Secrets access policy for EKS"
   policy      = data.aws_iam_policy_document.eks_external_secrets_access_policy.json
 }
@@ -139,8 +139,8 @@ data "aws_iam_policy_document" "eks_taxonomy_service_secrets_access_policy" {
 }
 
 resource "aws_iam_policy" "eks_taxonomy_service_secrets_access_policy" {
-  name        = "ligl-ui-${local.region}-secrets-access-policy-irsa"
-  description = "Ligl-ui ReadWrite access policy for EKS"
+  name        = "taxonomy_service-${local.region}-secrets-access-policy-irsa"
+  description = "taxonomy_service ReadWrite access policy for EKS"
   policy      = data.aws_iam_policy_document.eks_taxonomy_service_secrets_access_policy.json
 }
 
@@ -173,7 +173,7 @@ data "aws_iam_policy_document" "ligl_ui_secrets_assume_role_policy" {
 }
 
 resource "aws_iam_role" "eks_taxonomy_service_secrets_role" {
-  name               = "ligl-ui-${local.region}-eks-secrets-role-irsa"
+  name               = "taxonomy_service-${local.region}-eks-secrets-role-irsa"
   assume_role_policy = data.aws_iam_policy_document.ligl_ui_secrets_assume_role_policy.json
 }
 
@@ -222,7 +222,7 @@ spec:
         - name: "secrets.externalSecrets.serviceAccount.name"
           value: ${local.service_account_name}
         - name: "secrets.externalSecrets.serviceAccount.arn"
-          value: ${aws_iam_role.eks_ligl_ui_secrets_role.arn}
+          value: ${aws_iam_role.eks_taxonomy_service_secrets_role.arn}
         - name: "global.namespace"
           value: ${local.application_namespace}
         - name: "application.resources.requests.cpu"
