@@ -146,12 +146,12 @@ secrets:
     create: true
 
     # Specifies the name of the kubernetes secrets
-    name: "ligl-ui-secrets"
+    name: "taxonomy-service-secrets"
 
     # Specifies the service account for external-secrets
     serviceAccount:
-      name: "ligl-ui-sa"
-      arn: "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
+      name: "taxonomy-service-sa"
+      arn: "arn:aws:iam::975635808270:role/taxonomy-service-us-east-2-eks-secrets-role-irsa"
 
   secretDefinitions:
     data:
