@@ -1,6 +1,6 @@
 # Reveal Installation and Usage Guide
 
-![](https://github.com/AlphaEzops/reveal-eks/tree/main/docs/assets/macro-system.gif)
+![](docs/assets/macro-system.gif)
 
 ---
 
