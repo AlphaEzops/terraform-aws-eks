@@ -22,6 +22,8 @@
 - [tfenv](./docs/tfenv.md) - terraform version manager **optional**
 - [aws vault](./docs/aws-vault.md) - tool for securely storing and accessing AWS credentials in development environments **optional**
 
+# Strucutre of folder
+![](docs/assets/structure-folder.png)
 
 ## 2. Deploy Infrastructure
 
