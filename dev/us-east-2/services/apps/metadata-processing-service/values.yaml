@@ -113,7 +113,7 @@ configMap:
       "Hosting": {
           "address": "http://*:50001"
       },
-      "Origion": "http://10.1.0.13:8081", //This is the clientweb url and we can give multiple with comma seperator.
+      "Origion": "http://10.1.0.13:8081", 
       "Service": "NUIXMicroservice"
     }
 
