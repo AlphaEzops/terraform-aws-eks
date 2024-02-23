@@ -348,3 +348,9 @@ module "notification-service" {
   source = "./modules/notification-service"
   application_namespace = "notification-service"
 }
+
+module "process-service" {
+  depends_on = [module.notification-service]
+  source = "./modules/process-service"
+  application_namespace = "process-service"
+}

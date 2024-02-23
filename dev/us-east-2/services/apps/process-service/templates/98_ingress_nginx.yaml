@@ -6,7 +6,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: {{ .Values.global.namespace | default .Release.Name }}
-  name: {{ .Values.global.namespace }}-ingress
+  name: {{ .Values.global.namespace }}-ingress-odata
   annotations:
     # {{- if .Values.ingress.hostname }}
     # external-dns.alpha.kubernetes.io/hostname: {{ .Values.ingress.hostname }}
