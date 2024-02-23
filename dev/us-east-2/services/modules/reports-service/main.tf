@@ -1,60 +1,24 @@
----
-global:
-  # K8s namespace. The name of the deployment.
-  namespace: "reports-service"
+data "aws_caller_identity" "this" {}
+data "aws_partition" "this" {}
+data "aws_eks_cluster" "reveal-cluster" {
+  name = "reveal-cluster"
+}
 
-  ecr:
-    enabled: false
-    secret: "reveal-ecr"
-    # -- AWS Account ID (default "475250404638")
-    account: ""
-    # -- ECR AWS Region (default "us-east-1")
-    region: ""
-    # -- Set the full hostname/url for the secret rather than building it with account and region
-    host: ""
-    # -- Docker ECR Password (required)
-    # -- Command: aws ecr get-login-password
-    password: ""
-    # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
-    patchDefaultServiceAccount: true
+# data "aws_secretsmanager_secret" "secret_reveal" {
+#  name = "prod/reveal/reports-service"
+# }
 
-ingress:
-  # -- The ingress class (set per ingress)
-  # -- Options:
-  # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
-  # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
-  enabled: true
-  # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
-  hostname: "ligl-ui.dev.ezops.com.br"
-  class: "nginx"
-  # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
-  sslCertArn: ""
-  # -- Uncomment below to add custom annotations for the public ingress
-  annotations: {}
-  alb:
-    rules: []
-    paths: []
+# data "aws_secretsmanager_secret_version" "secret_reveal" {
+#  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+# }
 
-application:
-  image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
-  tag: "reports-service"
-  name: "reports-service"
-  replicaCount: 2
-  nodeSelector:
-    kubernetes.io/os: linux
-    kubernetes.io/arch: amd64
-  resources:
-    requests:
-      cpu: 500m
-      memory: 500Mi
-    limits:
-      cpu: 1000m
-      memory: 1000Mi
 
-configMap:
-  name: "reports-service-config" 
-  configuration: |2
-    {
+# SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
+locals {
+  region = "us-east-2"
+  application_namespace = var.application_namespace
+  setting_json = jsonencode(<<EOT
+     {
       "ConnectionStrings": {
         "VMDB": "Server=IN-DEMO-DB-01\\VDSQL,60444;Database=OPTIMUM_DIT_MASTER;integrated security=True;Encrypt=false",
         "VRDB": "Server=IN-DEMO-DB-01\\VDSQL,60444;Database=OPTIMUM_DIT_REPORTS;integrated security=True;Encrypt=false"
@@ -126,3 +90,62 @@ configMap:
       "Origion": "http://10.1.0.13:8081", 
       "Service": "TaxonomyService"
     }
+EOT  
+)
+}
+
+
+#==============================================================================================================
+# APPLICATION - REPORTS SERVICE
+#==============================================================================================================
+
+
+resource "kubectl_manifest" "reports_service" {
+
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/instance: app-of-apps
+  name: ${local.application_namespace}-development
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: ${local.application_namespace}
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: "global.namespace"
+          value: ${local.application_namespace}
+        - name: "application.resources.requests.cpu"
+          value: "100m"
+        - name: "application.resources.requests.memory"
+          value: "100m"
+        - name: "configMap.configuration"
+          value: ${local.setting_json}
+    path: dev/us-east-2/services/apps/reports-service
+    repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      allowEmpty: false
+      prune: false
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 5
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+YAML
+}

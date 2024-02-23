@@ -336,3 +336,9 @@ module "sql-server-backup" {
   source = "./modules/sql-server-backup"
   application_namespace = "sql-server-backup"
 }
+
+module "reports_service" {
+  depends_on = [module.sql-server-backup]
+  source = "./modules/reports-service"
+  application_namespace = "reports-service"
+}
