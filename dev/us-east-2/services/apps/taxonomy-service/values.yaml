@@ -155,12 +155,19 @@ secrets:
 
   secretDefinitions:
     data:
-      - name: LOGIN_URL
-        key: prod/reveal/ligl-ui
-        property: LOGIN_URL
-      - name: GET_USER_URL
-        key: prod/reveal/ligl-ui
-        property: GET_USER_URL
-      - name: ODATA
-        key: prod/reveal/ligl-ui
-        property: ODATA
+      - name: DB_HOST
+        key: prod/reveal
+        property: DB_HOST
+      - name: DB_PORT
+        key: prod/reveal
+        property: DB_PORT
+      - name: DB_NAME
+        key: prod/reveal
+        property: DB_NAME
+      - name: DB_USERNAME
+        key: prod/reveal
+        property: DB_USERNAME
+      - name: DB_PASSWORD
+        key: prod/reveal
+        property: DB_PASSWORD
+
