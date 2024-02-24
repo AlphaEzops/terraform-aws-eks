@@ -23,26 +23,6 @@ spec:
         timestamp: {{ now | quote }}
       {{- end }}
     spec:
-
-    ## Init script will run and update the connection string with env variables
-      initContainers:
-        - name: update-connection-string
-          image: 975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal:transform-script-new
-          volumeMounts:
-            - name: config-taxonomy-service-volume
-              mountPath: /app
-          env:
-            - name: DB_HOST
-              value: "teste" 
-            - name: DB_PORT
-              value: "test2" 
-            - name: DB_NAME
-              value: "TESTE" 
-            - name: DB_USERNAME
-              value: "test" 
-            - name: DB_PASSWORD
-              value: "12345" 
-
       {{- if or .Values.global.imagePullSecrets .Values.global.ecr.enabled }}
       imagePullSecrets:
         {{- if .Values.global.ecr.enabled }}
