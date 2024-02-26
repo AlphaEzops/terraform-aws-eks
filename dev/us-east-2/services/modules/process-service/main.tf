@@ -4,13 +4,22 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
-# data "aws_secretsmanager_secret" "secret_reveal" {
-#  name = "prod/reveal/process-service"
-# }
+data "aws_secretsmanager_secret" "secret_reveal" {
+ name = "prod/reveal"
+}
 
-# data "aws_secretsmanager_secret_version" "secret_reveal" {
-#  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
-# }
+data "aws_secretsmanager_secret_version" "secret_reveal" {
+ secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+}
+
+# Database decode from AWS Secret Manager
+locals {
+  DB_HOST = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_HOST"]
+  DB_PORT = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PORT"]
+  DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
+  DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
+  DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
+}
 
 
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
@@ -19,9 +28,9 @@ locals {
   application_namespace = var.application_namespace
   service_account_name = var.service_account_name
   setting_json = jsonencode(<<EOT
-         {
+    {
       "ConnectionStrings": {
-        "VMDB": "Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;integrated security=True;Encrypt=false"
+        "VMDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};integrated security=True;Encrypt=false"
       },
       "Logging": {
         "LogLevel": {
@@ -84,10 +93,10 @@ locals {
         "host": "127.0.0.1",
         "name": "localhost",
         "port": 6379,
-        "expiry": 24 //In hours
+        "expiry": 24 
       },
       "Environment": "dev",
-      "Origion": "http://10.1.0.13:8081", //This is the clientweb url and we can give multiple with comma seperator.
+      "Origion": "http://10.1.0.13:8081", 
       "Service": "TaxonomyService"
     }
 EOT  

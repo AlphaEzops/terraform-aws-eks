@@ -107,7 +107,7 @@ configMap:
   configuration: |2
     {
       "ConnectionStrings": {
-        "VMDB": "Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;integrated security=True;Encrypt=false"
+        "VMDB": 'Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;integrated security=True;Encrypt=false'
       },
       "Logging": {
         "LogLevel": {
@@ -170,9 +170,9 @@ configMap:
         "host": "127.0.0.1",
         "name": "localhost",
         "port": 6379,
-        "expiry": 24 //In hours
+        "expiry": 24 
       },
       "Environment": "dev",
-      "Origion": "http://10.1.0.13:8081", //This is the clientweb url and we can give multiple with comma seperator.
+      "Origion": "http://10.1.0.13:8081", 
       "Service": "TaxonomyService"
     }

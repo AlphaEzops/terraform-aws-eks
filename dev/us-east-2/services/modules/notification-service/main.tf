@@ -4,6 +4,22 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
+data "aws_secretsmanager_secret" "secret_reveal" {
+ name = "prod/reveal"
+}
+
+data "aws_secretsmanager_secret_version" "secret_reveal" {
+ secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+}
+
+# Database decode from AWS Secret Manager
+locals {
+  DB_HOST = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_HOST"]
+  DB_PORT = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PORT"]
+  DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
+  DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
+  DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
+}
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
 locals {
   region = "us-east-2"
@@ -12,7 +28,7 @@ locals {
   setting_json = jsonencode(<<EOT
     {
         "ConnectionStrings": {
-            "VMDB": "Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
+            "VMDB": "Data Source=${local.DB_HOST},${local.DB_PORT};Initial Catalog=${local.DB_VMDB_NAME};Persist Security Info=True;User ID=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
         },
         "Logging": {
             "LogLevel": {

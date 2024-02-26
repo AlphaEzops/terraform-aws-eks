@@ -4,13 +4,22 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
-# data "aws_secretsmanager_secret" "secret_reveal" {
-#  name = "prod/reveal/authentication-service"
-# }
+data "aws_secretsmanager_secret" "secret_reveal" {
+ name = "prod/reveal"
+}
 
-# data "aws_secretsmanager_secret_version" "secret_reveal" {
-#  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
-# }
+data "aws_secretsmanager_secret_version" "secret_reveal" {
+ secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+}
+
+# Database decode from AWS Secret Manager
+locals {
+  DB_HOST = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_HOST"]
+  DB_PORT = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PORT"]
+  DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
+  DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
+  DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
+}
 
 
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
@@ -53,7 +62,7 @@ locals {
           "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
       },
       "ConnectionStrings": {
-          "VMDB": "Server=10.0.0.8\\vertical_dev,58081;Database=DEV_MASTER1;User Id=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
+          "VMDB": "${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};User Id=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
       },
       "Hosting": {
           "address": "http://*:50001"

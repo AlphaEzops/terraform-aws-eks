@@ -16,7 +16,7 @@ data "aws_secretsmanager_secret_version" "secret_reveal" {
 locals {
   DB_HOST = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_HOST"]
   DB_PORT = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PORT"]
-  DB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_NAME"]
+  DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
   DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
   DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
 }
@@ -30,7 +30,7 @@ locals {
   setting_json = jsonencode(<<EOT
     {
       "ConnectionStrings": {
-        "VMDB": "Data Source=${local.DB_HOST},${local.DB_PORT};Initial Catalog=${local.DB_NAME};Persist Security Info=True;User ID=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
+        "VMDB": "Data Source=${local.DB_HOST},${local.DB_PORT};Initial Catalog=${local.DB_VMDB_NAME};Persist Security Info=True;User ID=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
       },
       "Logging": {
         "LogLevel": {

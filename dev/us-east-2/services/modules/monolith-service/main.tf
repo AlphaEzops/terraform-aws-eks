@@ -4,7 +4,13 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
+data "aws_secretsmanager_secret" "secret_reveal" {
+ name = "prod/reveal"
+}
 
+data "aws_secretsmanager_secret_version" "secret_reveal" {
+ secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+}
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace

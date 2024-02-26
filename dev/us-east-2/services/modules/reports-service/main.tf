@@ -4,14 +4,23 @@ data "aws_eks_cluster" "reveal-cluster" {
   name = "reveal-cluster"
 }
 
-# data "aws_secretsmanager_secret" "secret_reveal" {
-#  name = "prod/reveal/reports-service"
-# }
+data "aws_secretsmanager_secret" "secret_reveal" {
+ name = "prod/reveal"
+}
 
-# data "aws_secretsmanager_secret_version" "secret_reveal" {
-#  secret_id = data.aws_secretsmanager_secret.secret_reveal.id
-# }
+data "aws_secretsmanager_secret_version" "secret_reveal" {
+ secret_id = data.aws_secretsmanager_secret.secret_reveal.id
+}
 
+# Database decode from AWS Secret Manager
+locals {
+  DB_HOST = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_HOST"]
+  DB_PORT = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PORT"]
+  DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
+  DB_VRDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VRDB_NAME"]
+  DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
+  DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
+}
 
 # SINGLE QUOTE ON CONNECTIONSTRINGS.VMDB TO ESCAPE STRINGS AUTOMATICALLY 
 locals {
@@ -21,8 +30,8 @@ locals {
   setting_json = jsonencode(<<EOT
      {
       "ConnectionStrings": {
-        "VMDB": "Server=IN-DEMO-DB-01\\VDSQL,60444;Database=OPTIMUM_DIT_MASTER;integrated security=True;Encrypt=false",
-        "VRDB": "Server=IN-DEMO-DB-01\\VDSQL,60444;Database=OPTIMUM_DIT_REPORTS;integrated security=True;Encrypt=false"
+        "VMDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};integrated security=True;Encrypt=false",
+        "VRDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VRDB_NAME};integrated security=True;Encrypt=false"
       },
       "Logging": {
         "LogLevel": {
