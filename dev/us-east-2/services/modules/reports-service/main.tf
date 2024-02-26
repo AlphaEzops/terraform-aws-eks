@@ -95,7 +95,7 @@ EOT
 )
 }
 module "custom_external_secret_reports_service" {
-  source = "../non-used/external_secrets"
+  source = "../../system/external-secrets-role"
   application_namespace = local.application_namespace
   service_account_name = local.service_account_name
 }

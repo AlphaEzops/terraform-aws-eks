@@ -99,7 +99,7 @@ EOT
 
 
 module "custom_external_secret_request_tracker_service" {
-  source = "../non-used/external_secrets"
+  source = "../../system/external-secrets-role"
   application_namespace = local.application_namespace
   service_account_name = local.service_account_name
 }
@@ -135,6 +135,8 @@ spec:
       parameters:
         - name: "global.namespace"
           value: ${local.application_namespace}
+        - name: "secrets.externalSecrets.serviceAccount.name"
+          value: ${local.service_account_name}
         - name: "secrets.externalSecrets.serviceAccount.arn"
           value: ${module.custom_external_secret_request_tracker_service.service_account_role_arn}
         - name: "application.resources.requests.cpu"

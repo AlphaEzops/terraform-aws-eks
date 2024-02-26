@@ -35,7 +35,7 @@ resource "aws_iam_policy" "eks_external_secrets_access_policy" {
 
 
 # -------------------------------------------------------------------
-# Lilg-ui Secrets Reader/Writer Role/Policy
+# Secrets Reader/Writer Role/Policy
 # -------------------------------------------------------------------
 
 data "aws_iam_policy_document" "eks_secrets_access_policy" {
