@@ -16,8 +16,8 @@ metadata:
     # nginx.ingress.kubernetes.io/rewrite-target: /
     # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
     cert-manager.io/cluster-issuer: "letsencrypt-staging"
-    ingress.kubernetes.io/force-ssl-redirect:  "true"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    # ingress.kubernetes.io/force-ssl-redirect:  "true"
+    # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     # nginx.ingress.kubernetes.io/backend-protocol:  "HTTP"
     # nginx.ingress.kubernetes.io/proxy-send-timeout: "300" 
     # nginx.ingress.kubernetes.io/proxy-read-timeout: "300"  
