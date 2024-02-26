@@ -53,7 +53,7 @@ application:
 
 
 secrets:
-  enabled: true
+  enabled: false
   # -- The secrets provider
   # -- Providers:
   # --- external-secrets: (https://external-secrets.io/v0.5.9/)

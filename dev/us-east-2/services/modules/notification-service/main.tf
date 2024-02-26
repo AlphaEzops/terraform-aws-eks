@@ -118,10 +118,6 @@ spec:
       valueFiles:
         - values.yaml
       parameters:
-        - name: "secrets.externalSecrets.serviceAccount.name"
-          value: ${local.service_account_name}
-        - name: "secrets.externalSecrets.serviceAccount.arn"
-          value: ${module.custom_external_secret_notification_service.service_account_role_arn}
         - name: "global.namespace"
           value: ${local.application_namespace}
         - name: "application.resources.requests.cpu"
