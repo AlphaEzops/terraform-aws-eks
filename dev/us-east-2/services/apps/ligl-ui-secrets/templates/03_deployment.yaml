@@ -35,7 +35,10 @@ spec:
         - name: {{ .Values.application.name }}
           image: {{ .Values.application.image }}:{{ .Values.application.tag }}
           ports:
-            - containerPort: 80
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
           volumeMounts:
             - name: config-ligl-ui-volume
               mountPath: /usr/share/nginx/html/assets/config/configuration.json

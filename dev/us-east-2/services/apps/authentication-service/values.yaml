@@ -51,6 +51,13 @@ application:
       cpu: 1000m
       memory: 1000Mi
 
+# -- Service configuration 
+service:
+  name: "deployment-authentication-service"
+  type: "ClusterIP"
+  port: 80
+  targetPort: 80
+
 secrets:
   enabled: true
   # -- The secrets provider
