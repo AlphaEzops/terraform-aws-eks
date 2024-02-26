@@ -56,6 +56,11 @@ spec:
               cpu: {{ .Values.application.resources.limits.cpu }}
               memory: {{ .Values.application.resources.limits.memory }}
           {{- end }}
+          {{- if .Values.secrets.secretDefinitions.data }}
+          env:
+          {{- include "helpers.create-env-secrets" . | indent 10}}
+          {{- end }}
+
 
       volumes:
         - name: {{ .Values.application.volumeName }}
