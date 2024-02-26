@@ -8,6 +8,13 @@ data "aws_eks_cluster" "reveal-cluster" {
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
+  service_account_name = var.service_account_name
+}
+
+module "custom_external_secret_monolith_service" {
+  source = "../non-used/external_secrets"
+  application_namespace = local.application_namespace
+  service_account_name = local.service_account_name
 }
 
 
@@ -37,6 +44,11 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "secrets.externalSecrets.serviceAccount.name"
+          value: ${local.service_account_name}
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${module.custom_external_secret_monolith_service.service_account_role_arn}
     path: dev/us-east-2/services/apps/monolith-service
     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
     targetRevision: HEAD

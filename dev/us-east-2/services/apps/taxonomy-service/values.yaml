@@ -151,7 +151,7 @@ secrets:
     # Specifies the service account for external-secrets
     serviceAccount:
       name: "taxonomy-service-sa"
-      arn: "arn:aws:iam::975635808270:role/taxonomy-service-us-east-2-eks-secrets-role-irsa"
+      arn: ""
 
   secretDefinitions:
     data:

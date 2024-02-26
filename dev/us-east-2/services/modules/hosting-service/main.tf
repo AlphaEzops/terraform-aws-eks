@@ -5,7 +5,7 @@ data "aws_eks_cluster" "reveal-cluster" {
 }
 
 # data "aws_secretsmanager_secret" "secret_reveal" {
-#  name = "prod/reveal/authentication-service"
+#  name = "prod/reveal/hosting-service"
 # }
 
 # data "aws_secretsmanager_secret_version" "secret_reveal" {
@@ -17,6 +17,7 @@ data "aws_eks_cluster" "reveal-cluster" {
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
+  service_account_name = var.service_account_name
   setting_json = jsonencode(<<EOT
     {
       "ConnectionStrings": {
@@ -93,13 +94,19 @@ EOT
 )
 }
 
+module "custom_external_secret_hosting_service" {
+  source = "../non-used/external_secrets"
+  application_namespace = local.application_namespace
+  service_account_name = local.service_account_name
+}
+
 
 #==============================================================================================================
-# APPLICATION - AUTHENTICATION SERVICE
+# APPLICATION - HOSTING SERVICE
 #==============================================================================================================
 
 
-resource "kubectl_manifest" "authentication_service" {
+resource "kubectl_manifest" "hosting_service" {
 
   yaml_body = <<YAML
 apiVersion: argoproj.io/v1alpha1
@@ -121,6 +128,10 @@ spec:
       valueFiles:
         - values.yaml
       parameters:
+        - name: "secrets.externalSecrets.serviceAccount.name"
+          value: ${local.service_account_name}
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${module.custom_external_secret_hosting_service.service_account_role_arn}
         - name: "global.namespace"
           value: ${local.application_namespace}
         - name: "application.resources.requests.cpu"

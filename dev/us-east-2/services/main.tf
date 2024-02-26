@@ -311,6 +311,7 @@ module "authentication-service" {
   depends_on = [module.ligl-external]
   source = "./modules/authentication-service"
   application_namespace = "authentication-service"
+  service_account_name = "authentication-service-sa"
 }
 
 module "taxonomy-service" {
@@ -321,15 +322,17 @@ module "taxonomy-service" {
 }
 
 module "monolith-service" {
-  depends_on = [module.taxonomy-service]
+  depends_on = [helm_release.argocd_helm_release]
   source = "./modules/monolith-service"
   application_namespace = "monolith-service"
+  service_account_name = "monolith-service-sa"
 }
 
 module "hosting-service" {
-  depends_on = [module.taxonomy-service]
+  depends_on = [helm_release.argocd_helm_release]
   source = "./modules/hosting-service"
   application_namespace = "hosting-service"
+  service_account_name = "hosting-service-sa"
 }
 
 module "sql-server-backup" {
@@ -342,28 +345,34 @@ module "reports-service" {
   depends_on = [module.sql-server-backup]
   source = "./modules/reports-service"
   application_namespace = "reports-service"
+  service_account_name = "reports-service-sa"
 }
 
 module "notification-service" {
   depends_on = [module.reports-service]
   source = "./modules/notification-service"
   application_namespace = "notification-service"
+  service_account_name = "notification-service-sa"
 }
 
 module "process-service" {
   depends_on = [module.notification-service]
   source = "./modules/process-service"
   application_namespace = "process-service"
+  service_account_name = "process-service-sa"
 }
 
 module "request-tracker-service" {
   depends_on = [module.notification-service]
   source = "./modules/request-tracker-service"
   application_namespace = "request-tracker-service"
+  service_account_name = "request-tracker-service-sa"
+
 }
 
 module "metadata-process-service" {
   depends_on = [module.notification-service]
   source = "./modules/metadata-process-service"
   application_namespace = "metadata-process-service"
+  service_account_name = "metadata-service-sa"
 }

@@ -8,6 +8,7 @@ data "aws_eks_cluster" "reveal-cluster" {
 locals {
   region = "us-east-2"
   application_namespace = var.application_namespace
+  service_account_name = var.service_account_name
   setting_json = jsonencode(<<EOT
     {
         "ConnectionStrings": {
@@ -83,6 +84,11 @@ locals {
 EOT  
 )
 }
+module "custom_external_secret_notification_service" {
+  source = "../non-used/external_secrets"
+  application_namespace = local.application_namespace
+  service_account_name = local.service_account_name
+}
 
 
 #==============================================================================================================
@@ -112,6 +118,10 @@ spec:
       valueFiles:
         - values.yaml
       parameters:
+        - name: "secrets.externalSecrets.serviceAccount.name"
+          value: ${local.service_account_name}
+        - name: "secrets.externalSecrets.serviceAccount.arn"
+          value: ${module.custom_external_secret_notification_service.service_account_role_arn}
         - name: "global.namespace"
           value: ${local.application_namespace}
         - name: "application.resources.requests.cpu"
