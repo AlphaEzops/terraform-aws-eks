@@ -26,7 +26,7 @@ locals {
   application_namespace = var.application_namespace
   service_account_name = var.service_account_name
   setting_json = jsonencode(<<EOT
-    {
+      {
         "ConnectionStrings": {
             "VMDB": "Data Source=${local.DB_HOST},${local.DB_PORT};Initial Catalog=${local.DB_VMDB_NAME};Persist Security Info=True;User ID=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
         },
@@ -96,7 +96,7 @@ locals {
         "Environment": "dev",
         "Origion": "http://10.1.0.13:8081",
         "Service": "NotificationService"
-    }
+      }
 EOT  
 )
 }

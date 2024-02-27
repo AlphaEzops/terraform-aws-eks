@@ -28,7 +28,7 @@ locals {
   application_namespace = var.application_namespace
   service_account_name = var.service_account_name
   setting_json = jsonencode(<<EOT
-     {
+    {
       "ConnectionStrings": {
         "VMDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};integrated security=True;Encrypt=false",
         "VRDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VRDB_NAME};integrated security=True;Encrypt=false"

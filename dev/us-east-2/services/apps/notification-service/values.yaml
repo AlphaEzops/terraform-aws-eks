@@ -105,7 +105,7 @@ secrets:
 configMap:
   name: "notification-service-config" 
   configuration: |2
-    {
+      {
         "ConnectionStrings": {
             "VMDB": "Data Source=10.0.0.8\\OPTIMUM_DEV,58081;Initial Catalog=DEV_MASTER;Persist Security Info=True;User ID=DITUser;Password=OptimumDIT@Vertical123;Encrypt=false"
         },
@@ -175,4 +175,4 @@ configMap:
         "Environment": "dev",
         "Origion": "http://10.1.0.13:8081",
         "Service": "NotificationService"
-    }
+      }
