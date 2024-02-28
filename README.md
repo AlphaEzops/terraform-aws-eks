@@ -30,7 +30,34 @@ An example of a created ArgoCD application is:
 
 <!-- This application deploys the monolith service, in the folder **dev/us-east-2/services/apps/monolith-service**. -->
 
+### HOW HELM CHARTS WORKS:
+
+Helm is a package manager for Kubernetes that allows deploying and managing applications in a Kubernetes cluster.
+
+A chart is basically a set of YAML templates that describe Kubernetes resources.
+
+Helm allows creating logic to meet the needs of applications, and this logic is implemented through the values referenced in the `values.yaml` file at the root of the Helm application.
+
+Helm applications can be deployed using the `helm install` or `helm release` commands.
+
+ArgoCD can deploy Helm applications, but it generates templates via the `helm template` command and executes Kubernetes templates.
+
+The folder structure of a Helm application is as follows:
+
+![](docs/assets/helm_folder.png) 
+
+The "templates" folder contains the Kubernetes templates that may or may not be created, depending on the logic applied within each template.
+
+![](docs/assets/helm_template_folder.png) 
+
+An example of Kubernetes templates using Helm is the configMap template, look that the `name`, `namespace` and content of `appsettings.json` are placed on `values.yaml` file and represented in key/values types:
+
+![](docs/assets/helm_template_file.png) 
+
+In this folder structure, all Helms charts are in folder **dev/us-east-2/services/apps**, each one are deployed separated by ArgoCD using Terraform structure.
+
 ### HOW TERRAFORM CREATES ARGOCD APPLICATIONS:
+
 Terraform modules are located in the folder **dev/us-east-2/services/modules** and they work. ArgoCD applications can be created via Kubernetes templates. An example of an ArgoCD application template is:
 
 ![](docs/assets/argocd_application_simple.png)
@@ -57,3 +84,4 @@ ArgoCD can deploy Helm charts, and you can configure a private repository to sto
 ValuesFiles is the default values.yaml file designated by Helm, and the parameters are individual values being changed within the default values.yaml. This is how a Terraform code deploys an application to ArgoCD by passing a Helm application via source. When executing the module in main.tf, the above code block will be executed by Terraform.
 
 ![](docs/assets/module_terraform.png) 
+
