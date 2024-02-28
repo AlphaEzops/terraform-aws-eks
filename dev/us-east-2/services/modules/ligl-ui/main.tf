@@ -16,16 +16,30 @@ locals {
   service_account_name = var.service_account_name
 }
 
-# module "custom_external_secret_ligl_ui" {
-#   source = "../../system/external-secrets-role"
-#   application_namespace = local.application_namespace
-#   service_account_name = local.service_account_name
-# }
-
-
 #==============================================================================================================
 # APPLICATION - LIGL-UI
 #==============================================================================================================
+
+# resource "helm_release" "ligl_ui" {
+#   name         = "ligl-ui"
+#   chart        = "argo-application"
+#   repository   = "git@github.com:AlphaEzops/reveal-eks.git"
+#   version      = "1.0.5"
+#   namespace    = "argocd"
+#   description  = "ArgoCD for Authentication Service"
+#   reset_values = true
+#   max_history  = 5
+
+#   values = [
+#     # Add values
+#     templatefile("${path.module}/helm_values/ligl-ui_values.yml", {
+#       "image_repo"        = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+#       "image_tag"         = "new-tag"
+#       "application_name"   = "ligl-ui"
+#       "ligl_ui_hostname"   = "ligl-ui.dev.ezops.com.br"
+#     })
+#   ]
+# }
 
 
 resource "kubectl_manifest" "ligl-ui" {
