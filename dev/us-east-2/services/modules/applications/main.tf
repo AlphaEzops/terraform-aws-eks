@@ -909,7 +909,7 @@ spec:
    
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/sql-server-backup
-      targetRevision: 56c1bf46196d3a21fd71f4415d55795f4af4246f
+      targetRevision: 3bf931694a75e8768c80b6877bbd8902cd3dd5ee
       helm:
         valueFiles:
           - values.yaml
