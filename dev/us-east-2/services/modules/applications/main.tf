@@ -18,6 +18,7 @@ locals {
   DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
   DB_VEDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VEDB_NAME"]
   DB_VSDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VSDB_NAME"]
+    DB_VRDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VRDB_NAME"]
   DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
   DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
 }
@@ -170,7 +171,429 @@ locals {
       }
   EOT  
   )
+  metadata_setting_json = jsonencode(<<EOT
+    {
+      "Logging": {
+          "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning"
+          }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+          "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+          "MinimumLevel": {
+              "Default": "Information",
+              "Override": {
+                  "Microsoft": "Warning",
+                  "System": "Warning"
+              }
+          },
+          "WriteTo": [
+              {
+                  "Name": "Console"
+              },
+              {
+                  "Name": "File",
+                  "Args": {
+                      "path": "/logs/core/log-.txt",
+                      "rollOnFileSizeLimit": true,
+                      "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+                      "rollingInterval": "Day"
+                  }
+              }
+          ],
+          "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "ConnectionStrings": {
+          "VMDB": "${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};User Id=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
+      },
+      "Hosting": {
+          "address": "http://*:50001"
+      },
+      "Origion": "http://10.1.0.13:8081",
+      "Service": "NUIXMicroservice"
+    }
+  EOT  
+  )
 
+  notification_setting_json = jsonencode(<<EOT
+    {
+      "ConnectionStrings": {
+          "VMDB": "Data Source=${local.DB_HOST},${local.DB_PORT};Initial Catalog=${local.DB_VMDB_NAME};Persist Security Info=True;User ID=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
+      },
+      "Logging": {
+          "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning"
+          }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+          "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+          "MinimumLevel": {
+              "Default": "Information",
+              "Override": {
+                  "Microsoft": "Warning",
+                  "System": "Warning"
+              }
+          },
+          "WriteTo": [
+              {
+                  "Name": "Console"
+              },
+              {
+                  "Name": "File",
+                  "Args": {
+                      "path": "/logs/core/log-.txt",
+                      "rollOnFileSizeLimit": true,
+                      "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+                      "rollingInterval": "Day"
+                  }
+              }
+          ],
+          "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "Tokens": {
+          "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
+          "Issuer": "VerticalAuthority",
+          "Audience": "Everyone",
+          "AccessTokenExpiry": 10,
+          "RefreshTokenExpiry": 60
+      },
+      "SecurityKeys": {
+          "EncyKey": "VDev@2016",
+          "DefaultPasswordKey": "VerticalPassword#123"
+      },
+      "WebSocketSetting": {
+          "KeepAliveInterval": 120,
+          "BufferSize": 4,
+          "DefaultBuffer": 1024,
+          "TimeOut": 3600000
+      },
+      "SwaggerSettings": {
+          "Version": "V1",
+          "Title": "Notification Service"
+      },
+      "ConnectionStringSettings": {
+          "MaxTryCount": 10,
+          "MaxDelayTryInSeconds": 30
+      },
+      "redis": {
+          "host": "127.0.0.1",
+          "name": "localhost",
+          "port": 6379,
+          "expiry": 24 
+      },
+      "Environment": "dev",
+      "Origion": "http://10.1.0.13:8081",
+      "Service": "NotificationService"
+    }
+  EOT 
+  )
+
+  hosting_setting_json = jsonencode(<<EOT
+    {
+      "ConnectionStrings": {
+        "VMDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};integrated security=True;Encrypt=false"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+        "MinimumLevel": {
+          "Default": "Information",
+          "Override": {
+            "Microsoft": "Warning",
+            "System": "Warning"
+          }
+        },
+        "WriteTo": [
+          {
+            "Name": "Console"
+          },
+          {
+            "Name": "File",
+            "Args": {
+              "path": "/logs/core/log-.txt",
+              "rollOnFileSizeLimit": true,
+              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+              "rollingInterval": "Day"
+            }
+          }
+        ],
+        "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "Tokens": {
+        "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
+        "Issuer": "VerticalAuthority",
+        "Audience": "Everyone",
+        "AccessTokenExpiry": 10,
+        "RefreshTokenExpiry": 60
+      },
+      "SecurityKeys": {
+        "EncyKey": "VDev@2016",
+        "DefaultPasswordKey": "VerticalPassword#123"
+      },
+      "WebSocketSetting": {
+        "KeepAliveInterval": 120,
+        "BufferSize": 4,
+        "DefaultBuffer": 1024,
+        "TimeOut": 3600000
+      },
+      "SwaggerSettings": {
+        "Version": "V1",
+        "Title": "Taxonomy Service"
+      },
+      "ConnectionStringSettings": {
+        "MaxTryCount": 10,
+        "MaxDelayTryInSeconds": 30
+      },
+      "redis": {
+        "host": "127.0.0.1",
+        "name": "localhost",
+        "port": 6379,
+        "expiry": 24 
+      },
+      "Environment": "dev",
+      "Origion": "*",
+      "Service": "TaxonomyService"
+    }
+  EOT  
+  )
+  process_setting_json = jsonencode(<<EOT
+    {
+      "ConnectionStrings": {
+        "VMDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};integrated security=True;Encrypt=false"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+        "MinimumLevel": {
+          "Default": "Information",
+          "Override": {
+            "Microsoft": "Warning",
+            "System": "Warning"
+          }
+        },
+        "WriteTo": [
+          {
+            "Name": "Console"
+          },
+          {
+            "Name": "File",
+            "Args": {
+              "path": "/logs/core/log-.txt",
+              "rollOnFileSizeLimit": true,
+              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+              "rollingInterval": "Day"
+            }
+          }
+        ],
+        "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "Tokens": {
+        "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
+        "Issuer": "VerticalAuthority",
+        "Audience": "Everyone",
+        "AccessTokenExpiry": 10,
+        "RefreshTokenExpiry": 60
+      },
+      "SecurityKeys": {
+        "EncyKey": "VDev@2016",
+        "DefaultPasswordKey": "VerticalPassword#123"
+      },
+      "WebSocketSetting": {
+        "KeepAliveInterval": 120,
+        "BufferSize": 4,
+        "DefaultBuffer": 1024,
+        "TimeOut": 3600000
+      },
+      "SwaggerSettings": {
+        "Version": "V1",
+        "Title": "Taxonomy Service"
+      },
+      "ConnectionStringSettings": {
+        "MaxTryCount": 10,
+        "MaxDelayTryInSeconds": 30
+      },
+      "redis": {
+        "host": "127.0.0.1",
+        "name": "localhost",
+        "port": 6379,
+        "expiry": 24 
+      },
+      "Environment": "dev",
+      "Origion": "http://10.1.0.13:8081", 
+      "Service": "TaxonomyService"
+    }
+  EOT  
+  )
+
+  reports_setting_json = jsonencode(<<EOT
+    {
+      "ConnectionStrings": {
+        "VMDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VMDB_NAME};integrated security=True;Encrypt=false",
+        "VRDB": "Server=${local.DB_HOST},${local.DB_PORT};Database=${local.DB_VRDB_NAME};integrated security=True;Encrypt=false"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+        "MinimumLevel": {
+          "Default": "Information",
+          "Override": {
+            "Microsoft": "Warning",
+            "System": "Warning"
+          }
+        },
+        "WriteTo": [
+          {
+            "Name": "Console"
+          },
+          {
+            "Name": "File",
+            "Args": {
+              "path": "/logs/core/log-.txt",
+              "rollOnFileSizeLimit": true,
+              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+              "rollingInterval": "Day"
+            }
+          }
+        ],
+        "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "Tokens": {
+        "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
+        "Issuer": "VerticalAuthority",
+        "Audience": "Everyone",
+        "AccessTokenExpiry": 10,
+        "RefreshTokenExpiry": 60
+      },
+      "SecurityKeys": {
+        "EncyKey": "VDev@2016",
+        "DefaultPasswordKey": "VerticalPassword#123"
+      },
+      "WebSocketSetting": {
+        "KeepAliveInterval": 120,
+        "BufferSize": 4,
+        "DefaultBuffer": 1024,
+        "TimeOut": 3600000
+      },
+      "SwaggerSettings": {
+        "Version": "V1",
+        "Title": "Taxonomy Service"
+      },
+      "ConnectionStringSettings": {
+        "MaxTryCount": 10,
+        "MaxDelayTryInSeconds": 30
+      },
+      "redis": {
+        "host": "127.0.0.1",
+        "name": "localhost",
+        "port": 6379,
+        "expiry": 24 
+      },
+      "Environment": "dev",
+      "Origion": "http://10.1.0.13:8081", 
+      "Service": "TaxonomyService"
+    }
+  EOT  
+  )
+
+  request_tracker_setting_json = jsonencode(<<EOT
+    {
+      "ConnectionStrings": {
+        "VMDB": "Data Source=${local.DB_HOST},${local.DB_PORT};Initial Catalog=${local.DB_VMDB_NAME};Persist Security Info=True;User ID=${local.DB_USERNAME};Password=${local.DB_PASSWORD};Encrypt=false"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "Serilog": {
+        "Using": [ "Serilog.Sinks.File", "Serilog.Sinks.Console" ],
+        "MinimumLevel": {
+          "Default": "Information",
+          "Override": {
+            "Microsoft": "Warning",
+            "System": "Warning"
+          }
+        },
+        "WriteTo": [
+          {
+            "Name": "Console"
+          },
+          {
+            "Name": "File",
+            "Args": {
+              "path": "/logs/core/log-.txt",
+              "rollOnFileSizeLimit": true,
+              "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter,Serilog.Formatting.Compact",
+              "rollingInterval": "Day"
+            }
+          }
+        ],
+        "Enrich": [ "FromLogContext", "WithThreadId", "WithMachineName" ]
+      },
+      "Tokens": {
+        "Key": "IxrAjDoa2FqEl3RIhrSrUJELhUckePEPVpaePlS_Poa",
+        "Issuer": "VerticalAuthority",
+        "Audience": "Everyone",
+        "AccessTokenExpiry": 10,
+        "RefreshTokenExpiry": 60
+      },
+      "SecurityKeys": {
+        "EncyKey": "VDev@2016",
+        "DefaultPasswordKey": "VerticalPassword#123"
+      },
+      "WebSocketSetting": {
+        "KeepAliveInterval": 120,
+        "BufferSize": 4,
+        "DefaultBuffer": 1024,
+        "TimeOut": 3600000
+      },
+      "SwaggerSettings": {
+        "Version": "V1",
+        "Title": "Taxonomy Service"
+      },
+      "ConnectionStringSettings": {
+        "MaxTryCount": 10,
+        "MaxDelayTryInSeconds": 30
+      },
+      "ligil": {
+        "url": "http://10.0.1.8:8021/Ligl/#/login/"
+      },
+      "redis": {
+        "host": "127.0.0.1",
+        "name": "localhost",
+        "port": 6379,
+        "expiry": 24 
+      },
+      "Environment": "dev",
+      "Origion": "http://10.1.0.13:8081",
+      "Service": "RequestTrackerService"
+    }
+  EOT  
+  )
 }
 
 
@@ -344,9 +767,149 @@ spec:
           - name: "application.resources.requests.memory"
             value: "100m"
         
+   
+    - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+      path: dev/us-east-2/services/apps/metadata-processing-service
+      targetRevision: HEAD   
+      helm:
+        valueFiles:
+          - values.yaml
+        parameters:
+          - name: "global.namespace"
+            value: "metadata-processing-service"
+          - name: "application.resources.requests.cpu"
+            value: "100m"
+          - name: "application.resources.requests.memory"
+            value: "100m"
+          - name: "configMap.configuration"
+            value: ${local.metadata_setting_json}
+    
+    
+    - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+      path: dev/us-east-2/services/apps/hosting-service
+      targetRevision: HEAD
+      helm:
+        valueFiles:
+          - values.yaml
+        parameters:
+          - name: "global.namespace"
+            value: "hosting-service"
+          - name: "application.resources.requests.cpu"
+            value: "100m"
+          - name: "application.resources.requests.memory"
+            value: "100m"
+          - name: "configMap.configuration"
+            value: ${local.hosting_setting_json}
+    
+    
+    
+    - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+      path: dev/us-east-2/services/apps/process-service
+      targetRevision: HEAD
+      helm:
+        valueFiles:
+          - values.yaml
+        parameters:
+          - name: "global.namespace"
+            value: "process-service"
+          - name: "application.resources.requests.cpu"
+            value: "100m"
+          - name: "application.resources.requests.memory"
+            value: "100m"
+          - name: "configMap.configuration"
+            value: ${local.process_setting_json}
+    
+    - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+      path: dev/us-east-2/services/apps/reports-service
+      targetRevision: HEAD
+      helm:
+        valueFiles:
+          - values.yaml
+        parameters:
+          - name: "global.namespace"
+            value: "reports-service"
+          - name: "application.resources.requests.cpu"
+            value: "100m"
+          - name: "application.resources.requests.memory"
+            value: "100m"
+          - name: "configMap.configuration"
+            value: ${local.reports_setting_json}
+      
+    
+    
+    
+    - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+      path: dev/us-east-2/services/apps/request-tracker-service
+      targetRevision: HEAD
+      helm:
+        valueFiles:
+          - values.yaml
+        parameters:
+          - name: "global.namespace"
+            value: "request-tracker-service"
+          - name: "application.resources.requests.cpu"
+            value: "100m"
+          - name: "application.resources.requests.memory"
+            value: "100m"
+          - name: "configMap.configuration"
+            value: ${local.request_tracker_setting_json}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+      path: dev/us-east-2/services/apps/notification-service
+      targetRevision: HEAD
+      helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: "global.namespace"
+          value: "notification-service"
+        - name: "application.resources.requests.cpu"
+          value: "100m"
+        - name: "application.resources.requests.memory"
+          value: "100m"
+        - name: "configMap.configuration"
+          value: ${local.notification_setting_json}
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/sql-server-backup
-      targetRevision: HEAD
+      targetRevision: 56c1bf46196d3a21fd71f4415d55795f4af4246f
       helm:
         valueFiles:
           - values.yaml

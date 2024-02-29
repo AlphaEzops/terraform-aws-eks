@@ -3,6 +3,7 @@ global:
   # K8s namespace. The name of the deployment.
   namespace: "sql-server-backup"
 
+fullnameOverride: "sql-server-backup"
 acceptEula:
   value: "n"
 edition:
