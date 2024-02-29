@@ -26,7 +26,6 @@ locals {
 
 locals {
   region = "us-east-2"
-  application_namespace = var.application_namespace
   sql_server_database_password = "password123@"
   authentication_settings_json = jsonencode(<<EOT
     {
@@ -608,13 +607,18 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
   labels:
     argocd.argoproj.io/instance: app-of-apps
-  name: ${local.application_namespace}-development
+  name: applications-development
   namespace: argocd-system
 spec:
   destination:
     server: 'https://kubernetes.default.svc'
   project: default
   sources:
+
+    #####################
+        LIGL-UI HELM 
+    #####################
+
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/ligl-ui-secrets
       targetRevision: HEAD
@@ -695,6 +699,9 @@ spec:
           - name: "configMap.getScheduledTask"
             value: "https://telerik.myligl.io/api/reportserver/v2/scheduledtasks"
 
+    ########################
+      AUTHENTICATION HELM 
+    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/authentication-service
@@ -710,9 +717,11 @@ spec:
             value: "100m"
           - name: "configMap.configuration"
             value: ${local.authentication_settings_json}
+
+    ########################
+      MONOLITH HELM 
+    #######################
     
-
-
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/monolith-service
       targetRevision: HEAD
@@ -736,7 +745,11 @@ spec:
             value: "metadata={0};provider=System.Data.SqlClient;provider connection string=&quot;data source={1};initial catalog={2};{3};MultipleActiveResultSets=True;Enlist={4};App=EntityFramework&quot;"
           - name: "configMap.StagingEntitiesConnectionString"
             value: "metadata=res://*/Staging.Staging.csdl|res://*/Staging.Staging.ssdl|res://*/Staging.Staging.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=source=${local.DB_HOST},${local.DB_PORT};initial catalog=${local.DB_VSDB_NAME};user id=${local.DB_USERNAME};pwd=${local.DB_PASSWORD};MultipleActiveResultSets=True;App=EntityFramework&quot;"
-
+   
+    ########################
+      TAXONOMY HELM 
+    #######################
+    
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/taxonomy-service
       targetRevision: HEAD
@@ -752,7 +765,11 @@ spec:
             value: "100m"
           - name: "configMap.configuration"
             value: ${local.taxonomy_setting_json}
-  
+     
+    ########################
+      LIGL-EXTERNAL HELM 
+    #######################
+
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/ligl-external
       targetRevision: HEAD
@@ -767,7 +784,10 @@ spec:
           - name: "application.resources.requests.memory"
             value: "100m"
         
-   
+    ########################
+      METADATA HELM 
+    #######################
+
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/metadata-processing-service
       targetRevision: HEAD   
@@ -784,7 +804,9 @@ spec:
           - name: "configMap.configuration"
             value: ${local.metadata_setting_json}
     
-    
+    ########################
+      HOSTING HELM 
+    #######################
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/hosting-service
       targetRevision: HEAD
@@ -801,7 +823,9 @@ spec:
           - name: "configMap.configuration"
             value: ${local.hosting_setting_json}
     
-    
+    ########################
+      PROCESS HELM 
+    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/process-service
@@ -819,6 +843,10 @@ spec:
           - name: "configMap.configuration"
             value: ${local.process_setting_json}
     
+    ########################
+      REPORTS HELM 
+    #######################
+
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/reports-service
       targetRevision: HEAD
@@ -835,8 +863,9 @@ spec:
           - name: "configMap.configuration"
             value: ${local.reports_setting_json}
       
-    
-    
+    ########################
+      REQUEST TRACKER HELM 
+    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/request-tracker-service
@@ -854,62 +883,33 @@ spec:
           - name: "configMap.configuration"
             value: ${local.request_tracker_setting_json}
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    ########################
+      NOTIFICATION HELM 
+    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/notification-service
       targetRevision: HEAD
       helm:
-      valueFiles:
-        - values.yaml
-      parameters:
-        - name: "global.namespace"
-          value: "notification-service"
-        - name: "application.resources.requests.cpu"
-          value: "100m"
-        - name: "application.resources.requests.memory"
-          value: "100m"
-        - name: "configMap.configuration"
-          value: ${local.notification_setting_json}
+        valueFiles:
+          - values.yaml
+        parameters:
+          - name: "global.namespace"
+            value: "notification-service"
+          - name: "application.resources.requests.cpu"
+            value: "100m"
+          - name: "application.resources.requests.memory"
+            value: "100m"
+          - name: "configMap.configuration"
+            value: ${local.notification_setting_json}
    
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+    ########################
+      SQL-SERVER-BACKUP HELM 
+    #######################
+  
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/sql-server-backup
-      targetRevision: 3bf931694a75e8768c80b6877bbd8902cd3dd5ee
+      targetRevision: HEAD
       helm:
         valueFiles:
           - values.yaml

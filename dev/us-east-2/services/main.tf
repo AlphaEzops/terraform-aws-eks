@@ -293,13 +293,17 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   }
 }
 
-
-module "ligl-ui" {
+module "applications" {
   depends_on = [helm_release.argocd_helm_release]
   source = "./modules/applications"
-  application_namespace = "ligl-ui"
-  service_account_name = "ligl-ui-sa"
 }
+
+# module "ligl-ui" {
+#   depends_on = [helm_release.argocd_helm_release]
+#   source = "./modules/ligl-ui"
+#   application_namespace = "ligl-ui"
+#   service_account_name = "ligl-ui-sa"
+# }
 
 # module "ligl-external" {
 #   depends_on = [helm_release.argocd_helm_release]
