@@ -1,0 +1,36 @@
+# Application Name
+name: ""
+
+# The ArgoCD Project the Application belongs to.
+project: "default"
+
+# Source config for the Application
+sources:
+  # Git Repo the Application points to.
+  - repoUrl: ""
+    # Chart name !!!!! Do not use if using a Git Repo !!!!! Only use when using a Helm Repo.
+    chart: ""
+
+
+    # Target revision for the repo.
+    targetRevision: "HEAD"
+
+    # Path in the repo Argo should look for manifests.
+    path: ""
+
+    # Helm configuration.
+    helm:
+      values: ""
+      valueFiles: []
+      automatedPrune: true
+      automatedSelfHeal: true
+      syncReplace: false
+      respectIgnoreDifferences: false
+
+# Destination cluster.
+destination:
+  server: "https://kubernetes.default.svc"
+  namespace: ""
+
+# Ignore differences per spec: https://argo-cd.readthedocs.io/en/stable/user-guide/diffing/
+ignoreDifferences: []

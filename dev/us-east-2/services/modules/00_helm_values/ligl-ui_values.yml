@@ -3,163 +3,140 @@ name: ${application_name}
 project: "default"
 destination:
   server: "https://kubernetes.default.svc"
-  namespace: ${application_name}
-source:
-  path: ${helm_path}
-  repoUrl: "${helm_repoUrl}"
-  targetRevision: "${helm_version}"
-  helm:
-    releaseName: ${application_name}
-    valueFiles: []
-    automatedPrune: true
-    automatedSelfHeal: true
-    values: |
-      global:
-        # K8s namespace. The name of the deployment.
-        namespace: "ligl-ui"
+  namespace: "${application_name}"
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  sources:
+    - repoURL: "${ligl_ui_helm_repoUrl}"
+      path: "${ligl_ui_helm_path}"
+      targetRevision: "${ligl_ui_helm_version}"
+      helm:
+        releaseName: "${application_name}"
+        valueFiles: []
+        automatedPrune: true
+        automatedSelfHeal: true
+        values: |
+          global:
+            # K8s namespace. The name of the deployment.
+            namespace: "ligl-ui"
 
 
-        ecr:
-          enabled: false
-          secret: "reveal-ecr"
-          # -- AWS Account ID (default "475250404638")
-          account: ""
-          # -- ECR AWS Region (default "us-east-1")
-          region: ""
-          # -- Set the full hostname/url for the secret rather than building it with account and region
-          host: ""
-          # -- Docker ECR Password (required)
-          # -- Command: aws ecr get-login-password
-          password: ""
-          # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
-          patchDefaultServiceAccount: true
+            ecr:
+              enabled: false
+              secret: "reveal-ecr"
+              # -- AWS Account ID (default "475250404638")
+              account: ""
+              # -- ECR AWS Region (default "us-east-1")
+              region: ""
+              # -- Set the full hostname/url for the secret rather than building it with account and region
+              host: ""
+              # -- Docker ECR Password (required)
+              # -- Command: aws ecr get-login-password
+              password: ""
+              # -- Should we run a post install/pre upgrade job to associate the ECR secret with the service account?
+              patchDefaultServiceAccount: true
 
-      application:
-        image: ${image_repo}
-        tag: "${image_tag}"
-        name: "${application_name}"
-        replicaCount: 2
-        nodeSelector:
-          kubernetes.io/os: linux
-          kubernetes.io/arch: amd64
-        resources:
-          requests:
-            cpu: 500m
-            memory: 500Mi
-          limits:
-            cpu: 1000m
-            memory: 1000Mi
+          application:
+            image: ${image_repo}
+            tag: "${image_tag}"
+            name: "${application_name}"
+            replicaCount: 2
+            nodeSelector:
+              kubernetes.io/os: linux
+              kubernetes.io/arch: amd64
+            resources:
+              requests:
+                cpu: 500m
+                memory: 500Mi
+              limits:
+                cpu: 1000m
+                memory: 1000Mi
 
-      ingress:
-        # -- The ingress class (set per ingress)
-        # -- Options:
-        # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
-        # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
-        enabled: true
-        # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
-        hostname: ${ligl_ui_hostname}
-        class: "nginx"
-        # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
-        sslCertArn: ""
-        # -- Uncomment below to add custom annotations for the public ingress
-        annotations: {}
-        alb:
-          rules: []
-          paths: []
+          ingress:
+            # -- The ingress class (set per ingress)
+            # -- Options:
+            # -- alb: (AWS Application Load balancer - https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.1/)
+            # -- nginx: Nginx Ingress (https://kubernetes.github.io/ingress-nginx/)
+            enabled: true
+            # -- Multiple hostnames can be provided if using external DNS, however this may not work for ingress-nginx
+            hostname: ${ligl_ui_hostname}
+            class: "nginx"
+            # -- sslCertArn is only valid when using the 'alb' class. Leave empty for aut-select
+            sslCertArn: ""
+            # -- Uncomment below to add custom annotations for the public ingress
+            annotations: {}
+            alb:
+              rules: []
+              paths: []
 
-      configMap:
-        name: "ligl-ui-config" 
-        serviceIp: ${configmap_serviceip}
-        webSocketUrl: ${configmap_websocketurl}
-        loginUrl: ${configmap_loginurl}
-        getUserUrl: ${configmap_getuserurl}
-        oData: ${configmap_odata}
-        moduleLookupUrl: ${configmap_modulelookupurl}
-        appSettingUrl: ${configmap_appsettingurl}
-        oDataTaxonomyUrl: ${configmap_odatataxonomyurl}
-        userPermissions: ${configmap_userpermissions}
-        logoutUrl: ${configmap_logouturl}
-        telerikReportServerUrl: ${configmap_telerikreportserverurl}
-        apiPrefixURL: ${configmap_apiprefixurl}
-        defaultLanguage: ${configmap_defaultlanguage}
-        IsNuixEnvironment: ${configmap_isnuixenvironment}
-        isCommonSpiritInstance: ${configmap_iscommonspiritinstance}
-        isLocalization: ${configmap_islocalization}
-        ClientName: ${configmap_clientname}
-        AuthenticationProviderType: ${configmap_authenticationprovidertype}
-        IsSSOSPInitiatedEnabled: ${configmap_isssospinitiatedenabled}
-        IsMearsk: ${configmap_ismearsk}
-        ssoSPInitiatedUrl: ${configmap_ssospinitiatedurl}
-        ApproversCount: ${configmap_approverscount}
-        DocumentHelpUrl: ${configmap_documenthelpurl}
-        telerikReportServerUrlNew: ${configmap_telerikreportserverurlnew}
-        reviewUrl: ${configmap_reviewurl}
-        scheduledtasksUrl: ${configmap_scheduledtasksurl}
-        reportParameters: ${configmap_reportparameters}
-        clientID: ${configmap_clientid}
-        reportParametersByClientID: ${configmap_reportparametersbyclientid}
-        telerikToken: ${configmap_teleriktoken}
-        childParameters: ${configmap_childparameters}
-        getScheduledTask: ${configmap_getscheduledtask}
+          configMap:
+            name: "ligl-ui-config" 
+            serviceIp: ${ligl_ui_configmap_serviceip}
+            webSocketUrl: ${ligl_ui_configmap_websocketurl}
+            loginUrl: ${ligl_ui_configmap_loginurl}
+            getUserUrl: ${ligl_ui_configmap_getuserurl}
+            oData: ${ligl_ui_configmap_odata}
+            moduleLookupUrl: ${ligl_ui_configmap_modulelookupurl}
+            appSettingUrl: ${ligl_ui_configmap_appsettingurl}
+            oDataTaxonomyUrl: ${ligl_ui_configmap_odatataxonomyurl}
+            userPermissions: ${ligl_ui_configmap_userpermissions}
+            logoutUrl: ${ligl_ui_configmap_logouturl}
+            telerikReportServerUrl: ${ligl_ui_configmap_telerikreportserverurl}
+            apiPrefixURL: ${ligl_ui_configmap_apiprefixurl}
+            defaultLanguage: ${ligl_ui_configmap_defaultlanguage}
+            IsNuixEnvironment: ${ligl_ui_configmap_isnuixenvironment}
+            isCommonSpiritInstance: ${ligl_ui_configmap_iscommonspiritinstance}
+            isLocalization: ${ligl_ui_configmap_islocalization}
+            ClientName: ${ligl_ui_configmap_clientname}
+            AuthenticationProviderType: ${ligl_ui_configmap_authenticationprovidertype}
+            IsSSOSPInitiatedEnabled: ${ligl_ui_configmap_isssospinitiatedenabled}
+            IsMearsk: ${ligl_ui_configmap_ismearsk}
+            ssoSPInitiatedUrl: ${ligl_ui_configmap_ssospinitiatedurl}
+            ApproversCount: ${ligl_ui_configmap_approverscount}
+            DocumentHelpUrl: ${ligl_ui_configmap_documenthelpurl}
+            telerikReportServerUrlNew: ${ligl_ui_configmap_telerikreportserverurlnew}
+            reviewUrl: ${ligl_ui_configmap_reviewurl}
+            scheduledtasksUrl: ${ligl_ui_configmap_scheduledtasksurl}
+            reportParameters: ${ligl_ui_configmap_reportparameters}
+            clientID: ${ligl_ui_configmap_clientid}
+            reportParametersByClientID: ${ligl_ui_configmap_reportparametersbyclientid}
+            telerikToken: ${ligl_ui_configmap_teleriktoken}
+            childParameters: ${ligl_ui_configmap_childparameters}
+            getScheduledTask: ${ligl_ui_configmap_getscheduledtask}
 
 
 
-      secrets:
-        enabled: ${secrets_enabled}
-        # -- The secrets provider
-        # -- Providers:
-        # --- external-secrets: (https://external-secrets.io/v0.5.9/)
-        # --- kubernetes: Use kubernetes secret. Add secrets to the 'kubernetes' section below.
-        provider: "external-secrets"
+          secrets:
+            enabled: ${secrets_enabled}
+            # -- The secrets provider
+            # -- Providers:
+            # --- external-secrets: (https://external-secrets.io/v0.5.9/)
+            # --- kubernetes: Use kubernetes secret. Add secrets to the 'kubernetes' section below.
+            provider: "external-secrets"
 
-        # -- OPTIONS FOR: 'external-secrets' -- #
-        externalSecrets:
-          # -- The external-secrets provider
-          # -- Providers:
-          # --- aws: AWS SecretsManager
-          provider: aws
-          # -- Options for aws (AWS SecretsManager)
-          aws:
-            # -- Region: The AWS region where the secret resides (default "us-east-1")
-            region: "us-east-2"
-          enabled: true
-          # Specifies whether a service account should be created
-          create: true
+            # -- OPTIONS FOR: 'external-secrets' -- #
+            externalSecrets:
+              # -- The external-secrets provider
+              # -- Providers:
+              # --- aws: AWS SecretsManager
+              provider: aws
+              # -- Options for aws (AWS SecretsManager)
+              aws:
+                # -- Region: The AWS region where the secret resides (default "us-east-1")
+                region: "us-east-2"
+              enabled: true
+              # Specifies whether a service account should be created
+              create: true
 
-          # Specifies the name of the kubernetes secrets
-          name: "ligl-ui-secrets"
+              # Specifies the name of the kubernetes secrets
+              name: "ligl-ui-secrets"
 
-          # Specifies the service account for external-secrets
-          serviceAccount:
-            name: "ligl-ui-sa"
-            arn: "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
+              # Specifies the service account for external-secrets
+              serviceAccount:
+                name: "ligl-ui-sa"
+                arn: ""
 
-        secretDefinitions:
-          data:
-            # - name: LOGIN_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: LOGIN_URL
-            # - name: GET_USER_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: GET_USER_URL
-            # - name: ODATA
-            #   key: prod/reveal/ligl-ui
-            #   property: ODATA
-            # - name: MODULE_LOOKUP_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: MODULE_LOOKUP_URL
-            # - name: APP_SETTING_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: APP_SETTING_URL
-            # - name: ODATA_TAXONOMY_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: ODATA_TAXONOMY_URL
-            # - name: USER_PERMISSIONS
-            #   key: prod/reveal/ligl-ui
-            #   property: USER_PERMISSIONS
-            # - name: LOGOUT_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: LOGOUT_URL
-            # - name: API_PREFIX_URL
-            #   key: prod/reveal/ligl-ui
-            #   property: API_PREFIX_URL
+        
