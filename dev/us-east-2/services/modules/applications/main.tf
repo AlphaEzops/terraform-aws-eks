@@ -627,7 +627,7 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: ${local.application_namespace}
+            value: "ligl-ui"
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
