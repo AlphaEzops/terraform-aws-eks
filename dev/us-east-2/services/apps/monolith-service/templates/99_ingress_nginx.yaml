@@ -18,7 +18,7 @@ metadata:
     # nginx.ingress.kubernetes.io/ssl-redirect: "true"
     # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /Api/$2
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$2
     # nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
     # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
@@ -29,7 +29,7 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /Api(/|$)(.*)
+          - path: /api(/|$)(.*)
             pathType:  Prefix
             backend:
               service:

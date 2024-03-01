@@ -29,7 +29,7 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /MetadataProcessingService/Api(/|$)(.*)
+          - path: /Api/MetadataService(/|$)(.*)
             pathType:  Prefix
             backend:
               service:
