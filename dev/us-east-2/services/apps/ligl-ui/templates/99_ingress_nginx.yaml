@@ -15,7 +15,7 @@ metadata:
     # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
     # nginx.ingress.kubernetes.io/rewrite-target: /
     # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
-    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    # cert-manager.io/cluster-issuer: "letsencrypt-staging"
     # ingress.kubernetes.io/force-ssl-redirect:  "true"
     # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     # nginx.ingress.kubernetes.io/backend-protocol:  "HTTP"
@@ -24,10 +24,10 @@ metadata:
     # nginx.ingress.kubernetes.io/proxy-connect-timeout: "300" 
 spec:
   ingressClassName: {{ $ingress_class }}
-  tls:
-    - hosts:
-      - {{ .Values.ingress.hostname }}
-      secretName: "reveal-ops"
+  # tls:
+  #   - hosts:
+  #     - {{ .Values.ingress.hostname }}
+  #     secretName: "reveal-ops"
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:

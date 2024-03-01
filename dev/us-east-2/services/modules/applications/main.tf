@@ -25,23 +25,63 @@ locals {
 
 locals {
   region = "us-east-2"
-  ligl_ui_namespace = "ligl-ui"
-  authentication_namespace = "authentication-service"
-  monolith_namespace = "monolith-service"
-  taxonomy_namespace = "taxonomy-service"
-  ligl_external_namespace = "ligl-external"
-  metadata_namespace = "metadata-service"
-  hosting_namespace = "hosting-service"
-  process_namespace = "process-service"
-  reports_namespace = "reports-service"
-  requests_namespace = "requests-servicer"
-  notification_namespace = "nofitication-service"
-  mssql_namespace = "mssql-service"
-
   hostname = "ligl-ui.dev.ezops.com.br"
   mssql_password = "password123@"
   mssql_size = "6Gi"
 }
+locals {
+  ligl_ui_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  ligl_ui_image_tag = "new-tag"
+  ligl_ui_namespace = "ligl-ui"
+
+  authentication_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  authentication_image_tag = "authentication-service-01-03"
+  authentication_namespace = "authentication-service"
+
+  monolith_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  monolith_image_tag = "monolith-service-master"
+  monolith_namespace = "monolith-service"
+
+  taxonomy_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  taxonomy_image_tag = "taxonomy-service"
+  taxonomy_namespace = "taxonomy-service"
+
+  ligl_external_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  ligl_external_image_tag = "ligl-external"
+  ligl_external_namespace = "ligl-external"
+
+  metadata_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  metadata_image_tag = "metadata-processing-service"
+  metadata_namespace = "metadata-service"
+
+  hosting_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  hosting_image_tag = "hosting-service"
+  hosting_namespace = "hosting-service"
+
+  process_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  process_image_tag = "process-service"
+  process_namespace = "process-service"
+
+  reports_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  reports_image_tag = "report-service"
+  reports_namespace = "reports-service"
+
+  requests_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  requests_image_tag = "request-tracker-service"
+  requests_namespace = "requests-service"
+
+  notification_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  notification_image_tag = "notification-service"
+  notification_namespace = "notification-service"
+
+  mssql_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
+  mssql_image_tag = "sql-server-backup"
+  mssql_namespace = "mssql-service"
+}
+
+
+
+
 
 
 locals {
@@ -613,52 +653,52 @@ locals {
   )
 }
 
-# #==============================================================================================================
-# # CERT MANAGER APPLICATION - ARGO CD - USED TO CERTIFICATE HOSTNAMES
-# #==============================================================================================================
+#==============================================================================================================
+# CERT MANAGER APPLICATION - ARGO CD - USED TO CERTIFICATE HOSTNAMES
+#==============================================================================================================
 
-# resource "kubectl_manifest" "cert_manager_system" {
-#   yaml_body = <<YAML
-# apiVersion: argoproj.io/v1alpha1
-# kind: Application
-# metadata:
-#   finalizers:
-#     - resources-finalizer.argocd.argoproj.io
-#   labels:
-#     argocd.argoproj.io/instance: app-of-apps
-#   name: cert-manager-development
-#   namespace: argocd-system
-# spec:
-#   destination:
-#     namespace: cert-manager
-#     server: 'https://kubernetes.default.svc'
-#   project: default
-#   source:
-#     helm:
-#       valueFiles:
-#         - values.yaml
-#       parameters:
-#         - name: "nodeSelector.kubernetes\\.io/os"
-#           value: "linux"
-#     path: dev/us-east-2/services/system/cert-manager
-#     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
-#     targetRevision: HEAD
-#   syncPolicy:
-#     automated:
-#       allowEmpty: false
-#       prune: false
-#       selfHeal: true
-#     retry:
-#       backoff:
-#         duration: 5s
-#         factor: 2
-#         maxDuration: 3m0s
-#       limit: 5
-#     syncOptions:
-#       - CreateNamespace=true
-#       - PruneLast=true
-# YAML
-# }
+resource "kubectl_manifest" "cert_manager_system" {
+  yaml_body = <<YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/instance: app-of-apps
+  name: cert-manager-development
+  namespace: argocd-system
+spec:
+  destination:
+    namespace: cert-manager
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: "nodeSelector.kubernetes\\.io/os"
+          value: "linux"
+    path: dev/us-east-2/services/system/cert-manager
+    repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      allowEmpty: false
+      prune: false
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 5
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+YAML
+}
 
 
 #==============================================================================================================
@@ -692,6 +732,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.ligl_ui_namespace}
+          - name: "application.image"
+            value: ${local.ligl_ui_image}
+          - name: "application.tag"
+            value: ${local.ligl_ui_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -772,6 +816,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.authentication_namespace}
+          - name: "application.image"
+            value: ${local.authentication_image}
+          - name: "application.tag"
+            value: ${local.authentication_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -791,6 +839,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.monolith_namespace}
+          - name: "application.image"
+            value: ${local.monolith_image}
+          - name: "application.tag"
+            value: ${local.monolith_image_tag}
           - name: "ingress.hostname"
             value: ${local.hostname}
           - name: "configMap.DefaultConnectionString"
@@ -818,6 +870,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.taxonomy_namespace}
+          - name: "application.image"
+            value: ${local.taxonomy_image}
+          - name: "application.tag"
+            value: ${local.taxonomy_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -837,6 +893,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.ligl_external_namespace}
+          - name: "application.image"
+            value: ${local.ligl_external_image}
+          - name: "application.tag"
+            value: ${local.ligl_external_image_tag}
           - name: "ingress.hostname"
             value: ${local.hostname}
           - name: "application.resources.requests.cpu"
@@ -854,6 +914,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.metadata_namespace}
+          - name: "application.image"
+            value: ${local.metadata_image}
+          - name: "application.tag"
+            value: ${local.metadata_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -873,6 +937,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.hosting_namespace}
+          - name: "application.image"
+            value: ${local.hosting_image}
+          - name: "application.tag"
+            value: ${local.hosting_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -892,6 +960,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.process_namespace}
+          - name: "application.image"
+            value: ${local.process_image}
+          - name: "application.tag"
+            value: ${local.process_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -911,6 +983,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.reports_namespace}
+          - name: "application.image"
+            value: ${local.reports_image}
+          - name: "application.tag"
+            value: ${local.reports_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -930,6 +1006,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.requests_namespace}
+          - name: "application.image"
+            value: ${local.requests_image}
+          - name: "application.tag"
+            value: ${local.requests_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -949,6 +1029,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.notification_namespace}
+          - name: "application.image"
+            value: ${local.notification_image}
+          - name: "application.tag"
+            value: ${local.notification_image_tag}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -968,6 +1052,10 @@ spec:
         parameters:
           - name: "global.namespace"
             value: ${local.mssql_namespace}
+          - name: "image.repository"
+            value: ${local.mssql_image}
+          - name: "image.tag"
+            value: ${local.mssql_image_tag}
           - name: "sapassword"
             value: ${local.mssql_password}
           - name: "acceptEula.value"
@@ -992,7 +1080,7 @@ spec:
       - CreateNamespace=true
       - PruneLast=true
 YAML
-  # depends_on = [
-  #   kubectl_manifest.cert_manager_system
-  # ]
+  depends_on = [
+    kubectl_manifest.cert_manager_system
+  ]
 }

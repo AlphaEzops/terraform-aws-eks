@@ -37,7 +37,7 @@ ingress:
 
 application:
   image: "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
-  tag: "report-service"
+  tag: "request-tracker-service"
   name: "request-tracker-service"
   replicaCount: 2
   nodeSelector:

@@ -47,51 +47,51 @@ resource "helm_release" "argocd_helm_release" {
 # # SYSTEM APPLICATIONS - ARGO CD
 # #==============================================================================================================
 
-resource "kubectl_manifest" "cert_manager_system" {
-  yaml_body = <<YAML
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  labels:
-    argocd.argoproj.io/instance: app-of-apps
-  name: cert-manager-development
-  namespace: argocd-system
-spec:
-  destination:
-    namespace: cert-manager
-    server: 'https://kubernetes.default.svc'
-  project: default
-  source:
-    helm:
-      valueFiles:
-        - values.yaml
-      parameters:
-        - name: "nodeSelector.kubernetes\\.io/os"
-          value: "linux"
-    path: dev/us-east-2/services/system/cert-manager
-    repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
-    targetRevision: HEAD
-  syncPolicy:
-    automated:
-      allowEmpty: false
-      prune: false
-      selfHeal: true
-    retry:
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m0s
-      limit: 5
-    syncOptions:
-      - CreateNamespace=true
-      - PruneLast=true
-YAML
-  depends_on = [
-    helm_release.argocd_helm_release
-  ]
-}
+# resource "kubectl_manifest" "cert_manager_system" {
+#   yaml_body = <<YAML
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+#   labels:
+#     argocd.argoproj.io/instance: app-of-apps
+#   name: cert-manager-development
+#   namespace: argocd-system
+# spec:
+#   destination:
+#     namespace: cert-manager
+#     server: 'https://kubernetes.default.svc'
+#   project: default
+#   source:
+#     helm:
+#       valueFiles:
+#         - values.yaml
+#       parameters:
+#         - name: "nodeSelector.kubernetes\\.io/os"
+#           value: "linux"
+#     path: dev/us-east-2/services/system/cert-manager
+#     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+#     targetRevision: HEAD
+#   syncPolicy:
+#     automated:
+#       allowEmpty: false
+#       prune: false
+#       selfHeal: true
+#     retry:
+#       backoff:
+#         duration: 5s
+#         factor: 2
+#         maxDuration: 3m0s
+#       limit: 5
+#     syncOptions:
+#       - CreateNamespace=true
+#       - PruneLast=true
+# YAML
+#   depends_on = [
+#     helm_release.argocd_helm_release
+#   ]
+# }
 
 resource "kubectl_manifest" "nginx_system" {
 
