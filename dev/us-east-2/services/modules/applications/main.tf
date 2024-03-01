@@ -31,7 +31,7 @@ locals {
 }
 locals {
   ligl_ui_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
-  ligl_ui_image_tag = "new-tag"
+  ligl_ui_image_tag = "ligl-ui-01-03"
   ligl_ui_namespace = "ligl-ui"
 
   authentication_image = "975635808270.dkr.ecr.us-east-2.amazonaws.com/reveal"
@@ -743,11 +743,11 @@ spec:
           - name: "configMap.name"
             value: "ligl-ui-config"
           - name: "configMap.serviceIp"
-            value: ${local.hostname}
+            value: "http://${local.hostname}"
           - name: "configMap.webSocketUrl"
             value: "ws://10.0.0.10:8092/"
           - name: "configMap.loginUrl"
-            value: "/Token"
+            value: "http://${local.hostname}/Token"
           - name: "configMap.getUserUrl"
             value: "/api/user"
           - name: "configMap.oData"
