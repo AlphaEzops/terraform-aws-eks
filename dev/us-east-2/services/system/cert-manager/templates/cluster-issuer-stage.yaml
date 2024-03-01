@@ -5,7 +5,7 @@ metadata:
 spec:
   acme:
     server: "https://acme-v02.api.letsencrypt.org/directory"
-    email: "arthuracs18@gmail.com"
+    email: "alpha@ezops.cloud"
     privateKeySecretRef:
       name: "reveal-ops"
     solvers:

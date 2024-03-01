@@ -18,15 +18,33 @@ locals {
   DB_VMDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VMDB_NAME"]
   DB_VEDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VEDB_NAME"]
   DB_VSDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VSDB_NAME"]
-    DB_VRDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VRDB_NAME"]
+  DB_VRDB_NAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_VRDB_NAME"]
   DB_USERNAME = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_USERNAME"]
   DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret_reveal.secret_string)["DB_PASSWORD"]
 }
 
-
 locals {
   region = "us-east-2"
-  sql_server_database_password = "password123@"
+  ligl_ui_namespace = "ligl-ui"
+  authentication_namespace = "authentication-service"
+  monolith_namespace = "monolith-service"
+  taxonomy_namespace = "taxonomy-service"
+  ligl_external_namespace = "ligl-external"
+  metadata_namespace = "metadata-service"
+  hosting_namespace = "hosting-service"
+  process_namespace = "process-service"
+  reports_namespace = "reports-service"
+  requests_namespace = "requests-servicer"
+  notification_namespace = "nofitication-service"
+  mssql_namespace = "mssql-service"
+
+  hostname = "ligl-ui.dev.ezops.com.br"
+  mssql_password = "password123@"
+  mssql_size = "6Gi"
+}
+
+
+locals {
   authentication_settings_json = jsonencode(<<EOT
     {
       "ConnectionStrings": {
@@ -595,7 +613,57 @@ locals {
   )
 }
 
+# #==============================================================================================================
+# # CERT MANAGER APPLICATION - ARGO CD - USED TO CERTIFICATE HOSTNAMES
+# #==============================================================================================================
 
+# resource "kubectl_manifest" "cert_manager_system" {
+#   yaml_body = <<YAML
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+#   labels:
+#     argocd.argoproj.io/instance: app-of-apps
+#   name: cert-manager-development
+#   namespace: argocd-system
+# spec:
+#   destination:
+#     namespace: cert-manager
+#     server: 'https://kubernetes.default.svc'
+#   project: default
+#   source:
+#     helm:
+#       valueFiles:
+#         - values.yaml
+#       parameters:
+#         - name: "nodeSelector.kubernetes\\.io/os"
+#           value: "linux"
+#     path: dev/us-east-2/services/system/cert-manager
+#     repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
+#     targetRevision: HEAD
+#   syncPolicy:
+#     automated:
+#       allowEmpty: false
+#       prune: false
+#       selfHeal: true
+#     retry:
+#       backoff:
+#         duration: 5s
+#         factor: 2
+#         maxDuration: 3m0s
+#       limit: 5
+#     syncOptions:
+#       - CreateNamespace=true
+#       - PruneLast=true
+# YAML
+# }
+
+
+#==============================================================================================================
+# APPLICATIONS - DEPLOY APPLICATIONS
+#==============================================================================================================
 
 
 resource "kubectl_manifest" "application" {
@@ -615,10 +683,6 @@ spec:
   project: default
   sources:
 
-    #####################
-        LIGL-UI HELM 
-    #####################
-
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/ligl-ui-secrets
       targetRevision: HEAD
@@ -627,7 +691,7 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "ligl-ui"
+            value: ${local.ligl_ui_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
@@ -635,7 +699,7 @@ spec:
           - name: "configMap.name"
             value: "ligl-ui-config"
           - name: "configMap.serviceIp"
-            value: "ligl-ui.dev.ezops.com.br/"
+            value: ${local.hostname}
           - name: "configMap.webSocketUrl"
             value: "ws://10.0.0.10:8092/"
           - name: "configMap.loginUrl"
@@ -699,9 +763,6 @@ spec:
           - name: "configMap.getScheduledTask"
             value: "https://telerik.myligl.io/api/reportserver/v2/scheduledtasks"
 
-    ########################
-      AUTHENTICATION HELM 
-    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/authentication-service
@@ -710,17 +771,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: authentication-service
+            value: ${local.authentication_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
           - name: "configMap.configuration"
             value: ${local.authentication_settings_json}
+          - name: "ingress.hostname"
+            value: ${local.hostname}
 
-    ########################
-      MONOLITH HELM 
-    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/monolith-service
@@ -730,7 +790,9 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: monolith-service
+            value: ${local.monolith_namespace}
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.DefaultConnectionString"
             value: "data source=${local.DB_HOST},${local.DB_PORT};initial catalog=${local.DB_VEDB_NAME};user id=${local.DB_USERNAME};pwd=${local.DB_PASSWORD};MultipleActiveResultSets=True;Enlist=false;App=EntityFramework"
           - name: "configMap.CaseCustodianDataSourceContextConnectionString" 
@@ -745,10 +807,7 @@ spec:
             value: "metadata={0};provider=System.Data.SqlClient;provider connection string=&quot;data source={1};initial catalog={2};{3};MultipleActiveResultSets=True;Enlist={4};App=EntityFramework&quot;"
           - name: "configMap.StagingEntitiesConnectionString"
             value: "metadata=res://*/Staging.Staging.csdl|res://*/Staging.Staging.ssdl|res://*/Staging.Staging.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=source=${local.DB_HOST},${local.DB_PORT};initial catalog=${local.DB_VSDB_NAME};user id=${local.DB_USERNAME};pwd=${local.DB_PASSWORD};MultipleActiveResultSets=True;App=EntityFramework&quot;"
-   
-    ########################
-      TAXONOMY HELM 
-    #######################
+
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/taxonomy-service
@@ -758,17 +817,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: taxonomy-service
+            value: ${local.taxonomy_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.taxonomy_setting_json}
      
-    ########################
-      LIGL-EXTERNAL HELM 
-    #######################
 
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/ligl-external
@@ -778,15 +836,14 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: ligl-external
+            value: ${local.ligl_external_namespace}
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
         
-    ########################
-      METADATA HELM 
-    #######################
 
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/metadata-processing-service
@@ -796,17 +853,17 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "metadata-processing-service"
+            value: ${local.metadata_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.metadata_setting_json}
     
-    ########################
-      HOSTING HELM 
-    #######################
+
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/hosting-service
       targetRevision: HEAD
@@ -815,17 +872,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "hosting-service"
+            value: ${local.hosting_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.hosting_setting_json}
     
-    ########################
-      PROCESS HELM 
-    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/process-service
@@ -835,17 +891,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "process-service"
+            value: ${local.process_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.process_setting_json}
     
-    ########################
-      REPORTS HELM 
-    #######################
 
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/reports-service
@@ -855,17 +910,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "reports-service"
+            value: ${local.reports_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.reports_setting_json}
       
-    ########################
-      REQUEST TRACKER HELM 
-    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/request-tracker-service
@@ -875,17 +929,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "request-tracker-service"
+            value: ${local.requests_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.request_tracker_setting_json}
     
-    ########################
-      NOTIFICATION HELM 
-    #######################
     
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/notification-service
@@ -895,17 +948,16 @@ spec:
           - values.yaml
         parameters:
           - name: "global.namespace"
-            value: "notification-service"
+            value: ${local.notification_namespace}
           - name: "application.resources.requests.cpu"
             value: "100m"
           - name: "application.resources.requests.memory"
             value: "100m"
+          - name: "ingress.hostname"
+            value: ${local.hostname}
           - name: "configMap.configuration"
             value: ${local.notification_setting_json}
    
-    ########################
-      SQL-SERVER-BACKUP HELM 
-    #######################
   
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
       path: dev/us-east-2/services/apps/sql-server-backup
@@ -914,14 +966,16 @@ spec:
         valueFiles:
           - values.yaml
         parameters:
+          - name: "global.namespace"
+            value: ${local.mssql_namespace}
           - name: "sapassword"
-            value: ${local.sql_server_database_password}
+            value: ${local.mssql_password}
           - name: "acceptEula.value"
             value: "Y"
           - name: "nodeSelector.kubernetes\\.io/os"
             value: "linux"
           - name: "persistence.dataSize"
-            value: "6Gi"
+            value: ${local.mssql_size}
 
   syncPolicy:
     automated:
@@ -938,4 +992,7 @@ spec:
       - CreateNamespace=true
       - PruneLast=true
 YAML
+  # depends_on = [
+  #   kubectl_manifest.cert_manager_system
+  # ]
 }

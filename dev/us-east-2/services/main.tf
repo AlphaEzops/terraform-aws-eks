@@ -6,17 +6,6 @@ data "aws_eks_cluster_auth" "cluster_auth" {
   name = data.aws_eks_cluster.cluster_info.id
 }
 
-locals {
-  service_account_name = "ligl-ui-sa"
-  # secret_role_arn = "arn:aws:iam::975635808270:role/ligl-ui-us-east-2-eks-secrets-role-irsa"
-}
-
-
-
-#data "aws_ssm_parameter" "ssh_key" {
-#name = "/DEV/REVEAL/PRIVATEKEY"
-#}
-
 #==============================================================================================================
 # KUBERNETES RESOURCES - NAMESPACE
 #==============================================================================================================
@@ -54,9 +43,9 @@ resource "helm_release" "argocd_helm_release" {
   }
 }
 
-#==============================================================================================================
-# SYSTEM APPLICATIONS - ARGO CD
-#==============================================================================================================
+# #==============================================================================================================
+# # SYSTEM APPLICATIONS - ARGO CD
+# #==============================================================================================================
 
 resource "kubectl_manifest" "cert_manager_system" {
   yaml_body = <<YAML
@@ -195,56 +184,56 @@ YAML
 #   ]
 # }
 
-resource "kubectl_manifest" "external_secrets" {
+# resource "kubectl_manifest" "external_secrets" {
 
-  yaml_body = <<YAML
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-  labels:
-    argocd.argoproj.io/instance: app-of-apps
-  name: external-secret-development
-  namespace: argocd-system
-spec:
-  destination:
-    namespace: external-secrets
-    server: 'https://kubernetes.default.svc'
-  project: default
-  source:
-    helm:
-      valueFiles:
-        - values.yaml
-      parameters:
-        - name: "nodeSelector.kubernetes\\.io/os"
-          value: "linux"
-        - name: "webhook.nodeSelector.kubernetes\\.io/os"
-          value: "linux"
-        - name: "certController.nodeSelector.kubernetes\\.io/os"
-          value: "linux"
-    chart: external-secrets
-    repoURL: https://charts.external-secrets.io
-    targetRevision: 0.9.5
-  syncPolicy:
-    automated:
-      allowEmpty: false
-      prune: false
-      selfHeal: true
-    retry:
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 3m0s
-      limit: 5
-    syncOptions:
-      - CreateNamespace=true
-      - PruneLast=true
-YAML
-  depends_on = [
-    helm_release.argocd_helm_release
-  ]
-}
+#   yaml_body = <<YAML
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+#   labels:
+#     argocd.argoproj.io/instance: app-of-apps
+#   name: external-secret-development
+#   namespace: argocd-system
+# spec:
+#   destination:
+#     namespace: external-secrets
+#     server: 'https://kubernetes.default.svc'
+#   project: default
+#   source:
+#     helm:
+#       valueFiles:
+#         - values.yaml
+#       parameters:
+#         - name: "nodeSelector.kubernetes\\.io/os"
+#           value: "linux"
+#         - name: "webhook.nodeSelector.kubernetes\\.io/os"
+#           value: "linux"
+#         - name: "certController.nodeSelector.kubernetes\\.io/os"
+#           value: "linux"
+#     chart: external-secrets
+#     repoURL: https://charts.external-secrets.io
+#     targetRevision: 0.9.5
+#   syncPolicy:
+#     automated:
+#       allowEmpty: false
+#       prune: false
+#       selfHeal: true
+#     retry:
+#       backoff:
+#         duration: 5s
+#         factor: 2
+#         maxDuration: 3m0s
+#       limit: 5
+#     syncOptions:
+#       - CreateNamespace=true
+#       - PruneLast=true
+# YAML
+#   depends_on = [
+#     helm_release.argocd_helm_release
+#   ]
+# }
 
 #==============================================================================================================
 # INGRESS - ARGO CD
@@ -302,7 +291,6 @@ module "applications" {
 #   depends_on = [helm_release.argocd_helm_release]
 #   source = "./modules/ligl-ui"
 #   application_namespace = "ligl-ui"
-#   service_account_name = "ligl-ui-sa"
 # }
 
 # module "ligl-external" {
@@ -315,28 +303,24 @@ module "applications" {
 #   depends_on = [module.ligl-external]
 #   source = "./modules/authentication-service"
 #   application_namespace = "authentication-service"
-#   service_account_name = "authentication-service-sa"
 # }
 
 # module "taxonomy-service" {
 #   depends_on = [helm_release.argocd_helm_release]
 #   source = "./modules/taxonomy-service"
 #   application_namespace = "taxonomy-service"
-#   service_account_name = "taxonomy-service-sa"
 # }
 
 # module "monolith-service" {
 #   depends_on = [helm_release.argocd_helm_release]
 #   source = "./modules/monolith-service"
 #   application_namespace = "monolith-service"
-#   service_account_name = "monolith-service-sa"
 # }
 
 # module "hosting-service" {
 #   depends_on = [helm_release.argocd_helm_release]
 #   source = "./modules/hosting-service"
 #   application_namespace = "hosting-service"
-#   service_account_name = "hosting-service-sa"
 # }
 
 # module "sql-server-backup" {
@@ -349,33 +333,28 @@ module "applications" {
 #   depends_on = [module.sql-server-backup]
 #   source = "./modules/reports-service"
 #   application_namespace = "reports-service"
-#   service_account_name = "reports-service-sa"
 # }
 
 # module "notification-service" {
 #   depends_on = [module.reports-service]
 #   source = "./modules/notification-service"
 #   application_namespace = "notification-service"
-#   service_account_name = "notification-service-sa"
 # }
 
 # module "process-service" {
 #   depends_on = [module.notification-service]
 #   source = "./modules/process-service"
 #   application_namespace = "process-service"
-#   service_account_name = "process-service-sa"
 # }
 
 # module "request-tracker-service" {
 #   depends_on = [module.notification-service]
 #   source = "./modules/request-tracker-service"
 #   application_namespace = "request-tracker-service"
-#   service_account_name = "request-tracker-service-sa"
 # }
 
 # module "metadata-process-service" {
 #   depends_on = [module.notification-service]
 #   source = "./modules/metadata-process-service"
 #   application_namespace = "metadata-process-service"
-#   service_account_name = "metadata-service-sa"
 # }
