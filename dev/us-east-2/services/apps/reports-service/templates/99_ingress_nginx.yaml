@@ -17,7 +17,7 @@ metadata:
     # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     # nginx.ingress.kubernetes.io/ssl-redirect: "true"
     # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /odata/ReportsService/
+    nginx.ingress.kubernetes.io/rewrite-target: /odata/$2
     # nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
     # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
@@ -28,7 +28,7 @@ spec:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          - path: /ReportsService/odata/
+          - path: /odata/ReportsService(/|$)(.*)
             pathType:  Prefix
             backend:
               service:
