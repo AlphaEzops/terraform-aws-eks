@@ -684,7 +684,7 @@ spec:
   sources:
 
     - repoURL: 'git@github.com:AlphaEzops/reveal-eks.git'
-      path: dev/us-east-2/services/apps/ligl-ui-secrets
+      path: dev/us-east-2/services/apps/ligl-ui
       targetRevision: HEAD
       helm:
         valueFiles:
