@@ -16,17 +16,9 @@ locals {
   service_account_name = var.service_account_name
 }
 
-# module "custom_external_secret_ligl_ui" {
-#   source = "../../system/external-secrets-role"
-#   application_namespace = local.application_namespace
-#   service_account_name = local.service_account_name
-# }
-
-
 #==============================================================================================================
 # APPLICATION - LIGL-UI
 #==============================================================================================================
-
 
 resource "kubectl_manifest" "ligl-ui" {
 

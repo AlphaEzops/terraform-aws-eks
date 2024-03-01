@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "mssql.fullname" . }}
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
   labels:
     app: {{ template "mssql.fullname" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}

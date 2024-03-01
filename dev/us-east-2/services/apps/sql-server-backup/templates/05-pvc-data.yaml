@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: {{ template "mssql.fullname" . }}-data
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
   labels:
     app: {{ template "mssql.fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"

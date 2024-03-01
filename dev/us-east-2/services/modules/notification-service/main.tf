@@ -100,11 +100,11 @@ locals {
 EOT  
 )
 }
-module "custom_external_secret_notification_service" {
-  source = "../../system/external-secrets-role"
-  application_namespace = local.application_namespace
-  service_account_name = local.service_account_name
-}
+# module "custom_external_secret_notification_service" {
+#   source = "../../system/external-secrets-role"
+#   application_namespace = local.application_namespace
+#   service_account_name = local.service_account_name
+# }
 
 
 #==============================================================================================================

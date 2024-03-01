@@ -293,86 +293,89 @@ resource "kubernetes_ingress_v1" "argo_cd_ingress" {
   }
 }
 
-
-module "ligl-ui" {
+module "applications" {
   depends_on = [helm_release.argocd_helm_release]
-  source = "./modules/ligl-ui"
-  application_namespace = "ligl-ui"
-  service_account_name = "ligl-ui-sa"
+  source = "./modules/applications"
 }
 
-module "ligl-external" {
-  depends_on = [module.ligl-ui]
-  source = "./modules/ligl-external"
-  application_namespace = "ligl-external"
-}
+# module "ligl-ui" {
+#   depends_on = [helm_release.argocd_helm_release]
+#   source = "./modules/ligl-ui"
+#   application_namespace = "ligl-ui"
+#   service_account_name = "ligl-ui-sa"
+# }
 
-module "authentication-service" {
-  depends_on = [module.ligl-external]
-  source = "./modules/authentication-service"
-  application_namespace = "authentication-service"
-  service_account_name = "authentication-service-sa"
-}
+# module "ligl-external" {
+#   depends_on = [helm_release.argocd_helm_release]
+#   source = "./modules/ligl-external"
+#   application_namespace = "ligl-external"
+# }
 
-module "taxonomy-service" {
-  depends_on = [module.authentication-service]
-  source = "./modules/taxonomy-service"
-  application_namespace = "taxonomy-service"
-  service_account_name = "taxonomy-service-sa"
-}
+# module "authentication-service" {
+#   depends_on = [module.ligl-external]
+#   source = "./modules/authentication-service"
+#   application_namespace = "authentication-service"
+#   service_account_name = "authentication-service-sa"
+# }
 
-module "monolith-service" {
-  depends_on = [helm_release.argocd_helm_release]
-  source = "./modules/monolith-service"
-  application_namespace = "monolith-service"
-  service_account_name = "monolith-service-sa"
-}
+# module "taxonomy-service" {
+#   depends_on = [helm_release.argocd_helm_release]
+#   source = "./modules/taxonomy-service"
+#   application_namespace = "taxonomy-service"
+#   service_account_name = "taxonomy-service-sa"
+# }
 
-module "hosting-service" {
-  depends_on = [helm_release.argocd_helm_release]
-  source = "./modules/hosting-service"
-  application_namespace = "hosting-service"
-  service_account_name = "hosting-service-sa"
-}
+# module "monolith-service" {
+#   depends_on = [helm_release.argocd_helm_release]
+#   source = "./modules/monolith-service"
+#   application_namespace = "monolith-service"
+#   service_account_name = "monolith-service-sa"
+# }
 
-module "sql-server-backup" {
-  depends_on = [module.hosting-service]
-  source = "./modules/sql-server-backup"
-  application_namespace = "sql-server-backup"
-}
+# module "hosting-service" {
+#   depends_on = [helm_release.argocd_helm_release]
+#   source = "./modules/hosting-service"
+#   application_namespace = "hosting-service"
+#   service_account_name = "hosting-service-sa"
+# }
 
-module "reports-service" {
-  depends_on = [module.sql-server-backup]
-  source = "./modules/reports-service"
-  application_namespace = "reports-service"
-  service_account_name = "reports-service-sa"
-}
+# module "sql-server-backup" {
+#   depends_on = [module.hosting-service]
+#   source = "./modules/sql-server-backup"
+#   application_namespace = "sql-server-backup"
+# }
 
-module "notification-service" {
-  depends_on = [module.reports-service]
-  source = "./modules/notification-service"
-  application_namespace = "notification-service"
-  service_account_name = "notification-service-sa"
-}
+# module "reports-service" {
+#   depends_on = [module.sql-server-backup]
+#   source = "./modules/reports-service"
+#   application_namespace = "reports-service"
+#   service_account_name = "reports-service-sa"
+# }
 
-module "process-service" {
-  depends_on = [module.notification-service]
-  source = "./modules/process-service"
-  application_namespace = "process-service"
-  service_account_name = "process-service-sa"
-}
+# module "notification-service" {
+#   depends_on = [module.reports-service]
+#   source = "./modules/notification-service"
+#   application_namespace = "notification-service"
+#   service_account_name = "notification-service-sa"
+# }
 
-module "request-tracker-service" {
-  depends_on = [module.notification-service]
-  source = "./modules/request-tracker-service"
-  application_namespace = "request-tracker-service"
-  service_account_name = "request-tracker-service-sa"
+# module "process-service" {
+#   depends_on = [module.notification-service]
+#   source = "./modules/process-service"
+#   application_namespace = "process-service"
+#   service_account_name = "process-service-sa"
+# }
 
-}
+# module "request-tracker-service" {
+#   depends_on = [module.notification-service]
+#   source = "./modules/request-tracker-service"
+#   application_namespace = "request-tracker-service"
+#   service_account_name = "request-tracker-service-sa"
+# }
 
-module "metadata-process-service" {
-  depends_on = [module.notification-service]
-  source = "./modules/metadata-process-service"
-  application_namespace = "metadata-process-service"
-  service_account_name = "metadata-service-sa"
-}
+# module "metadata-process-service" {
+#   depends_on = [module.notification-service]
+#   source = "./modules/metadata-process-service"
+#   application_namespace = "metadata-process-service"
+#   service_account_name = "metadata-service-sa"
+# }

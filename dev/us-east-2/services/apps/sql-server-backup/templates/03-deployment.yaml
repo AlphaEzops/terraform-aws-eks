@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "mssql.fullname" . }}
+  namespace: {{ .Values.global.namespace | default .Release.Name }}
   labels:
     app: {{ template "mssql.fullname" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
