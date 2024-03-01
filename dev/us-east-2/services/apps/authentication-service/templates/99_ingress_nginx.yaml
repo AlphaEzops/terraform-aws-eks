@@ -18,17 +18,17 @@ metadata:
     # nginx.ingress.kubernetes.io/ssl-redirect: "true"
     # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /Token
-    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    # cert-manager.io/cluster-issuer: "letsencrypt-staging"
     # nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
     # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
     # nginx.ingress.kubernetes.io/upstream-vhost: {{ quote .Values.ingress.hostname }}
 spec:
   ingressClassName: {{ $ingress_class }}
-  tls:
-  - hosts:
-    - {{ .Values.ingress.hostname }}
-    secretName: "reveal-ops"
+  # tls:
+  # - hosts:
+  #   - {{ .Values.ingress.hostname }}
+  #   secretName: "reveal-ops"
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:
